@@ -1,0 +1,12 @@
+.doctors-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-between;
+    margin: 120px 0 0 0; 
+}
+
+.no-doctors-message {
+    margin-left: 45%;
+    margin-top: 15%;
+}

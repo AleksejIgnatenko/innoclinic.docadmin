@@ -1,0 +1,616 @@
+:root {
+    --light-createDoctorProfileModal: #ffffff;
+    --dark-createDoctorProfileModal: #171717;
+
+    --light-createDoctorProfileModal-border: #999;
+    --dark-createDoctorProfileModal-border: #333;
+
+    --light-gray: #999;
+    --dark-gray: #494949;
+
+    --error: #c91818;
+}
+
+[data-theme='light'] {
+    --createDoctorProfile-bg: var(--light-createDoctorProfileModal);
+    --createDoctorProfile-fg: var(--dark-createDoctorProfileModal);
+
+    --border-color-createDoctorProfile: var(--light-createDoctorProfileModal-border);
+
+    --gray: var(--light-gray);
+}
+
+[data-theme='dark'] {
+    --createDoctorProfile-bg: var(--dark-createDoctorProfileModal);
+    --createDoctorProfile-fg: var(--light-createDoctorProfileModal);
+
+    --border-color-createDoctorProfile: var(--dark-createDoctorProfileModal-border);
+
+    --gray: var(--dark-gray);
+}
+
+.createDoctorProfile-section {
+    background: var(--createDoctorProfile-bg);
+    max-width: 530px;
+    width: 100%;
+    padding: 30px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    border: 1px solid var(--border-color-createDoctorProfile);
+    margin-top: 15%;
+}
+
+.createDoctorProfile-section h2 {
+    margin: 0 0 12px 0;
+}
+
+.createDoctorProfile-stage-progress {
+    list-style: none;
+    width: 80%;
+    display: flex; 
+    justify-content: center; 
+    padding: 0; 
+    margin: 0;
+}
+
+.createDoctorProfile-stage-progress li {
+    float: left;
+    width: 33.33%;
+    position: relative;
+    text-align: center;
+    color: var(--accent);
+    font-size: 12px;
+}
+
+.createDoctorProfile-stage-progress li::before {
+    display: block;
+    content: "";
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    margin: 0 auto 5px auto;
+    border: 4px solid var(--gray);
+    background: var(--gray);
+    transition: border 0.1s ease-in-out 0s, background 0.1s ease-in-out 0s;
+}
+
+.createDoctorProfile-stage-progress li::after {
+    position: absolute;
+    content: "";
+    width: calc(100% - 40px);
+    height: 4px;
+    border-radius: 5px;
+    background: var(--gray);
+    left: calc(-50% + 20px);
+    top: 14px;
+    background: linear-gradient(90deg, var(--accent) 50%, var(--gray) 50%);
+    background-size: 210% 100%;
+    background-position: -95% 0;
+    transition: background-position 0.3s ease-in-out;
+}
+
+.createDoctorProfile-stage-progress li:first-child::after {
+    content: none;
+}
+
+.createDoctorProfile-stage-progress li.createDoctorProfile-active-stage::before {
+    border-color: var(--accent);
+    transition: border 0.1s ease-in-out 0.3s, background 0.1s ease-in-out 0.3s;
+}
+
+.createDoctorProfile-stage-progress li.createDoctorProfile-active-stage::after {
+    background-position: -190% 0;
+}
+
+.createDoctorProfile-stage-progress li:has(~ .createDoctorProfile-active-stage)::before,
+.createDoctorProfile-stage-progress li:has(~ .createDoctorProfile-active-stage)::after {
+    border-color: var(--accent);
+    background: var(--accent);
+    background-position: -190% 0;
+}
+
+.stage {
+    width: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+/* Stage 1 */
+.createDoctorProfile-form-wrapper {
+    width: 100%;
+    overflow: hidden;
+    margin: 24px 0;
+    position: relative;
+}
+
+.createDoctorProfile-input-wrapper input {
+    display: block;
+    font-size: 16px;
+    width: 100%;
+    height: 55px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    outline: none;
+    border-radius: 5px;
+    position: relative;
+    color: var(--createDoctorProfile-fg);
+}
+
+.input.default-input-border.custom-select option {
+    padding: 8px 12px;
+    background-color: #fff;
+    color: #333;
+}
+
+.createDoctorProfile-input-wrapper input:focus~.input-label,
+.createDoctorProfile-input-wrapper input:not(:placeholder-shown)~.input-label,
+.label-active {
+    opacity: 1 !important;
+    visibility: visible !important;
+    top: -7px !important;
+    color: var(--accent) !important;
+    font-size: 13px !important;
+    background-color: var(--createDoctorProfile-bg) !important;
+    z-index: 2 !important;
+}
+
+.default-input-border {
+    border: 1px solid var(--border-color-createDoctorProfile);
+}
+
+.filtred-list {
+    cursor: pointer;
+    max-height: 55px;
+    overflow-y: auto;
+}
+
+.input-label {
+    position: absolute;
+    top: 20px;
+    font-size: 1.1rem;
+    left: 14px;
+    color: rgb(122, 122, 122);
+    font-weight: 100;
+    transition: 0.1s ease;
+    /* background-color: white; */
+    padding: 0 5px;
+    opacity: 1;
+}
+
+.createDoctorProfile-form {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+
+.createDoctorProfile-form-wrapper::before,
+.createDoctorProfile-form-wrapper::after {
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 24px;
+    top: 0;
+    z-index: 1;
+}
+
+.createDoctorProfile-form-wrapper::before {
+    left: 0;
+    width: 24px;
+    background: linear-gradient(90deg, var(--createDoctorProfile-bg), rgba(32, 32, 32, 0));
+}
+
+.createDoctorProfile-form-wrapper::after {
+    right: 0;
+    background: linear-gradient(-90deg, var(--createDoctorProfile-bg), rgba(32, 32, 32, 0));
+}
+
+.createDoctorProfile-inputs {
+    margin-top: 30px;
+    padding-top: 30px;
+}
+
+.createDoctorProfile-input-wrapper {
+    position: relative;
+    margin-top: 10px;
+}
+
+.createDoctorProfile-input-label {
+    position: absolute;
+    top: 20px;
+    font-size: 1.1rem;
+    left: 14px;
+    color: rgb(122, 122, 122);
+    font-weight: 100;
+    transition: 0.1s ease;
+    /* background-color: white; */
+    padding: 0 5px;
+    opacity: 1;
+}
+
+.createDoctorProfile-input {
+    display: block;
+    font-size: 16px;
+    width: 100%;
+    height: 55px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    outline: none;
+    border-radius: 5px;
+    position: relative;
+    border: 2px solid var(--gray);
+}
+
+.createDoctorProfile-input-wrapper input,
+.createDoctorProfile-input-wrapper select {
+    display: block;
+    font-size: 16px;
+    width: 100%;
+    height: 55px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    outline: none;
+    border-radius: 5px;
+    position: relative;
+    color: var(--appointmentModal-fg);
+}
+
+/* .createDoctorProfile-input:focus,
+.createDoctorProfile-input:focus {
+    border: 2px solid #1a73e8;
+} */
+
+.navigation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.primary-btn,
+.secondary-btn {
+    font-size: 14px;
+    font-weight: bold;
+    padding: 0.5em 1.5em;
+    width: 200px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--createDoctorProfile-bg);
+    position: relative;
+    background-size: 200% 200%;
+    background-position: 100% 0;
+    border: none;
+    transition: background-position 0.3s ease-in-out;
+    display: inline-block;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.primary-btn {
+    background: var(--accent);
+}
+
+.disabled-primary-btn {
+  background-color: #ccc; 
+  cursor: not-allowed; 
+  pointer-events: none;
+}
+
+.secondary-btn {
+    border: 2px solid var(--accent);
+    color: var(--accent);
+    background: none;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.error-input-border {
+    border-color: var(--error);
+}
+
+.error-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    top: -7px !important;
+    color: var(--error) !important;
+    font-size: 13px !important;
+    background-color: var(--createDoctorProfile-bg) !important;
+    z-index: 2 !important;
+}
+
+
+/* Stage 2 */
+.upload-area {
+    border: 2px dashed var(--accent);
+    border-radius: 40px;
+    margin: 30px 20px 15px 20px;
+    padding: 30px 50px;
+    height: 550px;
+    text-align: center;
+    background-size: contain; 
+    background-position: center;
+    background-repeat: no-repeat; 
+    cursor: pointer;
+}
+
+  .upload-area__header {
+    margin-left: 25%;
+  }
+
+  .upload-area--open { /* Slid Down Animation */
+    animation: slidDown 500ms ease-in-out;
+  }
+  
+  @keyframes slidDown {
+    from {
+      height: 28.125rem; /* 450px */
+    }
+  
+    to {
+      height: 35rem; /* 560px */
+    }
+  }
+
+  /* Header */
+  .upload-area__title {
+    font-size: 1.8rem;
+    margin-bottom: 0.3125rem;
+  }
+  
+  .upload-area__paragraph {
+    margin-top: 0;
+  }
+
+  .upload-area__tooltip {
+    position: relative;
+    cursor: pointer;
+    transition: color 300ms ease-in-out;
+    display: inline-block;
+  }
+
+  .upload-area__tooltip:hover .upload-area__tooltip-data {
+    background-color: var(--createDoctorProfile-bg); 
+    color: var(--createDoctorProfile-fg);
+    border-radius: 5px; 
+    padding: 2px 4px; 
+    position: absolute; 
+    z-index: 10; 
+}
+  
+  .upload-area__tooltip-data {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -125%);
+    min-width: max-content;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    opacity: 0;
+    visibility: hidden;
+    transition: none 300ms ease-in-out;
+    transition-property: opacity, visibility;
+  }
+
+  .upload-area__tooltip-data:hover {
+    background-color: white; 
+    border-radius: 5px;
+    padding: 2px 4px;
+}
+
+  .upload-area__tooltip:hover .upload-area__tooltip-data {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Drop Zoon */
+  .upload-area__drop-zoon {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: border-color 300ms ease-in-out;
+  }
+  
+  .drop-zoon__icon {
+    display: flex;
+    font-size: 3.75rem;
+    transition: opacity 300ms ease-in-out;
+    margin-left: 40%;
+    margin-top: 55%;
+  }
+  
+  .drop-zoon__paragraph {
+    font-size: 0.9375rem;
+    margin: 0;
+    margin-top: 0.625rem;
+    transition: opacity 300ms ease-in-out;
+  }
+  
+  .drop-zoon:hover .drop-zoon__icon,
+  .drop-zoon:hover .drop-zoon__paragraph {
+    opacity: 0.7;
+  }
+  
+  .drop-zoon__loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    z-index: 10;
+  }
+  
+  .drop-zoon__preview-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    padding: 0.3125rem;
+    border-radius: 10px;
+    display: none;
+    z-index: 1000;
+    transition: opacity 300ms ease-in-out;
+  }
+  
+  .drop-zoon:hover .drop-zoon__preview-image {
+    opacity: 0.8;
+  }
+  
+  .drop-zoon__file-input {
+    display: none;
+  }
+  
+  .drop-zoon--over .drop-zoon__icon,
+  .drop-zoon--over .drop-zoon__paragraph {
+    opacity: 0.7;
+  }
+  
+  .drop-zoon--Uploaded .drop-zoon__icon,
+  .drop-zoon--Uploaded .drop-zoon__paragraph {
+    display: none;
+  }
+  
+  /* File Details Area */
+  .upload-area__file-details {
+    height: 0;
+    visibility: hidden;
+    opacity: 0;
+    text-align: left;
+    transition: none 500ms ease-in-out;
+    transition-property: opacity, visibility;
+    transition-delay: 500ms;
+  }
+  
+  /* (duploaded-file--open) Modifier Class */
+  .file-details--open {
+    height: auto;
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .file-details__title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: var(--clr-light-gray);
+  }
+  
+  /* Uploaded File */
+  .uploaded-file {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: none 500ms ease-in-out;
+    transition-property: visibility, opacity;
+  }
+  
+  /* (duploaded-file--open) Modifier Class */
+  .uploaded-file--open {
+    visibility: visible;
+    opacity: 1;
+  }
+  
+  .uploaded-file__icon-container {
+    position: relative;
+    margin-right: 0.3125rem;
+  }
+  
+  .uploaded-file__icon {
+    font-size: 3.4375rem;
+  }
+  
+  .uploaded-file__icon-text {
+    position: absolute;
+    top: 1.5625rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+  
+  .uploaded-file__info {
+    position: relative;
+    top: -0.3125rem;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .uploaded-file__info::before,
+  .uploaded-file__info::after {
+    content: '';
+    position: absolute;
+    bottom: -0.9375rem;
+    width: 0;
+    height: 0.5rem;
+    background-color: #ebf2ff;
+    border-radius: 0.625rem;
+  }
+  
+  .uploaded-file__info::before {
+    width: 100%;
+  }
+  
+  .uploaded-file__info::after {
+    width: 100%;
+    background-color: var(--clr-blue);
+  }
+  
+  /* Progress Animation */
+  .uploaded-file__info--active::after {
+    animation: progressMove 800ms ease-in-out;
+    animation-delay: 300ms;
+  }
+  
+  @keyframes progressMove {
+    from {
+      width: 0%;
+      background-color: transparent;
+    }
+  
+    to {
+      width: 100%;
+      background-color: var(--clr-blue);
+    }
+  }
+  
+  .uploaded-file__name {
+    width: 100%;
+    max-width: 6.25rem; /* 100px */
+    display: inline-block;
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .uploaded-file__counter {
+    font-size: 1rem;
+  }  
+
+  
