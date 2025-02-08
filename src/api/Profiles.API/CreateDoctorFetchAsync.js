@@ -21,8 +21,9 @@ async function CreateDoctorFetchAsync(doctorModel) {
 
         if (response.ok) {
             console.log("ok");
-        } else {
-            console.log("not ok");
+        } else if (response.status === 400) {
+            const data = await response.json();
+            console.log(data);
         }
     } catch (error) {
         console.error('Error in creating patient:', error);

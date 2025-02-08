@@ -1,0 +1,172 @@
+:root {
+    --light-signInUpModal: #ffffff;
+    --dark-signInUpModal: #171717;
+
+    --light-signInUpModal-border: #999;
+    --dark-signInUpModal-border: #333;
+
+    --error: #c91818;
+}
+
+[data-theme='light'] {
+    --signInUpModal-bg: var(--light-signInUpModal);
+    --signInUpModal-fg: var(--dark-signInUpModal);
+
+    --border-color-signInUpModal: var(--light-signInUpModal-border);
+}
+
+[data-theme='dark'] {
+    --signInUpModal-bg: var(--dark-signInUpModal);
+    --signInUpModal-fg: var(--light-signInUpModal);
+
+    --border-color-signInUpModal: var(--dark-signInUpModal-border);
+}
+
+.sign-in-container {
+    max-width: 450px;
+    width: 100%;
+    border: 1px solid var(--border-color-signInUpModal);
+    margin: auto;
+    margin-top: 4rem;
+    border-radius: 10px;
+    padding: 2rem;
+    height: auto;
+    box-sizing: border-box; 
+    background-color: var(--signInUpModal-bg); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+    z-index: 1001;
+}
+
+.sign-in-top-content {
+    text-align: center;
+}
+
+.sign-in-top-content h2 {
+    font-size: 20px;
+    font-weight: 100;
+    margin-bottom: 10px;
+}
+
+.sign-in-inputs {
+    margin-top: 15px;
+    padding-top: 15px;
+}
+
+.sign-in-input-wrapper {
+    position: relative;
+}
+
+.sign-in-input-wrapper input {
+    display: block;
+    font-size: 16px;
+    width: 100%;
+    height: 55px;
+    padding: 0 15px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2;
+    background-color: transparent;
+    outline: none;
+    border-radius: 5px;
+    position: relative;
+    color: var(--signInUpModal-fg);
+}
+
+.default-input-border {
+    border: 1px solid var(--border-color-signInUpModal);
+}
+
+.input-label {
+    position: absolute;
+    top: 20px;
+    font-size: 1.1rem;
+    left: 14px;
+    color: rgb(122, 122, 122);
+    font-weight: 100;
+    transition: 0.1s ease;
+    /* background-color: white; */
+    padding: 0 5px;
+    opacity: 1;
+}
+
+.error-input-border {
+    border-color: var(--error);
+}
+
+.error-label {
+    opacity: 1 !important;
+    visibility: visible !important;
+    top: -7px !important;
+    color: var(--error) !important;
+    font-size: 13px !important;
+    background-color: var(--signInUpModal-bg) !important;
+    z-index: 2 !important;
+}
+
+/* Основные стили для меток */
+.sign-in-input-wrapper input:focus~.input-label,
+.sign-in-input-wrapper input:not(:placeholder-shown)~.input-label {
+    opacity: 1;
+    visibility: visible;
+    top: -7px;
+    color: var(--accent);
+    font-size: 13px;
+    background-color: var(--signInUpModal-bg);
+    z-index: 2;
+}
+
+.sign-in-input-wrapper input:focus {
+    border: 2px solid var(--accent);
+}
+
+.error-input-border {
+    border: 1px solid var(--error);
+}
+
+.link-btn {
+    margin-bottom: 2rem;
+}
+
+.btn-group {
+    display: flex; 
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.sign-in-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    height: 38px;
+    padding: 0 25px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.disabled-sign-in-btn {
+    background-color: #ccc; 
+    cursor: not-allowed; 
+    pointer-events: none;
+    border: none;
+    height: 38px;
+    padding: 0 25px;
+    border-radius: 5px;
+}
+
+.signup-btn {
+    border: none;
+    background-color: transparent;
+    color: var(--accent);
+    font-weight: bold;
+    cursor: pointer;
+    height: 35px;
+    padding: 10px 5px;
+}
+
+/* .sign-in-btn:hover {
+    background-color: #18c91b;
+}
+
+.login-btn:hover {
+    background-color: #e8f2ff6e;
+} */

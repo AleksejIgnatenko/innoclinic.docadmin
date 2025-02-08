@@ -1,31 +1,31 @@
 :root {
-    --light-nav-bar: #ffffff;
-    --dark-nav-bar: #171717;
+    --light-toolbar: #ffffff;
+    --dark-toolbar: #171717;
   
     --light-search: #ece9e9;
     --dark-search: #383838;
   }
   
   [data-theme='light'] {
-    --nav-bar-bg: var(--light-nav-bar);
-    --nav-bar-fg: var(--dark-nav-bar);
+    --toolbar-bg: var(--light-toolbar);
+    --toolbar-fg: var(--dark-toolbar);
   
     --search-bg:var(--light-search);
   }
   
   [data-theme='dark'] {
-    --nav-bar-bg: var(--dark-nav-bar);
-    --nav-bar-fg: var(--light-nav-bar);
+    --toolbar-bg: var(--dark-toolbar);
+    --toolbar-fg: var(--light-toolbar);
   
     --search-bg:var(--dark-search);
   }
   
-  .nav-bar {
+  .toolbar {
     display: flex;
     align-items: center;
     height: 60px;
     width: 100%;
-    background-color: var(--nav-bar-bg);
+    background-color: var(--toolbar-bg);
     position: fixed;
     top: 0;
     z-index: 1000; 
@@ -51,13 +51,13 @@
   .search-bar input {
     background: none;
     border: none;
-    color: var(--nav-bar-fg);
+    color: var(--toolbar-fg);
     width: 100%;
     outline: none;
   }
   
   .search-bar i, .filter-search-container i {
-    color: var(--nav-bar-fg); 
+    color: var(--toolbar-fg); 
     margin: 0 0.5rem; 
     font-size: 1.2rem;
     cursor: pointer;

@@ -3,11 +3,9 @@ import './../styles/Sidebar.css';
 import 'boxicons/css/boxicons.min.css';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
-import CreateDoctorProfileModal from './CreateDoctorProfileModal';
 
 const Sidebar = () => {
     const [showSidebar, setShowSidebar] = useState(false);
-    const [showCreateDoctorProfileModal, setCreateDoctorProfileModal] = useState(false);
     const [currentTheme, setCurrentTheme] = useState(() => {
         return localStorage.getItem('theme') || 'light';
     });
@@ -20,10 +18,6 @@ const Sidebar = () => {
 
     const toggleSidebar = () => {
         setShowSidebar(!showSidebar);
-    };
-
-    const toggleCreateDoctorProfileModal = () => {
-        setCreateDoctorProfileModal(!showCreateDoctorProfileModal);
     };
 
     const handleSubMenuClick = (e) => {
@@ -47,7 +41,6 @@ const Sidebar = () => {
 
     return (
         <>
-            {showCreateDoctorProfileModal && <CreateDoctorProfileModal onClose={toggleCreateDoctorProfileModal}/>}
             <div className={`sidebar ${showSidebar ? '' : 'close'}`}>
                 <div className="logo-details">
                     <i className='bx bx-menu' onClick={toggleSidebar}></i>
@@ -64,21 +57,21 @@ const Sidebar = () => {
                         </ul>
                     </li>
                     <li>
-                        <Link onClick={toggleCreateDoctorProfileModal}>
-                            <i className='bx bx-plus'></i>
-                            <span className="link_name">Create doctor profile</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link className="link_name" >Create doctor profile</Link></li>
-                        </ul>
-                    </li>
-                    <li>
                         <Link to="/doctors">
                             <i className='bx bx-user-circle'></i>
                             <span className="link_name">Doctors</span>
                         </Link>
                         <ul className="sub-menu blank">
                             <li><Link to="/doctors" className="link_name">Doctors</Link></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <Link to="/mySchedule">
+                            <i className='bx bx-calendar'></i>
+                            <span className="link_name">My schedule</span>
+                        </Link>
+                        <ul className="sub-menu blank">
+                            <li><Link to="/mySchedule" className="link_name">My schedule</Link></li>
                         </ul>
                     </li>
                     <li>

@@ -1,0 +1,73 @@
+:root {
+    --light-table: #ffffff;
+    --dark-table: #171717;
+
+    --light-table-border: #999;
+    --dark-table-border: #333;
+
+    --error: #c91818;
+}
+
+[data-theme='light'] {
+    --table-bg: var(--light-table);
+    --table-fg: var(--dark-table);
+
+    --border-color-table: var(--light-table-border);
+}
+
+[data-theme='dark'] {
+    --table-bg: var(--dark-table);
+    --table-fg: var(--light-table);
+
+    --border-color-table: var(--dark-table-border);
+}
+
+.table-container {
+    margin: 4% 1%;
+}
+
+.table-container table{
+    margin:auto;
+    width:100%;
+    overflow:hidden;
+    background-color:var(--table-bg);
+    border-radius:10px;
+    position:relative;
+    border-collapse:collapse;
+    z-index:1;
+    color:var(--table-fg);
+    white-space:nowrap;
+}
+
+.table-container th, .table-container td{
+    padding:1rem;
+    gap:10px;
+    position:relative;
+    cursor:default;
+}
+
+.table-container th{
+    text-transform:uppercase;
+}
+
+.table-container tr td {
+    text-align: center;
+}
+
+.table-container tr, .table-container th {
+    border-bottom: 1px solid var(--border-color-table);
+}
+
+.table-container tr:last-child {
+    border-bottom: none; 
+}
+
+.active {
+    color: var(--accent);
+    font-weight: bold; 
+}
+
+.inactive {
+    color: var(--error);
+    font-weight: bold; 
+}

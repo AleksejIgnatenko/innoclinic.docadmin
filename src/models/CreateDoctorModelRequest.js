@@ -5,6 +5,7 @@ class CreateDoctorModelRequest {
         middleName,
         cabinetNumber,
         dateOfBirth,
+        email,
         specializationId,
         officeId,
         careerStartYear,
@@ -15,6 +16,7 @@ class CreateDoctorModelRequest {
         this.middleName = middleName;
         this.cabinetNumber = cabinetNumber;
         this.dateOfBirth = dateOfBirth;
+        this.email = email;
         this.specializationId = specializationId; 
         this.officeId = officeId; 
         this.careerStartYear = careerStartYear;

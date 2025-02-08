@@ -1,42 +1,46 @@
 import React, { useState } from 'react';
-import './../styles/NavBar.css';
-import FilterDoctorModal from './FilterDoctorModal';
+import './../styles/Toolbar.css';
+import FilterModal from './FilterModal';
 
-const NavBar = ({ 
+const Toolbar = ({ 
     pageTitle, 
     setSearchTerm, 
-    doctors, 
-    onFilterDoctors, 
+    items, 
+    onFilterItems, 
     selectedAddresses, 
     setSelectedAddresses, 
     selectedSpecialization, 
     setSelectedSpecialization, 
-}) => {
-        
-    const [showFilterDoctorModal, setFilterDoctorModal] = useState(false);
+    showCreateDoctorProfileModal,
+    showFilterIcon = false, 
+    showAddIcon = false,
+    showCalendarIcon = false,
+    onCalendarClick,
+}) => { 
+    const [showFilterModal, setFilterModal] = useState(false);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
-    const toggleFilterDoctorModal = () => {
-        setFilterDoctorModal(!showFilterDoctorModal);
+    const toggleFilterModal = () => {
+        setFilterModal(!showFilterModal);
     };
 
     return (
         <>
-            {showFilterDoctorModal && (
-                <FilterDoctorModal
-                    onClose={toggleFilterDoctorModal}
-                    doctors={doctors}
-                    onFilterDoctors={onFilterDoctors}
+            {showFilterModal && (
+                <FilterModal
+                    onClose={toggleFilterModal}
+                    items={items} 
+                    onFilterItems={onFilterItems} 
                     selectedAddresses={selectedAddresses}
                     setSelectedAddresses={setSelectedAddresses}
                     selectedSpecialization={selectedSpecialization}
                     setSelectedSpecialization={setSelectedSpecialization}
                 />
             )}
-            <div className='nav-bar'>
+            <div className='toolbar'>
                 <h2 className='pageName'>{pageTitle}</h2>
                 <div className="filter-search-container">
                     <div className="search-bar">
@@ -47,11 +51,19 @@ const NavBar = ({
                             onChange={handleSearchChange}
                         />
                     </div>
-                    <i className='bx bx-filter' onClick={toggleFilterDoctorModal}></i>
+                    {showFilterIcon && (
+                        <i className='bx bx-filter' onClick={toggleFilterModal}></i>
+                    )}
+                    {showAddIcon && (
+                        <i className='bx bx-plus' onClick={showCreateDoctorProfileModal}></i>
+                    )}
+                    {showCalendarIcon && (
+                        <i className='bx bx-calendar' onClick={onCalendarClick}></i>
+                    )}
                 </div>
             </div>
         </>
     );
 };
 
-export default NavBar;
+export default Toolbar;

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './../styles/CreateDoctorProfile.css';
 import EmailExistsAsync from '../api/Authorization.API/EmailExistsAsync';
 import GetAllSpecializationFetchAsync from '../api/Services.API/GetAllSpecializationFetchAsync';
@@ -8,7 +7,6 @@ import CreateDoctorFetchAsync from '../api/Profiles.API/CreateDoctorFetchAsync';
 import CreateDoctorModelRequest from '../models/CreateDoctorModelRequest';
 
 const CreateDoctorProfileModal = ({ onClose }) => {
-    const navigate = useNavigate();
 
     const [currentStage, setCurrentStage] = useState(0);
     const stages = [
@@ -472,7 +470,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
     };
 
     async function toggleCreateDoctorProfileAsync() {
-        var createDoctorRequest = new CreateDoctorModelRequest(firstName, lastName, middleName, 1, dateOfBirth, selectedSpecializationId, selectedOfficeId, careerStartYear, selectedStatus);
+        var createDoctorRequest = new CreateDoctorModelRequest(firstName, lastName, middleName, 1, dateOfBirth, email, selectedSpecializationId, selectedOfficeId, careerStartYear, selectedStatus);
         await CreateDoctorFetchAsync(createDoctorRequest);
     }
 
@@ -486,7 +484,6 @@ const CreateDoctorProfileModal = ({ onClose }) => {
     const handleCancelClick = () => {
         const confirmResult = window.confirm("Do you really want to cancel? Entered data will not be saved.");
         if (confirmResult) {
-            navigate("/doctors");
             onClose();
         }
     };
