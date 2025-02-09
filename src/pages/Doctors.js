@@ -29,7 +29,7 @@ function Doctors() {
             }
         };
 
-        //fetchData();
+        fetchData();
     }, []);
 
     const handleFilterDoctors = (filtered) => {

@@ -3,36 +3,7 @@ import './../styles/Table.css';
 import Toolbar from './Toolbar';
 import Calendar from './Calendar';
 
-const appointmentData = [
-    {
-        "id": "d9d675de-24c2-4365-a980-cbb8e2b87118",
-        "patient": {
-            "id": "20829999-7b12-4552-a9e4-e9591179e1b0",
-            "firstName": "Петров",
-            "lastName": "Петр",
-            "middleName": "Петрович",
-            "accountId": "04a1fbc5-c607-4522-8990-a4ee6a76e7cf"
-        },
-        "doctor": {
-            "id": "c713fe08-b22f-43fc-8cf2-b2f773f887a5",
-            "firstName": "Иванов",
-            "lastName": "Иван",
-            "middleName": "Иванович",
-            "cabinetNumber": 1
-        },
-        "medicalService": {
-            "id": "920789dd-10ea-4d77-bb70-b29078b28dd5",
-            "serviceName": "service",
-            "price": 0,
-            "isActive": true
-        },
-        "date": "2025-02-07",
-        "time": "09:00 AM",
-        "isApproved": false
-    }
-];
-
-const Table = () => {
+const Table = ({ appointmentsData }) => {
         const [searchTerm, setSearchTerm] = useState('');
         const [selectedDate, setSelectedDate] = useState('');
         const [showCalendar, setShowCalendar] = useState(false);
@@ -73,7 +44,7 @@ const Table = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {appointmentData.map((appointment) => (
+                        {appointmentsData.map((appointment) => (
                             <tr key={appointment.id}>
                                 <td data-label="time-for-appointment">{appointment.time}</td>
                                 <td data-label="full-name">

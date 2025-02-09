@@ -1,5 +1,7 @@
 import './../styles/SignInModal.css';
 import React, { useState, useEffect } from 'react';
+import SignInModelRequest from '../models/SignInModelRequest';
+import SignInFetchAsync from '../api/Authorization.API/SignInFetchAsync';
 
 const SignInModal = ({ onClose, onOpenSignUp }) => {
     const [email, setEmail] = useState('');
@@ -105,19 +107,18 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
     };
 
     async function handleSignInAsync() {
-        // const signInModel = new SignInModelRequest(email, password);
-        // if ((5 < password.length) && (password.length < 16)) {
-        //     await SignInFetchAsync(signInModel)
-        //     onClose();
-        // } else {
-        //     const input = document.getElementById('sign-in-password-input');
-        //     const label = document.getElementById('sign-in-password-label');
-        //     if (input && label) { 
-        //         input.classList.add('error-input-border');
-        //         label.classList.add('error-label');
-        //         label.textContent = "Количество символов в пароле должно быть от 6 до 15";
-        //     }
-        // }
+        const signInModel = new SignInModelRequest(email, password);
+        if ((5 < password.length) && (password.length < 16)) {
+            await SignInFetchAsync(signInModel)
+        } else {
+            const input = document.getElementById('sign-in-password-input');
+            const label = document.getElementById('sign-in-password-label');
+            if (input && label) { 
+                input.classList.add('error-input-border');
+                label.classList.add('error-label');
+                label.textContent = "Количество символов в пароле должно быть от 6 до 15";
+            }
+        }
     }
 
     return (

@@ -84,7 +84,6 @@
     color: rgb(122, 122, 122);
     font-weight: 100;
     transition: 0.1s ease;
-    /* background-color: white; */
     padding: 0 5px;
     opacity: 1;
 }
@@ -99,7 +98,7 @@
     top: -7px !important;
     color: var(--error) !important;
     font-size: 13px !important;
-    background-color: var(--signInUpModal-bg) !important;
+    background-color: var(--light-signInUpModal) !important;
     z-index: 2 !important;
 }
 
@@ -111,7 +110,7 @@
     top: -7px;
     color: var(--accent);
     font-size: 13px;
-    background-color: var(--signInUpModal-bg);
+    background-color: var(--light-signInUpModal);
     z-index: 2;
 }
 
