@@ -38,11 +38,11 @@
   }
   
   .curr-date {
-      background-color: var(--accent);
-      color: var(--calendar-bg);
-      border-radius: 100%;
-  }
-  
+    border: 2px solid var(--accent); 
+    color: var(--calendar-fg); 
+    border-radius: 100%; 
+    background-color: transparent;
+}
   
   .calendar-week-day {
     height: 50px;
@@ -161,6 +161,12 @@
   .month-list > div > div:hover {
     background-color: var(--color-hover);
   }
+
+  .selected-date {
+    background-color: var(--accent);
+    color: var(--calendar-bg);
+    border-radius: 100%;
+}
   
   @keyframes to-top {
     0% {

@@ -7,9 +7,11 @@ import Doctors from './pages/Doctors';
 import Cookies from 'js-cookie';
 import SignInModal from './components/SignInModal';
 import MySchedule from './pages/MySchedule';
+import PatientProfile from './pages/PatientProfile';
 
 function App() {
-  const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
+  //const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
+  const isUserLoggedIn = true;
 
   return (
     <>
@@ -22,6 +24,7 @@ function App() {
                 <Route path="/" element={<Home />} />
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/mySchedule" element={<MySchedule />} />
+                <Route path="/patientProfile/:patientId" element={<PatientProfile />} />
               </Routes>
             </div>
           </>

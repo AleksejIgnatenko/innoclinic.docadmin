@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import './../styles/Calendar.css';
 
-const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
+const Calendar = ({ onClose, setSelectedDate, onSelectDate, currentDate }) => {
     useEffect(() => {
-        let calendar = document.querySelector('.calendar-container');
-
+        const calendar = document.querySelector('.calendar-container');
         const month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
         const isLeapYear = (year) => {
@@ -16,32 +15,28 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
         }
 
         const generateCalendar = (month, year) => {
-            let calendar_days = calendar.querySelector('.calendar-days');
-            let calendar_header_year = calendar.querySelector('#year');
+            const calendar_days = calendar.querySelector('.calendar-days');
+            const calendar_header_year = calendar.querySelector('#year');
 
-            let days_of_month = [31, getFebDays(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
+            const days_of_month = [31, getFebDays(year), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
             calendar_days.innerHTML = '';
 
-            let currDate = new Date();
-            if (month == null) month = currDate.getMonth();
-            if (year == null) year = currDate.getFullYear();
-
-            let curr_month = `${month_names[month]}`;
-            let month_picker = calendar.querySelector('#month-picker');
+            const curr_month = `${month_names[month]}`;
+            const month_picker = calendar.querySelector('#month-picker');
             month_picker.innerHTML = curr_month;
             calendar_header_year.innerHTML = year;
 
-            let first_day = new Date(year, month, 1);
+            const first_day = new Date(year, month, 1);
+            const currDate = new Date();
 
             for (let i = 0; i <= days_of_month[month] + first_day.getDay() - 1; i++) {
-                let day = document.createElement('div');
+                const day = document.createElement('div');
                 if (i >= first_day.getDay()) {
-                    const dayNumber = i - first_day.getDay() + 1; 
+                    const dayNumber = i - first_day.getDay() + 1;
                     day.classList.add('calendar-day-hover');
                     day.innerHTML = dayNumber;
                     day.innerHTML += `<span></span><span></span><span></span><span></span>`;
-                    
+
                     day.onclick = () => {
                         const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
                         setSelectedDate(formattedDate);
@@ -49,6 +44,13 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
                         onClose();
                     };
 
+                    // Highlight the selected date
+                    const selectedDate = new Date(currentDate);
+                    if (dayNumber === selectedDate.getDate() && year === selectedDate.getFullYear() && month === selectedDate.getMonth()) {
+                        day.classList.add('selected-date');
+                    }
+
+                    // Highlight the current date
                     if (dayNumber === currDate.getDate() && year === currDate.getFullYear() && month === currDate.getMonth()) {
                         day.classList.add('curr-date');
                     }
@@ -57,11 +59,11 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
             }
         }
 
-        let month_list = calendar.querySelector('.month-list');
+        const month_list = calendar.querySelector('.month-list');
         month_list.innerHTML = '';
 
         month_names.forEach((e, index) => {
-            let month = document.createElement('div');
+            const month = document.createElement('div');
             month.innerHTML = `<div data-month="${index}">${e}</div>`;
             month.querySelector('div').onclick = () => {
                 month_list.classList.remove('show');
@@ -71,14 +73,14 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
             month_list.appendChild(month);
         });
 
-        let month_picker = calendar.querySelector('#month-picker');
+        const month_picker = calendar.querySelector('#month-picker');
         month_picker.onclick = () => {
             month_list.classList.add('show');
         }
 
-        let currDate = new Date();
-        let curr_month = { value: currDate.getMonth() };
-        let curr_year = { value: currDate.getFullYear() };
+        const currDate = new Date();
+        const curr_month = { value: currDate.getMonth() };
+        const curr_year = { value: currDate.getFullYear() };
 
         generateCalendar(curr_month.value, curr_year.value);
 
@@ -106,7 +108,7 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate }) => {
                 }
             });
         };
-    }, []);
+    }, [currentDate]);
 
     useEffect(() => {
         const handleKeyPress = (event) => {

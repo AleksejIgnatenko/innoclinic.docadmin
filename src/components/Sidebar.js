@@ -159,7 +159,7 @@ const Sidebar = () => {
                         <li>
                             <div className="profile-details">
                                 <div className="profile-content">
-                                    <img alt="profileImg" />
+                                    <img src="https://th.bing.com/th/id/OIP.audMX4ZGbvT2_GJTx2c4GgAAAA?rs=1&pid=ImgDetMain" alt="profileImg" />
                                 </div>
                                 <div className="name-job">
                                     <div className="profile_name">Farid Vatani</div>

@@ -4,17 +4,17 @@ import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync"
 
 async function CreateDoctorFetchAsync(doctorModel) {
     try {
-        // let jwtToken = getCookie('accessToken');
-        // if (!jwtToken) {
-        //     await RefreshTokenFetchAsync(); 
-        //     jwtToken = getCookie('accessToken');
-        // }
+        let jwtToken = getCookie('accessToken');
+        if (!jwtToken) {
+            await RefreshTokenFetchAsync(); 
+            jwtToken = getCookie('accessToken');
+        }
 
         const response = await fetch(`http://localhost:5002/api/Doctors`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
-                // "Authorization": `Bearer ${jwtToken}`,
+                "Authorization": `Bearer ${jwtToken}`,
             },
             body: JSON.stringify(doctorModel)
         });
