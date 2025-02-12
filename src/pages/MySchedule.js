@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import "./../styles/MySchedule.css";
-import Table from '../components/Table';
 import Loader from '../components/Loader';
 import GetAppointmentsByDoctorAndDateFetchAsync from '../api/Appointments.API/GetAppointmentsByDoctorAndDateFetchAsync';
+import DoctorAppointmentsTable from '../components/DoctorAppointmentsTable';
 
 function MySchedule() {
   const [appointments, setAppointments] = useState([]);
@@ -56,7 +56,7 @@ function MySchedule() {
       {!isLoading && appointments.length === 0 && (
         <p className='no-appointments-message'>There are no records for the current date</p>
       )}
-      <Table
+      <DoctorAppointmentsTable
         appointmentsData={appointments}
         selectedDate={selectedDate}
         setSelectedDate={setSelectedDate}

@@ -1,16 +1,16 @@
-import { getCookie } from "../../services/getCookie";
 import { ProfilesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
+import Cookies from 'js-cookie';
 
 async function CreateDoctorFetchAsync(doctorModel) {
     try {
-        let jwtToken = getCookie('accessToken');
+        let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
-            await RefreshTokenFetchAsync(); 
-            jwtToken = getCookie('accessToken');
+            await RefreshTokenFetchAsync();
+            jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`http://localhost:5002/api/Doctors`, {
+        const response = await fetch(`${ProfilesAPI}/Doctors`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

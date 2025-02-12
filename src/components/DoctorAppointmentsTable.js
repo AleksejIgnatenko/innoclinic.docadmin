@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import './../styles/Table.css';
-import Toolbar from './Toolbar';
+import './../styles/DoctorAppointmentsTable.css';
 import Calendar from './Calendar';
 import { Link } from 'react-router-dom';
+import DoctorToolbar from './DoctorToolbar';
 
-const Table = ({ appointmentsData, selectedDate, setSelectedDate }) => {
+const DoctorAppointmentsTable = ({ appointmentsData, selectedDate, setSelectedDate }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showCalendar, setShowCalendar] = useState(false);
 
@@ -18,7 +18,7 @@ const Table = ({ appointmentsData, selectedDate, setSelectedDate }) => {
 
     return (
         <>
-            <Toolbar
+            <DoctorToolbar
                 pageTitle={"My schedule"}
                 setSearchTerm={setSearchTerm}
                 showCalendarIcon={true}
@@ -80,4 +80,4 @@ const Table = ({ appointmentsData, selectedDate, setSelectedDate }) => {
     );
 };
 
-export default Table;
+export default DoctorAppointmentsTable;

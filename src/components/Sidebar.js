@@ -75,6 +75,15 @@ const Sidebar = () => {
                         </ul>
                     </li>
                     <li>
+                        <Link to="/appointments">
+                            <i className='bx bx-calendar'></i>
+                            <span className="link_name">Appointments</span>
+                        </Link>
+                        <ul className="sub-menu blank">
+                            <li><Link to="/appointments" className="link_name">Appointments</Link></li>
+                        </ul>
+                    </li>
+                    <li>
                         <div className="icon-link">
                             <Link to="/services">
                                 <i className='bx bx-collection'></i>

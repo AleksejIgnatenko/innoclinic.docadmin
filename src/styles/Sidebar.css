@@ -7,15 +7,15 @@
   }
   
   [data-theme='light'] {
-    --background-sidebar: var(--light-sidebar);
-    --foreground-sidebar: var(--dark-sidebar);
+    --sidebar-bg: var(--light-sidebar);
+    --sidebar-fg: var(--dark-sidebar);
 
     --color-profile-details:var(--light-profile-details)
   }
   
   [data-theme='dark'] {
-    --background-sidebar: var(--dark-sidebar);
-    --foreground-sidebar: var(--light-sidebar);
+    --sidebar-bg: var(--dark-sidebar);
+    --sidebar-fg: var(--light-sidebar);
 
     --color-profile-details:var(--dark-profile-details)
   }
@@ -26,7 +26,7 @@
     left: 0;
     height: 100%;
     width: 260px;
-    background: var(--background-sidebar);
+    background: var(--sidebar-bg);
     z-index: 100;
     transition: all 0.5s ease;
   }
@@ -44,7 +44,7 @@
   
   .sidebar .logo-details i {
     font-size: 30px;
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     height: 50px;
     min-width: 78px;
     text-align: center;
@@ -53,7 +53,7 @@
   
   .sidebar .logo-details .logo_name {
     font-size: 22px;
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     font-weight: 600;
     transition: 0.3s ease;
     transition-delay: 0.1s;
@@ -86,12 +86,12 @@
   }
   
   .sidebar .nav-links li:hover {
-    background: var(--background-sidebar);
+    background: var(--sidebar-bg);
   }
   
   .sidebar .sub-menu li:hover {
     background: none;
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
   }
   
   .sidebar .nav-links li .icon-link {
@@ -109,7 +109,7 @@
     min-width: 78px;
     text-align: center;
     line-height: 50px;
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -133,7 +133,7 @@
   .sidebar .nav-links li a .link_name {
     font-size: 18px;
     font-weight: 400;
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     transition: all 0.4s ease;
   }
   
@@ -145,7 +145,7 @@
   .sidebar .nav-links li .sub-menu {
     padding: 6px 6px 0px 80px;
     margin-top: 0px;
-    background: var(--background-sidebar);
+    background: var(--sidebar-bg);
     /* display: none; */
     overflow: hidden;
     height: 0;
@@ -158,7 +158,7 @@
   }
   
   .sidebar .nav-links li .sub-menu a {
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     font-size: 15px;
     padding: 5px 0;
     white-space: nowrap;
@@ -234,6 +234,7 @@
   
   .sidebar.close .profile-details {
     width: 78px;
+    background-color: var(--sidebar-bg);
   }
   
   .sidebar .profile-details .profile-content {
@@ -252,7 +253,7 @@
   
   .sidebar .profile-details .profile_name,
   .sidebar .profile-details .job {
-    color: var(--foreground-sidebar);
+    color: var(--sidebar-fg);
     font-size: 18px;
     font-weight: 500;
     white-space: nowrap;

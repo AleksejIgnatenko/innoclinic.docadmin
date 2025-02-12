@@ -19,7 +19,7 @@
 .data-loader {
 	position: absolute;
 	left: 50%;
-	margin-left: -100px;
+	/* margin-left: -100px; */
 	margin-top: 300px;
 	text-align: center;
 	padding: 2px;

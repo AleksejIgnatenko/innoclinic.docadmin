@@ -4,8 +4,6 @@
 
     --light-signInUpModal-border: #999;
     --dark-signInUpModal-border: #333;
-
-    --error: #c91818;
 }
 
 [data-theme='light'] {

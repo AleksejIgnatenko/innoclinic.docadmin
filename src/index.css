@@ -5,6 +5,7 @@
   --foreground-dark: #fff;
 
   --accent: #00FF7F;
+  --error: #c91818;
 }
 
 [data-theme='light'] {

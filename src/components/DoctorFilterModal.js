@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import './../styles/FilterModal.css';
+import './../styles/DoctorFilterModal.css';
 
-const FilterModal = ({ 
+const DoctorFilterModal = ({ 
     onClose, 
-    items, 
-    onFilterItems, 
+    doctors, 
+    onFilterDoctors, 
     selectedAddresses, 
-    setSelectedAddresses, 
+    setselectedAddresses, 
     selectedSpecialization, 
     setSelectedSpecialization 
 }) => {
@@ -25,7 +25,7 @@ const FilterModal = ({
 
     const handleAddressChange = (event) => {
         const value = event.target.value;
-        setSelectedAddresses(prev =>
+        setselectedAddresses(prev =>
             prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
         );
     };
@@ -35,18 +35,18 @@ const FilterModal = ({
     };
 
     const applyFilters = () => {
-        const filteredItems = items.filter(item =>
+        const filteredDoctors = doctors.filter(item =>
             (selectedAddresses.length === 0 || selectedAddresses.includes(item.office.address)) &&
             (selectedSpecialization === "" || item.specialization.specializationName === selectedSpecialization)
         );
-        onFilterItems(filteredItems); 
+        onFilterDoctors(filteredDoctors); 
         onClose();
     };
 
     const resetFilters = () => {
-        setSelectedAddresses([]); 
+        setselectedAddresses([]); 
         setSelectedSpecialization(""); 
-        onFilterItems(items); 
+        onFilterDoctors(doctors); 
         onClose();
     };
 
@@ -59,7 +59,7 @@ const FilterModal = ({
                     <div className="filter-input-group">
                         <label>Office address</label>
                         <div className="filter-checkbox-group">
-                            {[...new Set(items.map(i => i.office.address))].map(address => (
+                            {[...new Set(doctors.map(i => i.office.address))].map(address => (
                                 <label key={address}>
                                     <input
                                         type="checkbox"
@@ -77,7 +77,7 @@ const FilterModal = ({
                         <label>Specialization</label>
                         <select value={selectedSpecialization} onChange={handleSpecializationChange}>
                             <option value="">All</option>
-                            {[...new Set(items.map(i => i.specialization.specializationName))].map(spec => (
+                            {[...new Set(doctors.map(i => i.specialization.specializationName))].map(spec => (
                                 <option key={spec} value={spec}>{spec}</option>
                             ))}
                         </select>
@@ -92,4 +92,4 @@ const FilterModal = ({
     );
 };
 
-export default FilterModal;
+export default DoctorFilterModal;

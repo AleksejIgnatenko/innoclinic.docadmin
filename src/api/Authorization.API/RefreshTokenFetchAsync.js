@@ -1,10 +1,9 @@
 import Cookies from 'js-cookie';
 import { AuthorizationAPI } from '../api';
-import { getCookie } from '../../services/getCookie';
 
 async function RefreshTokenFetchAsync() {
     try {
-        const jwtToken = getCookie('refreshToken');
+        const jwtToken = Cookies.get('refreshToken');
 
         const response = await fetch(`${AuthorizationAPI}/Account/refresh`, {
             method: 'POST',
