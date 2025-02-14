@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import './../styles/ReceptionistAppointmentsTable.css';
 import Calendar from './Calendar';
 import { Link } from 'react-router-dom';
-import Toolbar from './DoctorToolbar';
 import AppointmentToolbar from './AppointmentToolbar';
 import UpdateAppointmentModelRequest from '../models/UpdateAppointmentModelRequest';
 import UpdateAppointmentFetchAsync from '../api/Appointments.API/UpdateAppointmentFetchAsync';
+import DeleteAppointmentFetchAsync from '../api/Appointments.API/DeleteAppointmentFetchAsync';
 
 const ReceptionistAppointmentsTable =
     ({
@@ -43,7 +43,7 @@ const ReceptionistAppointmentsTable =
             const updateAppointmentModelRequest = new UpdateAppointmentModelRequest(
                 appointment.id, appointment.doctor.id, appointment.medicalService.id, appointment.patient.id, appointment.date, appointment.time, !appointment.isApproved);
 
-            var resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
+            const resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
             if(resultResponseStatus === 200) {
                 const row = document.getElementById(appointment.id);
                 row.classList.add("approved-appointment");
@@ -52,6 +52,22 @@ const ReceptionistAppointmentsTable =
                 btn.classList.add("disabled-button-approve-style");
             }
         }
+
+        async function handleCancelAppointmentAsync(appointment) {
+            const confirmCancel = window.confirm("Вы уверены, что хотите отменить встречу?");
+            
+            if (confirmCancel) {
+                const resultResponseStatus = await DeleteAppointmentFetchAsync(appointment.id);
+                if(resultResponseStatus === 200) {
+                    setFilteredAppointments(prevAppointments => 
+                        prevAppointments.filter(a => a.id !== appointment.id)
+                    );
+                }
+                console.log("Встреча отменена."); 
+            } else {
+                console.log("Отмена встречи отменена.");
+            }
+        };
 
         return (
             <>
@@ -127,7 +143,10 @@ const ReceptionistAppointmentsTable =
                                                 id="appointment-approve-button">
                                                 Approve
                                             </button>
-                                            <button className="button-cancel-style" id="appointment-cancel-button">Cancel</button>
+                                            <button className="button-cancel-style" id="appointment-cancel-button"
+                                                onClick={() => handleCancelAppointmentAsync(appointment)}>
+                                            Cancel
+                                            </button>
                                             <button className="button-reschedule-style" id="appointment-reschedule-button">Reschedule</button>
                                         </td>
                                     </tr>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './../styles/CreateDoctorProfile.css';
+import './../styles/CreateDoctorProfileModal.css';
 import EmailExistsAsync from '../api/Authorization.API/EmailExistsAsync';
 import GetAllSpecializationFetchAsync from '../api/Services.API/GetAllSpecializationFetchAsync';
 import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';

@@ -3,8 +3,6 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import "./../styles/PatientProfile.css";
 import Loader from '../components/Loader';
 import ProfileCard from '../components/ProfileCard';
-import GetPatientByAccountIdFromTokenFetchAsync from '../api/Profiles.API/GetPatientByIdFetchAsync';
-import GetPatientByIdAsync from '../api/Profiles.API/GetPatientByIdFetchAsync';
 import GetPatientByIdFetchAsync from '../api/Profiles.API/GetPatientByIdFetchAsync';
 
 function PatientProfile() {

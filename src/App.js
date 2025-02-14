@@ -9,6 +9,7 @@ import SignInModal from './components/SignInModal';
 import MySchedule from './pages/MySchedule';
 import PatientProfile from './pages/PatientProfile';
 import Appointments from './pages/Appointments';
+import DoctorProfile from './pages/DoctorProfile';
 
 function App() {
   const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/mySchedule" element={<MySchedule />} />
                 <Route path="/patientProfile/:patientId" element={<PatientProfile />} />
+                <Route path="/doctorProfile/:doctorId?" element={<DoctorProfile />} />  
                 <Route path="/appointments" element={<Appointments />} />
               </Routes>
             </div>

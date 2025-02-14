@@ -94,6 +94,26 @@ function Appointments() {
     fetchData();
   }, [selectedDate]);
 
+  useEffect(() => {
+    const filtered = appointments.filter(appointment => {
+      const doctorName = `${appointment.doctor.lastName} ${appointment.doctor.firstName} ${appointment.doctor.middleName}`.toLowerCase();
+      const patientName = `${appointment.patient.lastName} ${appointment.patient.firstName}`.toLowerCase();
+      const serviceName = appointment.medicalService.serviceName.toLowerCase();
+      const appointmentTime = appointment.time.toLowerCase();
+      const phoneNumber = accounts.find(account => account.id === appointment.patient.accountId)?.phoneNumber.toLowerCase() || '';
+
+      return (
+        doctorName.includes(searchTerm.toLowerCase()) ||
+        patientName.includes(searchTerm.toLowerCase()) ||
+        serviceName.includes(searchTerm.toLowerCase()) ||
+        appointmentTime.includes(searchTerm.toLowerCase()) ||
+        phoneNumber.includes(searchTerm.toLowerCase())
+      );
+    });
+
+    setFilteredAppointments(filtered);
+  }, [searchTerm]);
+
   const toggleLoader = (status) => {
     setIsLoading(status);
   };
@@ -101,7 +121,29 @@ function Appointments() {
   const toggleCreateAppointmentModal = () => {
     setShowCreateAppointmentModal(!showCreateAppointmentModal);
     console.log(showCreateAppointmentModal)
-};
+  };
+
+  useEffect(() => {
+    const filtered = appointments.filter(appointment => {
+      const doctorName = appointment.doctor.lastName + appointment.doctor.firstName + appointment.doctor.middleName.toLowerCase();
+      const patientName = appointment.patient.lastName + appointment.patient.firstName.toLowerCase();
+      const serviceName = appointment.medicalService.serviceName.toLowerCase();
+      const appointmentTime = appointment.time.toLowerCase();
+      const phoneNumber = accounts.find(account => account.id === appointment.patient.accountId)?.phoneNumber.toLowerCase() || '';
+
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+      return (
+        doctorName.includes(lowerCaseSearchTerm) ||
+        patientName.includes(lowerCaseSearchTerm) ||
+        serviceName.includes(lowerCaseSearchTerm) ||
+        appointmentTime.includes(lowerCaseSearchTerm) ||
+        phoneNumber.includes(lowerCaseSearchTerm)
+      );
+    });
+
+    setFilteredAppointments(filtered);
+  }, [searchTerm]);
 
   return (
     <div>
@@ -129,8 +171,6 @@ function Appointments() {
         setSelectedAppointmentStatus={setSelectedAppointmentStatus}
         setSearchTerm={setSearchTerm}
         showCreateAppointmentModal={toggleCreateAppointmentModal}
-
-
       />
     </div>
   );

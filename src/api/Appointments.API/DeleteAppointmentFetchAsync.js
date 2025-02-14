@@ -2,7 +2,7 @@ import { AppointmentAPI } from "../api";
 import Cookies from 'js-cookie';
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 
-async function UpdateAppointmentFetchAsync(updateAppointment) {
+async function DeleteAppointmentFetchAsync(appointmentId) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,13 +10,12 @@ async function UpdateAppointmentFetchAsync(updateAppointment) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${AppointmentAPI}/Appointment/${updateAppointment.id}`, {
-            method: 'PUT',
+        const response = await fetch(`${AppointmentAPI}/Appointment/${appointmentId}`, {
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
                 "Authorization": `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify(updateAppointment)
         });
 
         return response.status;
@@ -27,4 +26,4 @@ async function UpdateAppointmentFetchAsync(updateAppointment) {
     }
 }
 
-export default UpdateAppointmentFetchAsync;
+export default DeleteAppointmentFetchAsync;
