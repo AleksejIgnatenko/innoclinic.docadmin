@@ -4,7 +4,6 @@ import Cookies from 'js-cookie';
 
 async function UpdateDoctorFetchAsync(doctorId, doctorModel) {
     try {
-        console.log(doctorModel)
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
             await RefreshTokenFetchAsync();
@@ -20,9 +19,7 @@ async function UpdateDoctorFetchAsync(doctorId, doctorModel) {
             body: JSON.stringify(doctorModel)
         });
 
-        if (response.ok) {
-            console.log("ok");
-        } else if (response.status === 400) {
+        if (!response.ok) {
             const data = await response.json();
             console.log(data);
         }

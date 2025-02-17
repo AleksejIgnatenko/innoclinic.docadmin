@@ -342,8 +342,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
         setIsEditing(false);
         const updateDoctorModel = new UpdateDoctorModelRequest(updateFirstName, updateLastName, updateMiddleName,
             updateCabinetNumber, updateDateofBirth, updateSelectedSpecializationId, updateSelectedOfficeId, updateCareerStartYear, updateSelectedStatus);
-        
-        console.log(updateDoctorModel);
+
         await UpdateDoctorFetchAsync(formData.Id, updateDoctorModel);
     };
 

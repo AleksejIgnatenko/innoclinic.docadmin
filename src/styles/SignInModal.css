@@ -1,29 +1,14 @@
 :root {
-    --light-signInUpModal: #ffffff;
-    --dark-signInUpModal: #171717;
+    --signInUpModal-bg: #ffffff;
+    --signInUpModal-fg: #171717;
 
-    --light-signInUpModal-border: #999;
-    --dark-signInUpModal-border: #333;
-}
-
-[data-theme='light'] {
-    --signInUpModal-bg: var(--light-signInUpModal);
-    --signInUpModal-fg: var(--dark-signInUpModal);
-
-    --border-color-signInUpModal: var(--light-signInUpModal-border);
-}
-
-[data-theme='dark'] {
-    --signInUpModal-bg: var(--dark-signInUpModal);
-    --signInUpModal-fg: var(--light-signInUpModal);
-
-    --border-color-signInUpModal: var(--dark-signInUpModal-border);
+    --signInUpModal-bg-border: #999;
 }
 
 .sign-in-container {
     max-width: 450px;
     width: 100%;
-    border: 1px solid var(--border-color-signInUpModal);
+    border: 1px solid var(--signInUpModal-bg-border);
     margin: auto;
     margin-top: 4rem;
     border-radius: 10px;
@@ -71,15 +56,16 @@
 }
 
 .default-input-border {
-    border: 1px solid var(--border-color-signInUpModal);
+    border: 1px solid var(--signInUpModal-bg-border);
 }
 
-.input-label {
+.sign-in-input-label {
     position: absolute;
     top: 20px;
     font-size: 1.1rem;
     left: 14px;
     color: rgb(122, 122, 122);
+    background-color: white;
     font-weight: 100;
     transition: 0.1s ease;
     padding: 0 5px;
@@ -90,25 +76,24 @@
     border-color: var(--error);
 }
 
-.error-label {
+.sign-in-error-label {
     opacity: 1 !important;
     visibility: visible !important;
     top: -7px !important;
     color: var(--error) !important;
     font-size: 13px !important;
-    background-color: var(--light-signInUpModal) !important;
     z-index: 2 !important;
 }
 
 /* Основные стили для меток */
-.sign-in-input-wrapper input:focus~.input-label,
-.sign-in-input-wrapper input:not(:placeholder-shown)~.input-label {
+.sign-in-input-wrapper input:focus~.sign-in-input-label,
+.sign-in-input-wrapper input:not(:placeholder-shown)~.sign-in-input-label {
     opacity: 1;
     visibility: visible;
     top: -7px;
     color: var(--accent);
     font-size: 13px;
-    background-color: var(--light-signInUpModal);
+    background-color: var(--signInUpModal-bg);
     z-index: 2;
 }
 

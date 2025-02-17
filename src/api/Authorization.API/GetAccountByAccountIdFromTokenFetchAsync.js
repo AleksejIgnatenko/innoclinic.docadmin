@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import { AuthorizationAPI } from '../api';
 import RefreshTokenFetchAsync from './RefreshTokenFetchAsync';
 
-async function GetAccountsByIdsFetchAsync(accountIds) {
+async function GetAccountByAccountIdFromTokenFetchAsync() {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,13 +10,12 @@ async function GetAccountsByIdsFetchAsync(accountIds) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${AuthorizationAPI}/Account/accounts-by-ids`, {
+        const response = await fetch(`${AuthorizationAPI}/Account/account-by-account-id-from-token`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${jwtToken}`
             },
-            body: JSON.stringify(accountIds)
         });
 
         const data = await response.json();
@@ -33,4 +32,4 @@ async function GetAccountsByIdsFetchAsync(accountIds) {
     }
 }
 
-export default GetAccountsByIdsFetchAsync;
+export default GetAccountByAccountIdFromTokenFetchAsync;

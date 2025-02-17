@@ -3,12 +3,40 @@ import './../styles/Sidebar.css';
 import 'boxicons/css/boxicons.min.css';
 import Cookies from 'js-cookie';
 import { Link } from 'react-router-dom';
+import GetAccountByAccountIdFromTokenFetchAsync from '../api/Authorization.API/GetAccountByAccountIdFromTokenFetchAsync';
+import GetDoctorByAccountIdFromTokenFetchAsync from '../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync';
+import GetReceptionistByAccountIdFromTokenFetchAsync from '../api/Profiles.API/GetReceptionistByAccountIdFromTokenFetchAsync';
 
 const Sidebar = () => {
+    const[account, setAccount] = useState(null);
+    const[profile, setProfile] = useState(null);
+
     const [showSidebar, setShowSidebar] = useState(false);
     const [currentTheme, setCurrentTheme] = useState(() => {
         return localStorage.getItem('theme') || 'light';
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {   
+            const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
+            setAccount(fetchedAccount);
+
+            if (fetchedAccount.role === "Doctor") {
+                const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
+                setProfile(fetchedProfile);
+            } else if (fetchedAccount.role === "Receptionist") {
+                const fetchedProfile = await GetReceptionistByAccountIdFromTokenFetchAsync();
+                setProfile(fetchedProfile);
+            }
+
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
 
     useEffect(() => {
         const root = document.documentElement;
@@ -65,24 +93,27 @@ const Sidebar = () => {
                             <li><Link to="/doctors" className="link_name">Doctors</Link></li>
                         </ul>
                     </li>
-                    <li>
-                        <Link to="/mySchedule">
-                            <i className='bx bx-calendar'></i>
-                            <span className="link_name">My schedule</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link to="/mySchedule" className="link_name">My schedule</Link></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link to="/appointments">
-                            <i className='bx bx-calendar'></i>
-                            <span className="link_name">Appointments</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link to="/appointments" className="link_name">Appointments</Link></li>
-                        </ul>
-                    </li>
+                    {account && (account.role === 'Doctor' ? (
+                        <li>
+                            <Link to="/mySchedule">
+                                <i className='bx bx-calendar'></i>
+                                <span className="link_name">My schedule</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link to="/mySchedule" className="link_name">My schedule</Link></li>
+                            </ul>
+                        </li>
+                    ) : account && (account.role === 'Receptionist' ? (
+                        <li>
+                            <Link to="/appointments">
+                                <i className='bx bx-calendar'></i>
+                                <span className="link_name">Appointments</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link to="/appointments" className="link_name">Appointments</Link></li>
+                            </ul>
+                        </li>
+                    ) : null))}
                     <li>
                         <div className="icon-link">
                             <Link to="/services">
@@ -164,7 +195,7 @@ const Sidebar = () => {
                             <li><Link className="link_name" onClick={toggleTheme}>Switching themes</Link></li>
                         </ul>
                     </li>
-                    {isUserLoggedIn ? (
+                    {isUserLoggedIn && account && profile ? (
                         <li>
                             <div className="profile-details">
                                 <Link to="/doctorProfile">
@@ -172,8 +203,8 @@ const Sidebar = () => {
                                         <img src="https://th.bing.com/th/id/OIP.audMX4ZGbvT2_GJTx2c4GgAAAA?rs=1&pid=ImgDetMain" alt="profileImg" />
                                     </div>
                                     <div className="name-job">
-                                        <div className="profile_name">Farid Vatani</div>
-                                        <div className="job">Software Engineer</div>
+                                    <div className="profile_name">{`${profile.firstName} ${profile.lastName}`}</div>
+                                        <div className="job">{account.role}</div>
                                     </div>
                                     <i className='bx bx-log-out' onClick={handleLogOut}></i>
                                 </Link>

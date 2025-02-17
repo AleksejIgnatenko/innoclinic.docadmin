@@ -55,47 +55,38 @@ function Doctors() {
     return (
         <>
             {showCreateDoctorProfileModal && <CreateDoctorProfileModal onClose={toggleCreateDoctorProfileModal} />}
-            <div>
-                {isLoading ? (
-                    <Loader />
+            {isLoading && <Loader />}
+            {!isLoading && doctors.length === 0 && (
+                <p className='no-doctors-message'>There are no doctors matching this filtration</p>
+            )}
+            <DoctorToolbar
+                pageTitle={"Doctors"}
+                setSearchTerm={setSearchTerm}
+                items={doctors}
+                onFilterItems={handleFilterDoctors}
+                selectedOffices={selectedOffices}
+                setselectedOffices={setselectedOffices}
+                selectedSpecialization={selectedSpecialization}
+                setSelectedSpecialization={setSelectedSpecialization}
+                showCreateDoctorProfileModal={toggleCreateDoctorProfileModal}
+                showAddIcon={true}
+                showFilterIcon={true}
+                showDoctorFilterModal={true}
+            />
+            <div className="doctors-container">
+                {displayedDoctors.length > 0 ? (
+                    displayedDoctors.map((doctor) => (
+                        <DoctorCard
+                            key={doctor.id}
+                            doctorId={doctor.id}
+                            name={`${doctor.firstName || ''} ${doctor.lastName || ''} ${doctor.middleName || ''}`}
+                            specialization={doctor.specialization?.specializationName || "Not found"}
+                            experience={doctor.careerStartYear ? new Date().getFullYear() - new Date(doctor.careerStartYear).getFullYear() + 1 : "N/A"}
+                            officeAddress={doctor.office?.address || "Not found"}
+                        />
+                    ))
                 ) : (
-                    <>
-                        {doctors.length < 1 ? (
-                            <p className='no-doctors-message'>There are no doctors available.</p>
-                        ) : (
-                            <>
-                                <DoctorToolbar
-                                    pageTitle={"Doctors"}
-                                    setSearchTerm={setSearchTerm}
-                                    items={doctors}
-                                    onFilterItems={handleFilterDoctors}
-                                    selectedOffices={selectedOffices}
-                                    setselectedOffices={setselectedOffices}
-                                    selectedSpecialization={selectedSpecialization}
-                                    setSelectedSpecialization={setSelectedSpecialization}
-                                    showCreateDoctorProfileModal={toggleCreateDoctorProfileModal}
-                                    showAddIcon={true}
-                                    showFilterIcon={true}
-                                    showDoctorFilterModal={true}
-                                />
-                                <div className="doctors-container">
-                                    {displayedDoctors.length > 0 ? (
-                                        displayedDoctors.map((doctor) => (
-                                            <DoctorCard
-                                                key={doctor.id}
-                                                name={`${doctor.firstName || ''} ${doctor.lastName || ''} ${doctor.middleName || ''}`}
-                                                specialization={doctor.specialization?.specializationName || "Not found"}
-                                                experience={doctor.careerStartYear ? new Date().getFullYear() - new Date(doctor.careerStartYear).getFullYear() + 1 : "N/A"}
-                                                officeAddress={doctor.office?.address || "Not found"}
-                                            />
-                                        ))
-                                    ) : (
-                                        <p className='no-doctors-message'>Nothing could be found.</p>
-                                    )}
-                                </div>
-                            </>
-                        )}
-                    </>
+                    <p>Nothing could be found.</p>
                 )}
             </div>
         </>

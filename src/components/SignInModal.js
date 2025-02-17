@@ -23,24 +23,24 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
         const label = document.getElementById('sign-in-email-label');
         if (input.value === '') {
             input.classList.add('error-input-border');
-            label.classList.add('error-label');
+            label.classList.add('sign-in-error-label');
             label.textContent = "Please, enter the email";
             setIsEmailValid(false);
         } else if (!input.value.includes('@')) {
             input.classList.add('error-input-border');
-            label.classList.add('error-label');
+            label.classList.add('sign-in-error-label');
             label.textContent = "You've entered an invalid email";
             setIsEmailValid(false);
         } else {
             label.textContent = 'Email';
             input.classList.remove('error-input-border');
-            label.classList.remove('error-label');
+            label.classList.remove('sign-in-error-label');
             // const isEmailAvailability = await EmailExistsAsync(email);
             // if(isEmailAvailability) {
             //     setIsEmailValid(true);
             // } else {
             //     input.classList.add('error-input-border');
-            //     label.classList.add('error-label');
+            //     label.classList.add('sign-in-error-label');
             //     label.textContent = "User with this email doesn’t exists";
             //     setIsEmailValid(false);
             // }
@@ -52,19 +52,19 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
         const label = document.getElementById('sign-in-password-label');
         if (input.value === '') {
             input.classList.add('error-input-border');
-            label.classList.add('error-label');
+            label.classList.add('sign-in-error-label');
             label.textContent = "Please, enter the password";
             setIsPasswordValid(false);
         } else if ((5 > password.length) || (password.length > 16)) {
             input.classList.add('error-input-border');
-            label.classList.add('error-label');
+            label.classList.add('sign-in-error-label');
             label.textContent = "The number of characters in the password must be from 6 to 15";
             setIsPasswordValid(false);
         }
         else {
             label.textContent = 'Password';
             input.classList.remove('error-input-border');
-            label.classList.remove('error-label');
+            label.classList.remove('sign-in-error-label');
             setIsPasswordValid(true);
         }
     };
@@ -80,7 +80,7 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
             const label = document.getElementById('sign-in-email-label');
             label.textContent = 'Email';
             input.classList.remove('error-input-border');
-            label.classList.remove('error-label');
+            label.classList.remove('sign-in-error-label');
             setIsEmailValid(true);
         }
     };
@@ -97,7 +97,7 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
             const label = document.getElementById('sign-in-password-label');
             label.textContent = 'Password';
             input.classList.remove('error-input-border');
-            label.classList.remove('error-label');
+            label.classList.remove('sign-in-error-label');
             setIsPasswordValid(true);
         }
     };
@@ -115,7 +115,7 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
             const label = document.getElementById('sign-in-password-label');
             if (input && label) { 
                 input.classList.add('error-input-border');
-                label.classList.add('error-label');
+                label.classList.add('sign-in-error-label');
                 label.textContent = "Количество символов в пароле должно быть от 6 до 15";
             }
         }
@@ -140,7 +140,7 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
                         class="input default-input-border"
                         placeholder=" "
                         required />
-                    <label class="input-label" id="sign-in-email-label">Email</label>
+                    <label class="sign-in-input-label" id="sign-in-email-label">Email</label>
                 </div>
                 <div class="sign-in-input-wrapper">
                     <input
@@ -154,7 +154,7 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
                         class="input default-input-border"
                         placeholder=" "
                         required />
-                    <label class="input-label" id="sign-in-password-label">Password</label>
+                    <label class="sign-in-input-label" id="sign-in-password-label">Password</label>
                 </div>
             </div>
             <div class="btn-group">
