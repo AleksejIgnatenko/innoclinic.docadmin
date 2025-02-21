@@ -1,19 +1,24 @@
 import React, { useEffect } from 'react';
 import './../styles/AppointmentFilterModal.css';
 
-const AppointmentFilterModal = ({ 
-    onClose, 
-    appointments, 
-    fetchedDoctors,
-    fetchedMedicalServices,
-    fetchedOffices,
-    setFilteredAppointments, 
-    selectedAddresses, 
+const AppointmentFilterModal = ({
+    onClose,
+    appointments,
+    doctors,
+    medicalServices,
+    offices,
+
+    setFilteredAppointments,
+
+    selectedAddresses,
     setSelectedAddresses,
+
     selectedDoctor,
     setSelectedDoctor,
+
     selectedMedicalService,
     setSelectedMedicalService,
+
     selectedAppointmentStatus,
     setSelectedAppointmentStatus,
 }) => {
@@ -51,35 +56,61 @@ const AppointmentFilterModal = ({
 
     const applyFilters = () => {
         const filteredAppointments = appointments.filter(appointment => {
-            const filteredDoctor = fetchedDoctors.find(d => d.id === appointment.doctor.id);
-        
-            const matchesAddress = selectedAddresses.length === 0 || 
+            const filteredDoctor = doctors.find(d => d.id === appointment.doctor.id);
+
+            const matchesAddress = selectedAddresses.length === 0 ||
                 (filteredDoctor.office.address && selectedAddresses.includes(filteredDoctor.office.address));
-            
-            const matchesDoctor = selectedDoctor === "" || 
+
+            const matchesDoctor = selectedDoctor === "" ||
                 (`${appointment.doctor.lastName} ${appointment.doctor.firstName}` === selectedDoctor);
-        
-            const matchesService = selectedMedicalService === "" || 
+
+            const matchesService = selectedMedicalService === "" ||
                 appointment.medicalService.serviceName === selectedMedicalService;
-            
-            const matchesStatus = selectedAppointmentStatus === "" || 
+
+            const matchesStatus = selectedAppointmentStatus === "" ||
                 (selectedAppointmentStatus === "Approved" && appointment.isApproved) ||
                 (selectedAppointmentStatus === "Not Approved" && !appointment.isApproved) ||
                 (selectedAppointmentStatus === "All");
-            
+
             return matchesAddress && matchesDoctor && matchesService && matchesStatus;
         });
-        
-        setFilteredAppointments(filteredAppointments); 
+
+        const formattedAppointments = filteredAppointments.map(({ time, doctor, patient, medicalService }) => {
+            const patientAccount = filteredAppointments.find(account => account.id === patient.accountId);
+            const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+
+            return {
+                time,
+                fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
+                fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
+                patientsPhoneNumber,
+                medicalService: medicalService.serviceName,
+            };
+        });
+
+        setFilteredAppointments(formattedAppointments);
         onClose();
     };
 
     const resetFilters = () => {
-        setSelectedAddresses([]); 
-        setSelectedDoctor(""); 
+        setSelectedAddresses([]);
+        setSelectedDoctor("");
         setSelectedMedicalService("");
-        setSelectedAppointmentStatus(""); 
-        setFilteredAppointments(appointments); 
+        setSelectedAppointmentStatus("");
+        
+        const formattedAppointments = appointments.map(({ time, doctor, patient, medicalService }) => {
+            const patientAccount = appointments.find(account => account.id === patient.accountId);
+            const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+      
+            return {
+              time,
+              fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
+              fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
+              patientsPhoneNumber,
+              medicalService: medicalService.serviceName,
+            };
+          });
+        setFilteredAppointments(formattedAppointments);
         onClose();
     };
 
@@ -92,7 +123,7 @@ const AppointmentFilterModal = ({
                     <div className="filter-input-group">
                         <label>Office address</label>
                         <div className="filter-checkbox-group">
-                            {fetchedOffices && [...new Set(fetchedOffices.map(office => office.address))].map(address => (
+                            {offices && [...new Set(offices.map(office => office.address))].map(address => (
                                 <label key={address}>
                                     <input
                                         type="checkbox"
@@ -110,7 +141,7 @@ const AppointmentFilterModal = ({
                         <label>Doctor's Full Name</label>
                         <select value={selectedDoctor} onChange={handleDoctorChange}>
                             <option value="">All</option>
-                            {fetchedDoctors && [...new Set(fetchedDoctors.map(doc => `${doc.lastName} ${doc.firstName}`))].map(docName => (
+                            {doctors && [...new Set(doctors.map(doc => `${doc.lastName} ${doc.firstName}`))].map(docName => (
                                 <option key={docName} value={docName}>{docName}</option>
                             ))}
                         </select>
@@ -119,7 +150,7 @@ const AppointmentFilterModal = ({
                         <label>Service Name</label>
                         <select value={selectedMedicalService} onChange={handleServiceChange}>
                             <option value="">All</option>
-                            {fetchedMedicalServices && [...new Set(fetchedMedicalServices.map(service => service.serviceName))].map(serviceName => (
+                            {medicalServices && [...new Set(medicalServices.map(service => service.serviceName))].map(serviceName => (
                                 <option key={serviceName} value={serviceName}>{serviceName}</option>
                             ))}
                         </select>

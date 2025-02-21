@@ -76,7 +76,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleFirstNameBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-firstName-label');
+        const label = document.getElementById('doctor-profile-card-firstName-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -100,7 +100,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleFirstNameInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-firstName-label');
+        const label = document.getElementById('doctor-profile-card-firstName-label');
 
         if (!input.value) {
             setFirstNameValid(false);
@@ -114,7 +114,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleLastNameBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-lastName-label');
+        const label = document.getElementById('doctor-profile-card-lastName-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -138,7 +138,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleLastNameInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-lastName-label');
+        const label = document.getElementById('doctor-profile-card-lastName-label');
 
         if (!input.value) {
             setLastNameValid(false);
@@ -159,7 +159,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleCabinetNumberBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-cabinetNumber-label');
+        const label = document.getElementById('doctor-profile-card-cabinetNumber-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -183,7 +183,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleCabinetNumberInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-cabinetNumber-label');
+        const label = document.getElementById('doctor-profile-card-cabinetNumber-label');
 
         if (!input.value) {
             setCabinetNumberValid(false);
@@ -211,7 +211,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleSpecializationBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-specialization-label');
+        const label = document.getElementById('doctor-profile-card-specialization-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -226,8 +226,8 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
     };
 
     const handleListClick = (id, item, type) => {
-        const input = document.getElementById(`updateDoctorProfile-${type}-input`)
-        const label = document.getElementById(`updateDoctorProfile-${type}-label`);
+        const input = document.getElementById(`doctor-profile-card-${type}-input`)
+        const label = document.getElementById(`doctor-profile-card-${type}-label`);
         setUpdateSelectedSpecializationId(id);
         setFilterSpecialization('');
 
@@ -241,7 +241,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleOfficesChange = (event) => {
         setUpdateSelectedOfficeId(event.target.value);
-        const label = document.getElementById('updateDoctorProfile-office-label');
+        const label = document.getElementById('doctor-profile-card-office-label');
         const input = event.target;
         input.classList.remove('error-input-border');
         label.classList.remove('error-label');
@@ -253,7 +253,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleOfficeBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-office-label');
+        const label = document.getElementById('doctor-profile-card-office-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -270,7 +270,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleCareerStartYearBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-careerStartYear-label');
+        const label = document.getElementById('doctor-profile-card-careerStartYear-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -314,7 +314,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleStatusChange = (event) => {
         setUpdateSelectedStatus(event.target.value);
-        const label = document.getElementById('updateDoctorProfile-status-label');
+        const label = document.getElementById('doctor-profile-card-status-label');
         const input = event.target;
         input.classList.remove('error-input-border');
         label.classList.remove('error-label');
@@ -323,7 +323,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const handleStatusBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('updateDoctorProfile-status-label');
+        const label = document.getElementById('doctor-profile-card-status-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -377,7 +377,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                 <div className="doctor-profile-card-content">
                     {isEditing ? (
                         <div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.FirstName}
                                     onChange={handleFirstNameChange}
@@ -385,13 +385,13 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     onInput={handleFirstNameInput}
                                     type="text"
                                     name="FirstName"
-                                    id="updateDoctorProfile-firstName-input"
+                                    id="doctor-profile-card-firstName-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-firstName-label">First name</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-firstName-label">First name</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.LastName}
                                     onChange={handleLastNameChange}
@@ -399,13 +399,13 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     onInput={handleLastNameInput}
                                     type="text"
                                     name="LastName"
-                                    id="updateDoctorProfile-lastName-input"
+                                    id="doctor-profile-card-lastName-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-lastName-label">Last name</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-lastName-label">Last name</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.MiddleName}
                                     onChange={handleMiddleNameChange}
@@ -413,13 +413,13 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     // onInput={handleMiddleNameInput}
                                     type="text"
                                     name="MiddleName"
-                                    id="updateDoctorProfile-middleName-input"
+                                    id="doctor-profile-card-middleName-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-middleName-label">Middle name</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-middleName-label">Middle name</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.CabinetNumber}
                                     onChange={handleCabinetNumberChange}
@@ -427,27 +427,27 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     // onInput={handleCabinetNumberInput}
                                     type="number"
                                     name="CabinetNumber"
-                                    id="updateDoctorProfile-CabinetNumber-input"
+                                    id="doctor-profile-card-CabinetNumber-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-cabinetNumber-label">Cabinet number</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-cabinetNumber-label">Cabinet number</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.DateOfBirth}
                                     onChange={handleDateOfBirthChange}
                                     type="date"
                                     name="DateOfBirth"
-                                    id="updateDoctorProfile-dateOfBirth-input"
+                                    id="doctor-profile-card-dateOfBirth-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-dateOfBirth-label">Date of birth</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-dateOfBirth-label">Date of birth</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
-                                    id="updateDoctorProfile-specialization-input"
+                                    id="doctor-profile-card-specialization-input"
                                     value={formData.Specialization}
                                     onChange={handleSpecializationChange}
                                     onBlur={handleSpecializationBlur}
@@ -456,7 +456,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     placeholder=""
                                     required
                                 />
-                                <label className="input-label" id="updateDoctorProfile-Specialization-label">Specialization</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-Specialization-label">Specialization</label>
                                 {filterSpecialization && (
                                     <div className="filtred-list">
                                         {filteredSpecializations.map(specialization => (
@@ -467,7 +467,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     </div>
                                 )}
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <select
                                     value={formData.Office}
                                     onChange={handleOfficesChange}
@@ -481,9 +481,9 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                         <option key={office.id} value={office.id}>{office.address}</option>
                                     ))}
                                 </select>
-                                <label className="input-label label-active" id="updateDoctorProfile-office-label">Office</label>
+                                <label className="doctor-profile-card-input-label label-active" id="doctor-profile-card-office-label">Office</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <input
                                     value={formData.CareerStartYear}
                                     onChange={handleCareerStartYearChange}
@@ -491,13 +491,13 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                     // onInput={handleCareerStartYearInput}
                                     type="date"
                                     name="CareerStartYear"
-                                    id="updateDoctorProfile-careerStartYear-input"
+                                    id="doctor-profile-card-careerStartYear-input"
                                     class="input default-input-border custom-select"
                                     placeholder=" "
                                     required />
-                                <label class="input-label" id="updateDoctorProfile-careerStartYear-label">Career start year</label>
+                                <label className="doctor-profile-card-input-label" id="doctor-profile-card-careerStartYear-label">Career start year</label>
                             </div>
-                            <div className="updateDoctorProfile-input-wrapper">
+                            <div className="doctor-profile-card-input-wrapper">
                                 <select
                                     value={updateSelectedStatus}
                                     onChange={handleStatusChange}
@@ -511,7 +511,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                                         <option key={index} value={status}>{status}</option>
                                     ))}
                                 </select>
-                                <label className="input-label label-active" id="updateDoctorProfile-status-label">Status</label>
+                                <label className="doctor-profile-card-input-label label-active" id="doctor-profile-card-status-label">Status</label>
                             </div>
                         </div>
                     ) : (

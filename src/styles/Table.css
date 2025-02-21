@@ -1,29 +1,30 @@
 :root {
-    --light-table: #ffffff;
-    --dark-table: #171717;
+    --light-doctor-table: #ffffff;
+    --dark-doctor-table: #171717;
 
-    --light-table-border: #999;
-    --dark-table-border: #333;
+    --light-doctor-table-border: #999;
+    --dark-doctor-table-border: #333;
 
     --error: #c91818;
 }
 
 [data-theme='light'] {
-    --table-bg: var(--light-table);
-    --table-fg: var(--dark-table);
+    --table-bg: var(--light-doctor-table);
+    --table-fg: var(--dark-doctor-table);
 
-    --border-color-table: var(--light-table-border);
+    --border-color-table: var(--light-doctor-table-border);
 }
 
 [data-theme='dark'] {
-    --table-bg: var(--dark-table);
-    --table-fg: var(--light-table);
+    --table-bg: var(--dark-doctor-table);
+    --table-fg: var(--light-doctor-table);
 
-    --border-color-table: var(--dark-table-border);
+    --border-color-table: var(--dark-doctor-table-border);
 }
 
 .table-container {
     margin: 5% 1%;
+    flex: 1;
 }
 
 .table-container table {
@@ -103,8 +104,4 @@
 
 .approved-appointment {
     background-color: lightgreen;
-}
-
-.disabled-button-approve-style {
-    background-color: #ccc;
 }

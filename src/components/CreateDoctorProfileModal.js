@@ -564,7 +564,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-firstName-label">First name</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-firstName-label">First name</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -578,7 +578,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-lastName-label">Last name</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-lastName-label">Last name</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -592,7 +592,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-middleName-label">Middle name</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-middleName-label">Middle name</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -606,7 +606,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-dateOfBirth-label">Date of birth</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-dateOfBirth-label">Date of birth</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -620,7 +620,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-email-label">Email</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-email-label">Email</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -632,7 +632,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         placeholder=" "
                                         required
                                     />
-                                    <label className="input-label" id="createDoctorProfile-specialization-label">Specialization</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-specialization-label">Specialization</label>
                                     {filterSpecialization && (
                                         <div className="filtred-list">
                                             {filteredSpecializations.map(specialization => (
@@ -656,7 +656,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                             <option key={office.id} value={office.id}>{office.address}</option>
                                         ))}
                                     </select>
-                                    <label className="input-label label-active" id="createDoctorProfile-office-label">Office</label>
+                                    <label className="createDoctorProfile-input-label label-active" id="createDoctorProfile-office-label">Office</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <input
@@ -670,7 +670,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                         class="input default-input-border"
                                         placeholder=" "
                                         required />
-                                    <label class="input-label" id="createDoctorProfile-careerStartYear-label">Career start year</label>
+                                    <label className="createDoctorProfile-input-label" id="createDoctorProfile-careerStartYear-label">Career start year</label>
                                 </div>
                                 <div className="createDoctorProfile-input-wrapper">
                                     <select
@@ -685,7 +685,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                             <option key={index} value={status}>{status}</option>
                                         ))}
                                     </select>
-                                    <label className="input-label label-active" id="createDoctorProfile-status-label">Status</label>
+                                    <label className="createDoctorProfile-input-label label-active" id="createDoctorProfile-status-label">Status</label>
                                 </div>
                             </div>
                         </div>

@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
-import './../styles/DoctorFilterModal.css';
+import './../styles/FilterDoctorModal.css';
 
-const DoctorFilterModal = ({ 
-    onClose, 
-    doctors, 
-    onFilterDoctors, 
-    selectedAddresses, 
-    setselectedAddresses, 
-    selectedSpecialization, 
-    setSelectedSpecialization 
+const FilterDoctorModal = ({
+    onClose,
+    doctors,
+    offices,
+    specializations,
+    onFilterDoctors,
+    selectedAddresses,
+    setSelectedAddresses,
+    selectedSpecialization,
+    setSelectedSpecialization
 }) => {
-    
+
     useEffect(() => {
         const handleKeyPress = (event) => {
             if (event.key === 'Escape') {
@@ -25,7 +27,7 @@ const DoctorFilterModal = ({
 
     const handleAddressChange = (event) => {
         const value = event.target.value;
-        setselectedAddresses(prev =>
+        setSelectedAddresses(prev =>
             prev.includes(value) ? prev.filter(v => v !== value) : [...prev, value]
         );
     };
@@ -35,18 +37,18 @@ const DoctorFilterModal = ({
     };
 
     const applyFilters = () => {
-        const filteredDoctors = doctors.filter(item =>
-            (selectedAddresses.length === 0 || selectedAddresses.includes(item.office.address)) &&
-            (selectedSpecialization === "" || item.specialization.specializationName === selectedSpecialization)
+        const filteredDoctors = doctors.filter(doctor =>
+            (selectedAddresses.length === 0 || selectedAddresses.includes(doctor.office.address)) &&
+            (selectedSpecialization === "" || doctor.specialization.specializationName === selectedSpecialization)
         );
-        onFilterDoctors(filteredDoctors); 
+        onFilterDoctors(filteredDoctors);
         onClose();
     };
 
     const resetFilters = () => {
-        setselectedAddresses([]); 
-        setSelectedSpecialization(""); 
-        onFilterDoctors(doctors); 
+        setSelectedAddresses([]);
+        setSelectedSpecialization("");
+        onFilterDoctors(doctors);
         onClose();
     };
 
@@ -59,16 +61,16 @@ const DoctorFilterModal = ({
                     <div className="filter-input-group">
                         <label>Office address</label>
                         <div className="filter-checkbox-group">
-                            {[...new Set(doctors.map(i => i.office.address))].map(address => (
-                                <label key={address}>
+                            {offices.map(office => (
+                                <label key={office.id}>
                                     <input
                                         type="checkbox"
                                         name="office-address"
-                                        value={address}
-                                        checked={selectedAddresses.includes(address)}
+                                        value={office.address}
+                                        checked={selectedAddresses.includes(office.address)}
                                         onChange={handleAddressChange}
                                     />
-                                    <span>{address}</span>
+                                    <span>{office.address}</span>
                                 </label>
                             ))}
                         </div>
@@ -77,8 +79,8 @@ const DoctorFilterModal = ({
                         <label>Specialization</label>
                         <select value={selectedSpecialization} onChange={handleSpecializationChange}>
                             <option value="">All</option>
-                            {[...new Set(doctors.map(i => i.specialization.specializationName))].map(spec => (
-                                <option key={spec} value={spec}>{spec}</option>
+                            {specializations.map(spec => (
+                                <option key={spec.id} value={spec.specializationName}>{spec.specializationName}</option>
                             ))}
                         </select>
                     </div>
@@ -92,4 +94,4 @@ const DoctorFilterModal = ({
     );
 };
 
-export default DoctorFilterModal;
+export default FilterDoctorModal;

@@ -115,6 +115,15 @@ const Sidebar = () => {
                         </li>
                     ) : null))}
                     <li>
+                        <Link to="/offices">
+                            <i className='bx bx-buildings'></i>
+                            <span className="link_name">Offices</span>
+                        </Link>
+                        <ul className="sub-menu blank">
+                            <li><Link className="link_name" to="/offices">Offices</Link></li>
+                        </ul>
+                    </li>
+                    <li>
                         <div className="icon-link">
                             <Link to="/services">
                                 <i className='bx bx-collection'></i>
@@ -142,15 +151,6 @@ const Sidebar = () => {
                             <li><Link to="/">Web Design</Link></li>
                             <li><Link to="/">Login Form</Link></li>
                             <li><Link to="/">Card Design</Link></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            <i className='bx bx-line-chart'></i>
-                            <span className="link_name">Chart</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/">Chart</Link></li>
                         </ul>
                     </li>
                     <li onClick={handleSubMenuClick}>

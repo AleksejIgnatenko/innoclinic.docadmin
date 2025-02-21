@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import "./../styles/Appointments.css";
 import Loader from '../components/Loader';
-import ReceptionistAppointmentsTable from '../components/ReceptionistAppointmentsTable';
 import GetAppointmentsByDateFetchAsync from '../api/Appointments.API/GetAppointmentsByDateFetchAsync';
 import GetAccountsByIdsFetchAsync from '../api/Authorization.API/GetAccountsByIdsFetchAsync';
 import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
 import GetAllMedicalServiceFetchAsync from '../api/Services.API/GetAllMedicalServiceFetchAsync';
 import GetAllDoctorsFetchAsync from '../api/Profiles.API/GetAllDoctorsFetchAsync';
+import AppointmentFilterModal from '../components/AppointmentFilterModal';
+import Toolbar from '../components/Toolbar';
+import Table from '../components/Table';
+import Calendar from '../components/Calendar';
+import UpdateAppointmentModelRequest from '../models/UpdateAppointmentModelRequest';
+import UpdateAppointmentFetchAsync from '../api/Appointments.API/UpdateAppointmentFetchAsync';
+import DeleteAppointmentFetchAsync from '../api/Appointments.API/DeleteAppointmentFetchAsync';
 
 function Appointments() {
   const [appointments, setAppointments] = useState([]);
@@ -16,42 +22,26 @@ function Appointments() {
   const [offices, setOffices] = useState([]);
   const [medicalServices, setMedicalServices] = useState([]);
 
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedDoctor, setSelectedDoctor] = useState('');
   const [selectedMedicalService, setSelectedMedicalService] = useState('');
   const [selectedAppointmentStatus, setSelectedAppointmentStatus] = useState('');
   const [selectedAddresses, setSelectedAddresses] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
 
   const [showCreateAppointmentModal, setShowCreateAppointmentModal] = useState(false);
+  const [showFilterAppointmentModal, setShowFilterAppointmentModal] = useState(false);
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getData = async () => {
       try {
         toggleLoader(true);
         const currentDate = new Date();
         currentDate.setDate(currentDate.getDate() + 1);
         const formattedDate = currentDate.toISOString().split('T')[0];
         setSelectedDate(formattedDate);
-
-        const fetchedAppointments = await GetAppointmentsByDateFetchAsync(formattedDate);
-        setAppointments(fetchedAppointments);
-        setFilteredAppointments(fetchedAppointments);
-
-        const accountIds = Array.from(new Set(fetchedAppointments.map(appointment => appointment.patient.accountId)));
-
-        const fetchedAccounts = await GetAccountsByIdsFetchAsync(accountIds);
-        setAccounts(fetchedAccounts);
-
-        const fetchedDoctors = await GetAllDoctorsFetchAsync();
-        setDoctors(fetchedDoctors);
-
-        const fetchedOffices = await GetAllOfficesFetchAsync();
-        setOffices(fetchedOffices);
-
-        const fetchedMedicalServices = await GetAllMedicalServiceFetchAsync();
-        setMedicalServices(fetchedMedicalServices);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -59,7 +49,7 @@ function Appointments() {
       }
     };
 
-    fetchData();
+    getData();
   }, []);
 
   useEffect(() => {
@@ -69,7 +59,6 @@ function Appointments() {
 
         const fetchedAppointments = await GetAppointmentsByDateFetchAsync(selectedDate);
         setAppointments(fetchedAppointments);
-        setFilteredAppointments(fetchedAppointments);
 
         const accountIds = Array.from(new Set(fetchedAppointments.map(appointment => appointment.patient.accountId)));
 
@@ -84,6 +73,21 @@ function Appointments() {
 
         const fetchedMedicalServices = await GetAllMedicalServiceFetchAsync();
         setMedicalServices(fetchedMedicalServices);
+
+        const formattedAppointments = fetchedAppointments.map(({ id, time, doctor, patient, medicalService }) => {
+          const patientAccount = fetchedAccounts.find(account => account.id === patient.accountId);
+          const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+
+          return {
+            id,
+            time,
+            fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
+            fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
+            patientsPhoneNumber,
+            medicalService: medicalService.serviceName,
+          };
+        });
+        setFilteredAppointments(formattedAppointments);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -95,23 +99,34 @@ function Appointments() {
   }, [selectedDate]);
 
   useEffect(() => {
-    const filtered = appointments.filter(appointment => {
-      const doctorName = `${appointment.doctor.lastName} ${appointment.doctor.firstName} ${appointment.doctor.middleName}`.toLowerCase();
-      const patientName = `${appointment.patient.lastName} ${appointment.patient.firstName}`.toLowerCase();
-      const serviceName = appointment.medicalService.serviceName.toLowerCase();
-      const appointmentTime = appointment.time.toLowerCase();
-      const phoneNumber = accounts.find(account => account.id === appointment.patient.accountId)?.phoneNumber.toLowerCase() || '';
+    const filteredAppointments = appointments.filter(appointment => {
+      const time = appointment.time.toLowerCase();
+      const patientName = `${appointment.fullNameOfThePatient}`.toLowerCase();
+      const doctorName = `${appointment.fullNameOfTheDoctor}`.toLowerCase();
+      const medicalServiceName = `${appointment.medicalService}`.toLowerCase();
 
       return (
-        doctorName.includes(searchTerm.toLowerCase()) ||
+        time.includes(searchTerm.toLowerCase()) ||
         patientName.includes(searchTerm.toLowerCase()) ||
-        serviceName.includes(searchTerm.toLowerCase()) ||
-        appointmentTime.includes(searchTerm.toLowerCase()) ||
-        phoneNumber.includes(searchTerm.toLowerCase())
+        doctorName.includes(searchTerm.toLowerCase()) ||
+        medicalServiceName.includes(searchTerm.toLowerCase())
       );
     });
 
-    setFilteredAppointments(filtered);
+    const formattedAppointments = filteredAppointments.map(({ time, doctor, patient, medicalService }) => {
+      const patientAccount = filteredAppointments.find(account => account.id === patient.accountId);
+      const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+
+      return {
+        time,
+        fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
+        fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
+        patientsPhoneNumber,
+        medicalService: medicalService.serviceName,
+      };
+    });
+
+    setFilteredAppointments(formattedAppointments);
   }, [searchTerm]);
 
   const toggleLoader = (status) => {
@@ -120,59 +135,117 @@ function Appointments() {
 
   const toggleCreateAppointmentModal = () => {
     setShowCreateAppointmentModal(!showCreateAppointmentModal);
-    console.log(showCreateAppointmentModal)
   };
 
-  useEffect(() => {
-    const filtered = appointments.filter(appointment => {
-      const doctorName = appointment.doctor.lastName + appointment.doctor.firstName + appointment.doctor.middleName.toLowerCase();
-      const patientName = appointment.patient.lastName + appointment.patient.firstName.toLowerCase();
-      const serviceName = appointment.medicalService.serviceName.toLowerCase();
-      const appointmentTime = appointment.time.toLowerCase();
-      const phoneNumber = accounts.find(account => account.id === appointment.patient.accountId)?.phoneNumber.toLowerCase() || '';
+  const toggleFilterAppointmentModal = () => {
+    setShowFilterAppointmentModal(!showFilterAppointmentModal);
+  };
 
-      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  const toggleCalendarClick = () => {
+    setShowCalendar(!showCalendar);
+  };
 
-      return (
-        doctorName.includes(lowerCaseSearchTerm) ||
-        patientName.includes(lowerCaseSearchTerm) ||
-        serviceName.includes(lowerCaseSearchTerm) ||
-        appointmentTime.includes(lowerCaseSearchTerm) ||
-        phoneNumber.includes(lowerCaseSearchTerm)
-      );
-    });
+  const handleSelectDate = (date) => {
+    setSelectedDate(date);
+  }
 
-    setFilteredAppointments(filtered);
-  }, [searchTerm]);
+  async function handleApproveAppointmentAsync(appointmentId) {
+    const appointment = appointments.find(a => a.id === appointmentId);
+
+    const updateAppointmentModelRequest = new UpdateAppointmentModelRequest(
+      appointment.id, appointment.doctor.id, appointment.medicalService.id, appointment.patient.id, appointment.date, appointment.time, true);
+
+    const resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
+    if (resultResponseStatus === 200) {
+      const row = document.getElementById(appointment.id);
+      row.classList.add("approved-appointment");
+
+      const btn = document.getElementById("approve-button");
+      btn.classList.add("disabled-button-approve-style");
+    }
+  }
+
+  async function handleCancelAppointmentAsync(appointmentId) {
+    const confirmCancel = window.confirm("Are you sure you want to cancel the appointment?");
+
+    if (confirmCancel) {
+      const resultResponseStatus = await DeleteAppointmentFetchAsync(appointmentId);
+      if (resultResponseStatus === 200) {
+        setFilteredAppointments(prevAppointments =>
+          prevAppointments.filter(a => a.id !== appointmentId)
+        );
+      }
+      console.log("The appointment has been cancelled.");
+    }
+  };
 
   return (
-    <div>
+    <>
       {isLoading && <Loader />}
-      {!isLoading && appointments.length === 0 && (
-        <p className='no-appointments-message'>There are no records for the current date</p>
-      )}
-      <ReceptionistAppointmentsTable
-        appointments={appointments}
-        filteredAppointments={filteredAppointments}
-        setFilteredAppointments={setFilteredAppointments}
-        accounts={accounts}
-        office={offices}
-        doctors={doctors}
-        medicalServices={medicalServices}
-        selectedDate={selectedDate}
-        setSelectedDate={setSelectedDate}
-        selectedAddresses={selectedAddresses}
-        setSelectedAddresses={setSelectedAddresses}
-        selectedDoctor={selectedDoctor}
-        setSelectedDoctor={setSelectedDoctor}
-        selectedMedicalService={selectedMedicalService}
-        setSelectedMedicalService={setSelectedMedicalService}
-        selectedAppointmentStatus={selectedAppointmentStatus}
-        setSelectedAppointmentStatus={setSelectedAppointmentStatus}
+
+      <Toolbar
+        pageTitle={"Appointments"}
         setSearchTerm={setSearchTerm}
-        showCreateAppointmentModal={toggleCreateAppointmentModal}
+
+        showAddIcon={true}
+        toggleCreateModalClick={toggleCreateAppointmentModal}
+
+        showFilterIcon={true}
+        toggleFilterModalClick={toggleFilterAppointmentModal}
+
+        showCalendarIcon={true}
+        toggleCalendarClick={toggleCalendarClick}
       />
-    </div>
+
+      {showFilterAppointmentModal && (
+        <AppointmentFilterModal
+          onClose={toggleFilterAppointmentModal}
+          appointments={appointments}
+          doctors={doctors}
+          medicalServices={medicalServices}
+          offices={offices}
+
+          setFilteredAppointments={setFilteredAppointments}
+
+          selectedAddresses={selectedAddresses}
+          setSelectedAddresses={setSelectedAddresses}
+
+          selectedDoctor={selectedDoctor}
+          setSelectedDoctor={setSelectedDoctor}
+
+          selectedMedicalService={selectedMedicalService}
+          setSelectedMedicalService={setSelectedMedicalService}
+
+          selectedAppointmentStatus={selectedAppointmentStatus}
+          setSelectedAppointmentStatus={setSelectedAppointmentStatus}
+        />
+      )}
+
+      {showCalendar && (
+        <Calendar
+          currentDate={new Date(selectedDate)}
+          onClose={toggleCalendarClick}
+          setSelectedDate={setSelectedDate}
+          onSelectDate={handleSelectDate}
+        />
+      )}
+
+      <div className="appointments-container">
+        {filteredAppointments.length > 0 ? (
+          <Table
+            items={filteredAppointments}
+
+            showApproveButton={true}
+            handleApprove={handleApproveAppointmentAsync}
+
+            showCancelButton={true}
+            handleCancel={handleCancelAppointmentAsync}
+          />
+        ) : (
+          !isLoading && <p className="no-appointments-message">Nothing could be found.</p>
+        )}
+      </div>
+    </>
   );
 }
 

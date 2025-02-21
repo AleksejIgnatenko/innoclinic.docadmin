@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import './../styles/DoctorToolbar.css';
-import DoctorFilterModal from './DoctorFilterModal';
+import FilterDoctorModal from './FilterDoctorModal';
 
 const DoctorToolbar = ({ 
     pageTitle, 
     setSearchTerm, 
     doctors, 
+    offices,
+    specializations,
     onFilterDoctors, 
     selectedAddresses, 
     setSelectedAddresses, 
@@ -30,9 +32,11 @@ const DoctorToolbar = ({
     return (
         <>
             {showFilterModal && (
-                <DoctorFilterModal
+                <FilterDoctorModal
                     onClose={toggleFilterModal}
-                    Doctors={doctors} 
+                    doctors={doctors} 
+                    offices={offices}
+                    specializations={specializations}
                     onFilterDoctors={onFilterDoctors} 
                     selectedAddresses={selectedAddresses}
                     setSelectedAddresses={setSelectedAddresses}

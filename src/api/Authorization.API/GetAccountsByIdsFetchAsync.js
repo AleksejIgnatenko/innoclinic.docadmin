@@ -11,7 +11,7 @@ async function GetAccountsByIdsFetchAsync(accountIds) {
         }
 
         const response = await fetch(`${AuthorizationAPI}/Account/accounts-by-ids`, {
-            method: 'GET',
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${jwtToken}`
