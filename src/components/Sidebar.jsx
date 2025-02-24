@@ -85,13 +85,17 @@ const Sidebar = () => {
                         </ul>
                     </li>
                     <li>
-                        <Link to="/doctors">
-                            <i className='bx bx-user-circle'></i>
-                            <span className="link_name">Doctors</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link to="/doctors" className="link_name">Doctors</Link></li>
-                        </ul>
+                        {account && account.role === 'Receptionist' && (
+                            <>
+                                <Link to="/doctors">
+                                    <i className='bx bx-user-circle'></i>
+                                    <span className="link_name">Doctors</span>
+                                </Link>
+                                <ul className="sub-menu blank">
+                                    <li><Link to="/doctors" className="link_name">Doctors</Link></li>
+                                </ul>
+                            </>
+                        )}
                     </li>
                     {account && (account.role === 'Doctor' ? (
                         <li>

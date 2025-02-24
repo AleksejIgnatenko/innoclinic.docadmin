@@ -4,10 +4,16 @@ import Loader from '../components/Loader';
 import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
 import Toolbar from '../components/Toolbar';
 import Table from '../components/Table';
+import { useNavigate } from 'react-router-dom';
+import CreateOfficeModal from '../components/CreateOfficeModal';
 
 function Offices() {
+    const navigate = useNavigate();
+
     const [offices, setOffices] = useState([]);
     const [filteredOffices, setFilteredOffices] = useState([]);
+
+    const [showCreateOfficeModal, setShowCreateOfficeModal] = useState(false);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -57,12 +63,16 @@ function Offices() {
     };
 
     const toggleCreateOfficeModalClick = () => {
-        console.log("create modal click")
+        setShowCreateOfficeModal(!showCreateOfficeModal)
     }
 
     const toggleFilterOfficeModalClick = () => {
         console.log("filter modal click")
     }
+
+    const handleTableRowClick = (id) => {
+        navigate(`/officeInfo/${id}`);
+    };
 
     // const createOfficeModal = () => {
     //     
@@ -70,7 +80,7 @@ function Offices() {
 
     return (
         <>
-            {/* {showCreateDoctorProfileModal && <CreateDoctorProfileModal onClose={toggleCreateDoctorProfileModal} />} */}
+            {showCreateOfficeModal && <CreateOfficeModal  onClose={toggleCreateOfficeModalClick} />}
             {isLoading && <Loader />}
             <Toolbar
                 pageTitle={"Offices"}
@@ -79,12 +89,17 @@ function Offices() {
                 showAddIcon={true}
                 toggleCreateModalClick={toggleCreateOfficeModalClick}
 
-                showFilterIcon={true}
-                toggleFilterModalClick={toggleFilterOfficeModalClick}
+                // showFilterIcon={true}
+                // toggleFilterModalClick={toggleFilterOfficeModalClick}
             />
             <div className="offices-container">
                 {filteredOffices.length > 0 ? (
-                    <Table items={filteredOffices} />
+                    <Table 
+                        items={filteredOffices} 
+
+                        useHandleRowClick={true}
+                        handleRowClick={handleTableRowClick}
+                    />
                 ) : (
                     !isLoading && <p className="no-offices-message">Nothing could be found.</p>
                 )}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './../styles/DoctorToolbar.css';
-import FilterDoctorModal from './FilterDoctorModal';
+import DoctorFilterModal from './DoctorFilterModal';
 
 const DoctorToolbar = ({ 
     pageTitle, 
@@ -32,7 +32,7 @@ const DoctorToolbar = ({
     return (
         <>
             {showFilterModal && (
-                <FilterDoctorModal
+                <DoctorFilterModal
                     onClose={toggleFilterModal}
                     doctors={doctors} 
                     offices={offices}

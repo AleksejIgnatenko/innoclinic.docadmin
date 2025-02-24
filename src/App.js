@@ -11,6 +11,7 @@ import PatientProfile from './pages/PatientProfile';
 import Appointments from './pages/Appointments';
 import DoctorProfile from './pages/DoctorProfile';
 import Offices from './pages/Offices';
+import OfficeInfo from './pages/OfficeInfo';
 
 function App() {
   const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/doctorProfile/:doctorId?" element={<DoctorProfile />} />  
                 <Route path="/appointments" element={<Appointments />} />
                 <Route path="/offices" element={<Offices />} />
+                <Route path="/OfficeInfo/:officeId" element={<OfficeInfo/>} />
               </Routes>
             </div>
           </>

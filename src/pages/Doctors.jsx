@@ -3,11 +3,12 @@ import "./../styles/Doctors.css";
 import Loader from '../components/Loader';
 import GetAllDoctorsFetchAsync from '../api/Profiles.API/GetAllDoctorsFetchAsync';
 import CreateDoctorProfileModal from '../components/CreateDoctorProfileModal';
-import DoctorToolbar from '../components/DoctorToolbar';
 import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
 import GetAllSpecializationFetchAsync from '../api/Services.API/GetAllSpecializationFetchAsync';
-import DoctorTable from '../components/DoctorTable';
 import { useNavigate } from 'react-router-dom';
+import Toolbar from '../components/Toolbar';
+import DoctorFilterModal from '../components/DoctorFilterModal';
+import Table from '../components/Table';
 
 function Doctors() {
     const navigate = useNavigate();
@@ -15,13 +16,15 @@ function Doctors() {
     const [doctors, setDoctors] = useState([]);
     const [offices, setOffices] = useState([]);
     const [specializations, setSpecializations] = useState([]);
-
+    
     const [searchTerm, setSearchTerm] = useState('');
-    const [showCreateDoctorProfileModal, setCreateDoctorProfileModal] = useState(false);
-    const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [selectedAddresses, setSelectedAddresses] = useState([]);
+    const [filteredDoctors, setFilteredDoctors] = useState([]);
     const [selectedSpecialization, setSelectedSpecialization] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(false)
+    
+    const [showCreateDoctorProfileModal, setCreateDoctorProfileModal] = useState(false);
+    const [showFilterDoctorModal, setShowFilterDoctorModal] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -30,7 +33,17 @@ function Doctors() {
 
                 const fetchedDoctors = await GetAllDoctorsFetchAsync();
                 setDoctors(fetchedDoctors);
-                setFilteredDoctors(fetchedDoctors);
+
+                const formattedDoctors = fetchedDoctors.map(({ id, firstName, lastName, middleName, specialization, status, dateOfBirth, office }) => ({
+                    id,
+                    fullName: `${firstName} ${lastName} ${middleName}`,
+                    specialization: specialization.specializationName,
+                    status,
+                    dateOfBirth,
+                    address: office.address,
+                }));
+
+                setFilteredDoctors(formattedDoctors);
 
                 const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
@@ -50,23 +63,25 @@ function Doctors() {
     useEffect(() => {
         const lowerCaseSearchTerm = searchTerm.toLowerCase();
         const filtered = doctors.filter(doctor => {
-            // const experience = doctor.careerStartYear ? new Date().getFullYear() - new Date(doctor.careerStartYear).getFullYear() + 1 : 0;
             return (
                 doctor.firstName.toLowerCase().includes(lowerCaseSearchTerm) ||
                 doctor.lastName.toLowerCase().includes(lowerCaseSearchTerm) ||
-                doctor.middleName.toLowerCase().includes(lowerCaseSearchTerm) //||
-                // doctor.specialization?.specializationName.toLowerCase().includes(lowerCaseSearchTerm) ||
-                // experience.toString().includes(lowerCaseSearchTerm) ||
-                // doctor.office?.address.toLowerCase().includes(lowerCaseSearchTerm)
+                doctor.middleName.toLowerCase().includes(lowerCaseSearchTerm)
             );
         });
-        setFilteredDoctors(filtered);
+
+        const formattedDoctors = filtered.map(({ id, firstName, lastName, middleName, specialization, status, dateOfBirth, office }) => ({
+            id,
+            fullName: `${firstName} ${lastName} ${middleName}`,
+            specialization: specialization.specializationName,
+            status,
+            dateOfBirth,
+            address: office.address,
+        }));
+
+        setFilteredDoctors(formattedDoctors);
     }, [searchTerm]);
-
-    const handleFilterDoctors = (filtered) => {
-        setFilteredDoctors(filtered);
-    };
-
+    
     const toggleLoader = (status) => {
         setIsLoading(status);
     };
@@ -75,6 +90,10 @@ function Doctors() {
         setCreateDoctorProfileModal(!showCreateDoctorProfileModal);
     };
 
+    const toggleFilterDoctorModal = () => {
+        setShowFilterDoctorModal(!showFilterDoctorModal);
+      };
+
     const handleTableRowClick = (id) => {
         navigate(`/doctorProfile/${id}`);
     };
@@ -82,28 +101,47 @@ function Doctors() {
     return (
         <>
             {showCreateDoctorProfileModal && <CreateDoctorProfileModal onClose={toggleCreateDoctorProfileModal} />}
+
             {isLoading && <Loader />}
-            <DoctorToolbar
+            
+            <Toolbar 
                 pageTitle={"Doctors"}
                 setSearchTerm={setSearchTerm}
-                doctors={doctors}
-                offices={offices}
-                specializations={specializations}
-                onFilterDoctors={handleFilterDoctors}
-                selectedAddresses={selectedAddresses}
-                setSelectedAddresses={setSelectedAddresses}
-                selectedSpecialization={selectedSpecialization}
-                setSelectedSpecialization={setSelectedSpecialization}
-                showCreateDoctorProfileModal={toggleCreateDoctorProfileModal}
+
                 showAddIcon={true}
+                toggleCreateModalClick={toggleCreateDoctorProfileModal}
+
                 showFilterIcon={true}
-                showDoctorFilterModal={true}
+                toggleFilterModalClick={toggleFilterDoctorModal}
             />
+
+            {showFilterDoctorModal && (
+                <DoctorFilterModal
+                    onClose={toggleFilterDoctorModal}
+                    doctors={doctors} 
+                    offices={offices}
+                    specializations={specializations}
+
+                    setFilteredDoctors={setFilteredDoctors}
+
+                    selectedAddresses={selectedAddresses}
+                    setSelectedAddresses={setSelectedAddresses}
+
+                    selectedSpecialization={selectedSpecialization}
+                    setSelectedSpecialization={setSelectedSpecialization}
+                />
+            )}
+
             <div className="doctors-container">
                 {filteredDoctors.length > 0 ? (
-                    <DoctorTable doctors={filteredDoctors} />
+                    <Table 
+                        items={filteredDoctors} 
+                        
+                        useHandleRowClick={true}
+                        handleRowClick={handleTableRowClick}
+                    />
                 ) : (
-                    !isLoading && <p>Nothing could be found.</p>
+                    !isLoading && <p className="no-doctors-message">Nothing could be found.</p>
                 )}
             </div>
         </>

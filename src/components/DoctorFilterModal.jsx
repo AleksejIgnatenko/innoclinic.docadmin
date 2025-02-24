@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
-import './../styles/FilterDoctorModal.css';
+import './../styles/DoctorFilterModal.css';
 
-const FilterDoctorModal = ({
+const DoctorFilterModal = ({
     onClose,
     doctors,
     offices,
     specializations,
-    onFilterDoctors,
+    setFilteredDoctors,
     selectedAddresses,
     setSelectedAddresses,
     selectedSpecialization,
@@ -41,14 +41,34 @@ const FilterDoctorModal = ({
             (selectedAddresses.length === 0 || selectedAddresses.includes(doctor.office.address)) &&
             (selectedSpecialization === "" || doctor.specialization.specializationName === selectedSpecialization)
         );
-        onFilterDoctors(filteredDoctors);
+
+        const formattedDoctors = filteredDoctors.map(({ id, firstName, lastName, middleName, specialization, status, dateOfBirth, office }) => ({
+            id,
+            fullName: `${firstName} ${lastName} ${middleName}`,
+            specialization: specialization.specializationName,
+            status,
+            dateOfBirth,
+            address: office.address,
+        }));
+
+        setFilteredDoctors(formattedDoctors);
         onClose();
     };
 
     const resetFilters = () => {
         setSelectedAddresses([]);
         setSelectedSpecialization("");
-        onFilterDoctors(doctors);
+
+        const formattedDoctors = doctors.map(({ id, firstName, lastName, middleName, specialization, status, dateOfBirth, office }) => ({
+            id,
+            fullName: `${firstName} ${lastName} ${middleName}`,
+            specialization: specialization.specializationName,
+            status,
+            dateOfBirth,
+            address: office.address,
+        }));
+
+        setFilteredDoctors(formattedDoctors);
         onClose();
     };
 
@@ -94,4 +114,4 @@ const FilterDoctorModal = ({
     );
 };
 
-export default FilterDoctorModal;
+export default DoctorFilterModal;

@@ -1,17 +1,18 @@
 import React from 'react';
 import "./../styles/Table.css";
+import ColumnNamesEnum from '../enums/ColumnNamesEnum';
 
 const Table = ({
     items,
 
     showApproveButton = false,
-    handleApprove,
+    handleApprove = () => {},
 
     showCancelButton = false,
-    handleCancel,
+    handleCancel = () => {},
 
     useHandleRowClick = false,
-    handleRowClick,
+    handleRowClick = () => {},
 
     showAppointmentsResults = false,
 }) => {
@@ -35,7 +36,9 @@ const Table = ({
                 <thead>
                     <tr>
                         {uniqueKeys.map((key) => (
-                            <th key={key}>{key.charAt(0).toUpperCase() + key.slice(1)}</th>
+                            <th key={key}>
+                                {ColumnNamesEnum[key] || key.charAt(0).toUpperCase() + key.slice(1)}
+                            </th>
                         ))}
                         {showAppointmentsResults && <th>Medical Results</th>}
                         {(showApproveButton || showCancelButton) && <th></th>}
@@ -47,11 +50,11 @@ const Table = ({
                             id={item.id}
                             key={item.id}
                             onClick={useHandleRowClick ? () => handleRowClick(item.id) : null}
-                            style={{ cursor: 'pointer' }}
                             className={item.status && item.status === 'Approved' ? 'approved-appointment' : ''}
+
                         >
                             {uniqueKeys.map((key) => (
-                                <td key={key} data-label={key}>
+                                <td key={key} data-label={key} style={{cursor: useHandleRowClick ? 'pointer' : 'default'}}>
                                     {key === 'fullNameOfThePatient' && item.status === 'Approved' ? (
                                         <a href={`/patientProfile/${item.patientId}`}>
                                             {item[key] || "Not found"}

@@ -8,7 +8,6 @@
     flex-direction: column;
 }
 
-/* .no-doctors-message {
-    margin-left: 40%;
-    margin-top: 15%;
-} */
+.no-doctors-message {
+    margin-left: 45%;
+}

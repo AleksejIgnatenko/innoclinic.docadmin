@@ -44,7 +44,6 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
 
     const [firstNameValid, setFirstNameValid] = useState(false);
     const [lastNameValid, setLastNameValid] = useState(false);
-    const [middleNameValid, setMiddleNameValid] = useState(false);
     const [cabinetNumberValid, setCabinetNumberValid] = useState(false);
     const [dateOfBirthValid, setDateOfBirthValid] = useState(false);
     const [specializationValid, setSpecializationValid] = useState(false);

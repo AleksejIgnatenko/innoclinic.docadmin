@@ -1,9 +1,9 @@
 :root {
-    --light-createDoctorProfileModal: #ffffff;
-    --dark-createDoctorProfileModal: #171717;
+    --light-create-officeModal: #ffffff;
+    --dark-create-officeModal: #171717;
 
-    --light-createDoctorProfileModal-border: #999;
-    --dark-createDoctorProfileModal-border: #333;
+    --light-create-officeModal-border: #999;
+    --dark-create-officeModal-border: #333;
 
     --light-gray: #999;
     --dark-gray: #494949;
@@ -12,25 +12,25 @@
 }
 
 [data-theme='light'] {
-    --createDoctorProfile-bg: var(--light-createDoctorProfileModal);
-    --createDoctorProfile-fg: var(--dark-createDoctorProfileModal);
+    --create-office-bg: var(--light-create-officeModal);
+    --create-office-fg: var(--dark-create-officeModal);
 
-    --border-color-createDoctorProfile: var(--light-createDoctorProfileModal-border);
+    --border-color-create-office: var(--light-create-officeModal-border);
 
     --gray: var(--light-gray);
 }
 
 [data-theme='dark'] {
-    --createDoctorProfile-bg: var(--dark-createDoctorProfileModal);
-    --createDoctorProfile-fg: var(--light-createDoctorProfileModal);
+    --create-office-bg: var(--dark-create-officeModal);
+    --create-office-fg: var(--light-create-officeModal);
 
-    --border-color-createDoctorProfile: var(--dark-createDoctorProfileModal-border);
+    --border-color-create-office: var(--dark-create-officeModal-border);
 
     --gray: var(--dark-gray);
 }
 
-.createDoctorProfile-section {
-    background: var(--createDoctorProfile-bg);
+.create-office-section {
+    background: var(--create-office-bg);
     max-width: 530px;
     width: 100%;
     padding: 30px 0;
@@ -38,15 +38,15 @@
     flex-direction: column;
     align-items: center;
     border-radius: 10px;
-    border: 1px solid var(--border-color-createDoctorProfile);
+    border: 1px solid var(--border-color-create-office);
     margin-top: 15%;
 }
 
-.createDoctorProfile-section h2 {
+.create-office-section h2 {
     margin: 0 0 12px 0;
 }
 
-.createDoctorProfile-stage-progress {
+.create-office-stage-progress {
     list-style: none;
     width: 80%;
     display: flex; 
@@ -55,7 +55,7 @@
     margin: 0;
 }
 
-.createDoctorProfile-stage-progress li {
+.create-office-stage-progress li {
     float: left;
     width: 33.33%;
     position: relative;
@@ -64,7 +64,7 @@
     font-size: 12px;
 }
 
-.createDoctorProfile-stage-progress li::before {
+.create-office-stage-progress li::before {
     display: block;
     content: "";
     height: 32px;
@@ -76,7 +76,7 @@
     transition: border 0.1s ease-in-out 0s, background 0.1s ease-in-out 0s;
 }
 
-.createDoctorProfile-stage-progress li::after {
+.create-office-stage-progress li::after {
     position: absolute;
     content: "";
     width: calc(100% - 40px);
@@ -91,21 +91,21 @@
     transition: background-position 0.3s ease-in-out;
 }
 
-.createDoctorProfile-stage-progress li:first-child::after {
+.create-office-stage-progress li:first-child::after {
     content: none;
 }
 
-.createDoctorProfile-stage-progress li.createDoctorProfile-active-stage::before {
+.create-office-stage-progress li.create-office-active-stage::before {
     border-color: var(--accent);
     transition: border 0.1s ease-in-out 0.3s, background 0.1s ease-in-out 0.3s;
 }
 
-.createDoctorProfile-stage-progress li.createDoctorProfile-active-stage::after {
+.create-office-stage-progress li.create-office-active-stage::after {
     background-position: -190% 0;
 }
 
-.createDoctorProfile-stage-progress li:has(~ .createDoctorProfile-active-stage)::before,
-.createDoctorProfile-stage-progress li:has(~ .createDoctorProfile-active-stage)::after {
+.create-office-stage-progress li:has(~ .create-office-active-stage)::before,
+.create-office-stage-progress li:has(~ .create-office-active-stage)::after {
     border-color: var(--accent);
     background: var(--accent);
     background-position: -190% 0;
@@ -119,14 +119,14 @@
 }
 
 /* Stage 1 */
-.createDoctorProfile-form-wrapper {
+.create-office-form-wrapper {
     width: 100%;
     overflow: hidden;
     margin: 24px 0;
     position: relative;
 }
 
-.createDoctorProfile-input-wrapper input {
+.create-office-input-wrapper input {
     display: block;
     font-size: 16px;
     width: 100%;
@@ -139,7 +139,7 @@
     outline: none;
     border-radius: 5px;
     position: relative;
-    color: var(--createDoctorProfile-fg);
+    color: var(--create-office-fg);
 }
 
 .input.default-input-border.custom-select option {
@@ -148,20 +148,20 @@
     color: #333;
 }
 
-.createDoctorProfile-input-wrapper input:focus~.createDoctorProfile-input-label,
-.createDoctorProfile-input-wrapper input:not(:placeholder-shown)~.createDoctorProfile-input-label,
+.create-office-input-wrapper input:focus~.create-office-input-label,
+.create-office-input-wrapper input:not(:placeholder-shown)~.create-office-input-label,
 .label-active {
     opacity: 1 !important;
     visibility: visible !important;
     top: -7px !important;
     color: var(--accent) !important;
     font-size: 13px !important;
-    background-color: var(--createDoctorProfile-bg) !important;
+    background-color: var(--create-office-bg) !important;
     z-index: 2 !important;
 }
 
 .default-input-border {
-    border: 1px solid var(--border-color-createDoctorProfile);
+    border: 1px solid var(--border-color-create-office);
 }
 
 .filtred-list {
@@ -170,13 +170,13 @@
     overflow-y: auto;
 }
 
-.createDoctorProfile-form {
+.create-office-form {
     display: flex;
     transition: transform 0.3s ease-in-out;
 }
 
-.createDoctorProfile-form-wrapper::before,
-.createDoctorProfile-form-wrapper::after {
+.create-office-form-wrapper::before,
+.create-office-form-wrapper::after {
     position: absolute;
     content: "";
     height: 100%;
@@ -185,28 +185,28 @@
     z-index: 1;
 }
 
-.createDoctorProfile-form-wrapper::before {
+.create-office-form-wrapper::before {
     left: 0;
     width: 24px;
-    background: linear-gradient(90deg, var(--createDoctorProfile-bg), rgba(32, 32, 32, 0));
+    background: linear-gradient(90deg, var(--create-office-bg), rgba(32, 32, 32, 0));
 }
 
-.createDoctorProfile-form-wrapper::after {
+.create-office-form-wrapper::after {
     right: 0;
-    background: linear-gradient(-90deg, var(--createDoctorProfile-bg), rgba(32, 32, 32, 0));
+    background: linear-gradient(-90deg, var(--create-office-bg), rgba(32, 32, 32, 0));
 }
 
-.createDoctorProfile-inputs {
+.create-office-inputs {
     margin-top: 30px;
     padding-top: 30px;
 }
 
-.createDoctorProfile-input-wrapper {
+.create-office-input-wrapper {
     position: relative;
     margin-top: 10px;
 }
 
-.createDoctorProfile-input-label {
+.create-office-input-label {
     position: absolute;
     top: 20px;
     font-size: 1.1rem;
@@ -219,7 +219,7 @@
     opacity: 1;
 }
 
-.createDoctorProfile-input {
+.create-office-input {
     display: block;
     font-size: 16px;
     width: 100%;
@@ -235,8 +235,8 @@
     border: 2px solid var(--gray);
 }
 
-.createDoctorProfile-input-wrapper input,
-.createDoctorProfile-input-wrapper select {
+.create-office-input-wrapper input,
+.create-office-input-wrapper select {
     display: block;
     font-size: 16px;
     width: 100%;
@@ -252,8 +252,8 @@
     color: var(--appointmentModal-fg);
 }
 
-/* .createDoctorProfile-input:focus,
-.createDoctorProfile-input:focus {
+/* .create-office-input:focus,
+.create-office-input:focus {
     border: 2px solid #1a73e8;
 } */
 
@@ -277,7 +277,7 @@
     width: 200px;
     border-radius: 5px;
     cursor: pointer;
-    color: var(--createDoctorProfile-bg);
+    color: var(--create-office-bg);
     position: relative;
     background-size: 200% 200%;
     background-position: 100% 0;
@@ -320,23 +320,23 @@
     top: -7px !important;
     color: var(--error) !important;
     font-size: 13px !important;
-    background-color: var(--createDoctorProfile-bg) !important;
+    background-color: var(--create-office-bg) !important;
     z-index: 2 !important;
 }
 
 
 /* Stage 2 */
 .upload-area {
-  border: 2px dashed var(--accent);
-  border-radius: 40px;
-  margin: 30px 20px 15px 20px;
-  padding: 30px 50px;
-  min-height: 350px;
-  text-align: center;
-  background-size: contain; 
-  background-position: center;
-  background-repeat: no-repeat; 
-  cursor: pointer;
+    border: 2px dashed var(--accent);
+    border-radius: 40px;
+    margin: 30px 20px 15px 20px;
+    padding: 30px 50px;
+    min-height: 350px;
+    text-align: center;
+    background-size: contain; 
+    background-position: center;
+    background-repeat: no-repeat; 
+    cursor: pointer;
 }
 
   .upload-area__header {
@@ -375,8 +375,8 @@
   }
 
   .upload-area__tooltip:hover .upload-area__tooltip-data {
-    background-color: var(--createDoctorProfile-bg); 
-    color: var(--createDoctorProfile-fg);
+    background-color: var(--create-office-bg); 
+    color: var(--create-office-fg);
     border-radius: 5px; 
     padding: 2px 4px; 
     position: absolute; 
@@ -431,7 +431,7 @@
   .drop-zoon__paragraph {
     font-size: 0.9375rem;
     margin: 0;
-    margin-top: 0.625rem;
+    margin-top: auto;
     transition: opacity 300ms ease-in-out;
   }
   
@@ -588,7 +588,7 @@
   
   .uploaded-file__name {
     width: 100%;
-    max-width: 6.25rem; /* 100px */
+    max-width: 6.25rem;
     display: inline-block;
     font-size: 1rem;
     white-space: nowrap;
@@ -599,5 +599,3 @@
   .uploaded-file__counter {
     font-size: 1rem;
   }  
-
-  

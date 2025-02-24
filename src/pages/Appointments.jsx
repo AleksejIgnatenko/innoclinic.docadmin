@@ -119,8 +119,8 @@ function Appointments() {
 
       return {
         time,
-        fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
-        fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
+        fullNameOfTheDoctor: `${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`,
+        fullNameOfThePatient: `${patient.firstName} ${patient.lastName} ${patient.middleName}`,
         patientsPhoneNumber,
         medicalService: medicalService.serviceName,
       };
