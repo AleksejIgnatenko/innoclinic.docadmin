@@ -10,7 +10,7 @@ import AppointmentFilterModal from '../components/AppointmentFilterModal';
 import Toolbar from '../components/Toolbar';
 import Table from '../components/Table';
 import Calendar from '../components/Calendar';
-import UpdateAppointmentModelRequest from '../models/UpdateAppointmentModelRequest';
+import UpdateAppointmentModelRequest from '../models/AppointmentModels/UpdateAppointmentModelRequest';
 import UpdateAppointmentFetchAsync from '../api/Appointments.API/UpdateAppointmentFetchAsync';
 import DeleteAppointmentFetchAsync from '../api/Appointments.API/DeleteAppointmentFetchAsync';
 
@@ -113,11 +113,12 @@ function Appointments() {
       );
     });
 
-    const formattedAppointments = filteredAppointments.map(({ time, doctor, patient, medicalService }) => {
+    const formattedAppointments = filteredAppointments.map(({ id, time, doctor, patient, medicalService }) => {
       const patientAccount = filteredAppointments.find(account => account.id === patient.accountId);
       const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
 
       return {
+        id,
         time,
         fullNameOfTheDoctor: `${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`,
         fullNameOfThePatient: `${patient.firstName} ${patient.lastName} ${patient.middleName}`,
@@ -144,10 +145,6 @@ function Appointments() {
   const toggleCalendarClick = () => {
     setShowCalendar(!showCalendar);
   };
-
-  const handleSelectDate = (date) => {
-    setSelectedDate(date);
-  }
 
   async function handleApproveAppointmentAsync(appointmentId) {
     const appointment = appointments.find(a => a.id === appointmentId);
@@ -226,7 +223,6 @@ function Appointments() {
           currentDate={new Date(selectedDate)}
           onClose={toggleCalendarClick}
           setSelectedDate={setSelectedDate}
-          onSelectDate={handleSelectDate}
         />
       )}
 

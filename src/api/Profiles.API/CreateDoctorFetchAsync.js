@@ -10,7 +10,7 @@ async function CreateDoctorFetchAsync(doctorModel) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${ProfilesAPI}/Doctors`, {
+        const response = await fetch(`${ProfilesAPI}/Doctor`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",

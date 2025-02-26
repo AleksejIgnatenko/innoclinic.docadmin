@@ -2,7 +2,7 @@ import { ProfilesAPI } from "../api";
 
 async function GetAllDoctorsFetchAsync() {
     try {
-        const response = await fetch(`${ProfilesAPI}/Doctors`, {
+        const response = await fetch(`${ProfilesAPI}/Doctor`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'

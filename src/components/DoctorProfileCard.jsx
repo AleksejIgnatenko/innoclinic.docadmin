@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './../styles/DoctorProfileCard.css';
 import UpdateDoctorFetchAsync from '../api/Profiles.API/UpdateDoctorFetchAsync';
-import UpdateDoctorModelRequest from '../models/UpdateDoctorModelRequest';
+import UpdateDoctorModelRequest from '../models/doctorModels/UpdateDoctorModelRequest';
 
 const DoctorProfileCard = ({ doctor, specializations, offices }) => {
     const [isEditing, setIsEditing] = useState(false);
@@ -45,10 +45,6 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
     const [firstNameValid, setFirstNameValid] = useState(false);
     const [lastNameValid, setLastNameValid] = useState(false);
     const [cabinetNumberValid, setCabinetNumberValid] = useState(false);
-    const [dateOfBirthValid, setDateOfBirthValid] = useState(false);
-    const [specializationValid, setSpecializationValid] = useState(false);
-    const [officeValid, setOfficeValid] = useState(false);
-    const [careerStartYearValid, setCareerStartYearValid] = useState(false);
 
     const handleEditClick = () => {
         if (isEditing) {
@@ -258,12 +254,10 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
             input.classList.add('error-input-border');
             label.classList.add('error-label');
             label.textContent = 'Please, choose the office';
-            setOfficeValid(false);
         } else {
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             label.textContent = 'Office';
-            setOfficeValid(true);
         }
     };
 
@@ -337,6 +331,8 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
         }
     };
 
+    const isFormValid = updateFirstName && updateLastName && updateDateofBirth && updateSelectedSpecializationId && updateSelectedOfficeId && updateCareerStartYear && updateSelectedStatus;
+
     async function handleSave() {
         setIsEditing(false);
         const updateDoctorModel = new UpdateDoctorModelRequest(updateFirstName, updateLastName, updateMiddleName,
@@ -355,7 +351,10 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                         )}
                         {isEditing ? (
                             <>
-                                <i className='bx bx-check' onClick={handleSave}></i>
+                                <i
+                                    className={`bx bx-check ${!isFormValid ? 'invalid' : ''}`}
+                                    onClick={handleSave}
+                                ></i>
                                 <i className='bx bx-x' onClick={handleEditClick}></i>
                             </>
                         ) : null}

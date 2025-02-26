@@ -1,8 +1,8 @@
-import { ProfilesAPI } from "../api";
+import { OfficesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function UpdateDoctorFetchAsync(doctorId, doctorModel) {
+async function UpdateOfficeFetchAsync(id, officeModel) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,24 +10,26 @@ async function UpdateDoctorFetchAsync(doctorId, doctorModel) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${ProfilesAPI}/Doctor/${doctorId}`, {
+        const response = await fetch(`${OfficesAPI}/Office/${id}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify(doctorModel)
+            body: JSON.stringify(officeModel)
         });
 
-        if (!response.ok) {
+        if (response.ok) {
+            console.log("ok");
+        } else if (response.status === 400) {
             const data = await response.json();
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in updating patient:', error);
-        alert('An error occurred while updating the patient');
+        console.error('Error in creating patient:', error);
+        alert('An error occurred while creating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }
 
-export default UpdateDoctorFetchAsync;
+export default UpdateOfficeFetchAsync;

@@ -4,7 +4,9 @@ import EmailExistsAsync from '../api/Authorization.API/EmailExistsAsync';
 import GetAllSpecializationFetchAsync from '../api/Services.API/GetAllSpecializationFetchAsync';
 import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
 import CreateDoctorFetchAsync from '../api/Profiles.API/CreateDoctorFetchAsync';
-import CreateDoctorModelRequest from '../models/CreateDoctorModelRequest';
+import CreateDoctorModelRequest from '../models/doctorModels/CreateDoctorModelRequest';
+import ImageUploader from './ImageUploader';
+import imageTypes from '../constants/ImageTypes';
 
 const CreateDoctorProfileModal = ({ onClose }) => {
 
@@ -40,19 +42,17 @@ const CreateDoctorProfileModal = ({ onClose }) => {
     const [firstNameValid, setFirstNameValid] = useState(false);
     const [lastNameValid, setLastNameValid] = useState(false);
     const [emailValid, setEmailValid] = useState(false);
-    const [officeValid, setOfficeValid] = useState(false);
 
     const [filterSpecialization, setFilterSpecialization] = useState('');
 
     const [file, setFile] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [fileName, setFileName] = useState('Project 1');
-    const [fileType, setFileType] = useState('');
+    const [imgPreview, setImgPreview] = useState(null);
+    const [imgLoading, setImgLoading] = useState(false);
+    const [uploadProgressPercent, setUploadProgressPercent] = useState(0);
+    const [imgFileName, setImgFileName] = useState('Project 1');
+    const [imgFileType, setImgFileType] = useState('');
 
-    const imagesTypes = ["jpeg", "png", "svg", "gif"];
-    const dropZoonRef = useRef(null);
+    const imgDropZoonRef = useRef(null);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -85,18 +85,18 @@ const CreateDoctorProfileModal = ({ onClose }) => {
         };
     }, [onClose]);
 
-    const handleDragOver = (e) => {
+    const handleDragOverImg = (e) => {
         e.preventDefault();
-        dropZoonRef.current.classList.add('drop-zoon--over');
+        imgDropZoonRef.current.classList.add('drop-zoon--over');
     };
 
-    const handleDragLeave = (e) => {
-        dropZoonRef.current.classList.remove('drop-zoon--over');
+    const handleDragLeaveImg = (e) => {
+        imgDropZoonRef.current.classList.remove('drop-zoon--over');
     };
 
-    const handleDrop = (e) => {
+    const handleDropImg = (e) => {
         e.preventDefault();
-        dropZoonRef.current.classList.remove('drop-zoon--over');
+        imgDropZoonRef.current.classList.remove('drop-zoon--over');
         const droppedFile = e.dataTransfer.files[0];
         if (validateFile(droppedFile)) {
             setFile(droppedFile);
@@ -104,11 +104,11 @@ const CreateDoctorProfileModal = ({ onClose }) => {
         }
     };
 
-    const handleButtonClick = () => {
+    const handleButtonClickImg = () => {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (e) => {
+    const handleChangeImg = (e) => {
         const selectedFile = e.target.files[0];
         if (validateFile(selectedFile)) {
             setFile(selectedFile);
@@ -119,14 +119,14 @@ const CreateDoctorProfileModal = ({ onClose }) => {
     const validateFile = (file) => {
         const fileType = file.type;
         const fileSize = file.size;
-        let isImage = imagesTypes.filter((type) => fileType.indexOf(`image/${type}`) !== -1);
+        let isImage = imageTypes.filter((type) => fileType.indexOf(`image/${type}`) !== -1);
 
         if (isImage.length !== 0) {
             if (fileSize <= 2000000) {
                 if (isImage[0] === 'jpeg') {
-                    setFileType('jpg');
+                    setImgFileType('jpg');
                 } else {
-                    setFileType(isImage[0]);
+                    setImgFileType(isImage[0]);
                 }
                 return true;
             } else {
@@ -143,19 +143,19 @@ const CreateDoctorProfileModal = ({ onClose }) => {
         const fileReader = new FileReader();
         fileReader.readAsDataURL(file);
 
-        setLoading(true);
-        setPreview(null);
-        setProgress(0);
+        setImgLoading(true);
+        setImgPreview(null);
+        setUploadProgressPercent(0);
 
         fileReader.onload = () => {
             setTimeout(() => {
-                setLoading(false);
-                setPreview(fileReader.result);
+                setImgLoading(false);
+                setImgPreview(fileReader.result);
                 progressMove();
             }, 600);
         };
 
-        setFileName(file.name);
+        setImgFileName(file.name);
     };
 
     const progressMove = () => {
@@ -165,7 +165,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                 clearInterval(intervalId);
             } else {
                 counter += 10;
-                setProgress(counter);
+                setUploadProgressPercent(counter);
             }
         }, 100);
     };
@@ -429,12 +429,10 @@ const CreateDoctorProfileModal = ({ onClose }) => {
             input.classList.add('error-input-border');
             label.classList.add('error-label');
             label.textContent = 'Please, choose the office';
-            setOfficeValid(false);
         } else {
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             label.textContent = 'Office';
-            setOfficeValid(true);
         }
     };
 
@@ -464,10 +462,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
         }
     };
 
-
-    const isFormValid = () => {
-        return firstNameValid && lastNameValid && dateOfBirth && emailValid && selectedSpecializationId && officeValid && careerStartYear && selectedStatus;
-    };
+    const isFormValid = firstNameValid && lastNameValid && dateOfBirth && emailValid && selectedSpecializationId && selectedOfficeId && careerStartYear && selectedStatus;
 
     async function toggleCreateDoctorProfileAsync() {
         var createDoctorRequest = new CreateDoctorModelRequest(firstName, lastName, middleName, 1, dateOfBirth, email, selectedSpecializationId, selectedOfficeId, careerStartYear, selectedStatus);
@@ -502,53 +497,23 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                 </ul>
                 <div className="createDoctorProfile-form-wrapper">
                     <div className="createDoctorProfile-form" style={{ transform: `translateX(-${currentStage * 100}%)` }}>
-                        <div className='stage'>
-                            <div className="upload-area__header">
-                                <h1 className="upload-area__title">Upload your image</h1>
-                                <div className="upload-area__paragraph">
-                                    File should be an image
-                                    <strong className="upload-area__tooltip">
-                                        Like
-                                        <span className="upload-area__tooltip-data">{imagesTypes.join(', .')}</span>
-                                    </strong>
-                                    <div className="drop-zoon__paragraph">or drop your file here or Click to browse</div>
-                                </div>
-                            </div>
-                            <div
-                                id="uploadArea"
-                                className="upload-area"
-                                style={{ backgroundImage: preview ? `url(${preview})` : 'none' }}
-                                ref={dropZoonRef}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
-                                onClick={handleButtonClick}>
-                                <span className="drop-zoon__icon">
-                                    <i className="bx bxs-file-image"></i>
-                                </span>
-                                <span id="loadingText" className={`drop-zoon__loading-text ${loading ? 'show' : ''}`}>Please Wait</span>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    id="fileInput"
-                                    className="drop-zoon__file-input"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                />
-                                <div id="fileDetails" className="upload-area__file-details file-details">
-                                    <h3 className="file-details__title">Uploaded File</h3>
-                                    <div id="uploadedFile" className="uploaded-file">
-                                        <div className="uploaded-file__icon-container">
-                                            <i className="bx bxs-file-blank uploaded-file__icon"></i>
-                                            <span className="uploaded-file__icon-text">{fileType}</span>
-                                        </div>
-                                        <div id="uploadedFileInfo" className="uploaded-file__info">
-                                            <span className="uploaded-file__name">{fileName}</span>
-                                            <span className="uploaded-file__counter">{progress}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div className='stage'>
+                            <ImageUploader 
+                                imgPreview={imgPreview}
+                                imgLoading={imgLoading}
+                                uploadProgressPercent={uploadProgressPercent}
+                                imgFileName={imgFileName}
+                                imgFileType={imgFileType}
+
+                                fileInputRef={fileInputRef}
+
+                                imgDropZoonRef={imgDropZoonRef}
+                                handleDragOverImg={handleDragOverImg}
+                                handleDragLeaveImg={handleDragLeaveImg}
+                                handleDropImg={handleDropImg}
+                                handleButtonClickImg={handleButtonClickImg}
+                                handleChangeImg={handleChangeImg}
+                            />
                         </div>
                         <div className='stage'>
                             <div className="createDoctorProfile-inputs">
@@ -653,7 +618,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                                     >
                                         <option value="" disabled>Select an office</option>
                                         {offices.map(office => (
-                                            <option key={office.id} value={office.id}>{office.address}</option>
+                                            <option key={office.id} value={office.id}>{office.city} {office.street} {office.houseNumber} {office.officeNumber}</option>
                                         ))}
                                     </select>
                                     <label className="createDoctorProfile-input-label label-active" id="createDoctorProfile-office-label">Office</label>
@@ -708,7 +673,7 @@ const CreateDoctorProfileModal = ({ onClose }) => {
                         </button>
                     ) : (
                         <button
-                            className={`primary-btn ${!isFormValid() ? 'disabled-primary-btn' : ''}`}
+                            className={`primary-btn ${!isFormValid ? 'disabled-primary-btn' : ''}`}
                             onClick={toggleCreateDoctorProfileAsync}
                             disabled={!isFormValid}
                         >

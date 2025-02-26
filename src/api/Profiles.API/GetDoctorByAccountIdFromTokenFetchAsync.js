@@ -10,7 +10,7 @@ async function GetDoctorByAccountIdFromTokenFetchAsync() {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${ProfilesAPI}/Doctors/doctor-by-account-id-from-token`, {
+        const response = await fetch(`${ProfilesAPI}/Doctor/doctor-by-account-id-from-token`, {
             method: 'GET',
             headers: {
                 "Content-Type": "application/json",

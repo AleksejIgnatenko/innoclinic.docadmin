@@ -26,12 +26,13 @@ function Offices() {
                 const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
 
-                const formattedOffices = fetchedOffices.map(({ id, address, registryPhoneNumber, isActive }) => ({
+                const formattedOffices = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
                     id,
-                    address,
+                    address: city + " " + street + " " + houseNumber + " " + officeNumber,
                     status: isActive ? 'Active' : 'Inactive',
                     registryPhoneNumber,
                 }));
+
                 setFilteredOffices(formattedOffices);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -47,14 +48,18 @@ function Offices() {
         const lowerCaseSearchTerm = searchTerm.toLowerCase();
         const filtered = offices.filter(office => {
             return (
-                office.address.toLowerCase().includes(lowerCaseSearchTerm)
+                office.city.toLowerCase().includes(lowerCaseSearchTerm) ||
+                office.street.toLowerCase().includes(lowerCaseSearchTerm) ||
+                office.houseNumber.toString().includes(lowerCaseSearchTerm) ||
+                office.officeNumber.toString().includes(lowerCaseSearchTerm)
             );
-        }).map(({ address, registryPhoneNumber, isActive }) => ({
-            address,
+        }).map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
+            id,
+            address: city + " " + street + " " + houseNumber + " " + officeNumber,
             status: isActive ? 'Active' : 'Inactive',
             registryPhoneNumber,
         }));
-
+    
         setFilteredOffices(filtered);
     }, [searchTerm]);
 
@@ -66,17 +71,9 @@ function Offices() {
         setShowCreateOfficeModal(!showCreateOfficeModal)
     }
 
-    const toggleFilterOfficeModalClick = () => {
-        console.log("filter modal click")
-    }
-
     const handleTableRowClick = (id) => {
         navigate(`/officeInfo/${id}`);
     };
-
-    // const createOfficeModal = () => {
-    //     
-    // };
 
     return (
         <>
@@ -88,9 +85,6 @@ function Offices() {
 
                 showAddIcon={true}
                 toggleCreateModalClick={toggleCreateOfficeModalClick}
-
-                // showFilterIcon={true}
-                // toggleFilterModalClick={toggleFilterOfficeModalClick}
             />
             <div className="offices-container">
                 {filteredOffices.length > 0 ? (

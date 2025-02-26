@@ -78,6 +78,10 @@
     cursor: pointer;
 }
 
+.icon-container i.invalid {
+    color: var(--office-info-card-bg);
+}
+
 .doctor-profile-card-header:after {
     position: absolute;
     content: '';

@@ -1,6 +1,6 @@
 import './../styles/SignInModal.css';
 import React, { useState, useEffect } from 'react';
-import SignInModelRequest from '../models/SignInModelRequest';
+import SignInModelRequest from '../models/accountModels/SignInModelRequest';
 import SignInFetchAsync from '../api/Authorization.API/SignInFetchAsync';
 
 const SignInModal = ({ onClose, onOpenSignUp }) => {

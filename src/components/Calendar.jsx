@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import './../styles/Calendar.css';
 
-const Calendar = ({ onClose, setSelectedDate, onSelectDate, currentDate }) => {
+const Calendar = ({ onClose, setSelectedDate, currentDate }) => {
     useEffect(() => {
         const calendar = document.querySelector('.calendar-container');
         const month_names = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -40,7 +40,6 @@ const Calendar = ({ onClose, setSelectedDate, onSelectDate, currentDate }) => {
                     day.onclick = () => {
                         const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
                         setSelectedDate(formattedDate);
-                        onSelectDate(formattedDate);
                         onClose();
                     };
 

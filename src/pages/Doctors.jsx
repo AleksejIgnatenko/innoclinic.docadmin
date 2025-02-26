@@ -40,7 +40,7 @@ function Doctors() {
                     specialization: specialization.specializationName,
                     status,
                     dateOfBirth,
-                    address: office.address,
+                    address: office.city + " " + office.street + " " + office.houseNumber + " " + office.officeNumber,
                 }));
 
                 setFilteredDoctors(formattedDoctors);
@@ -76,7 +76,7 @@ function Doctors() {
             specialization: specialization.specializationName,
             status,
             dateOfBirth,
-            address: office.address,
+            address: office.city + " " + office.street + " " + office.houseNumber + " " + office.officeNumber,
         }));
 
         setFilteredDoctors(formattedDoctors);

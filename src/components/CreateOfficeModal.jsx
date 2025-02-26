@@ -1,5 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './../styles/CreateOfficeModal.css';
+import OfficeModelRequest from '../models/officeModels/OfficeModelRequest';
+import CreateOfficeFetchAsync from '../api/Offices.API/CreateOfficeFetchAsync';
+import ImageUploader from './ImageUploader';
+import imageTypes from '../constants/ImageTypes';
 
 const CreateOfficeModal = ({ onClose }) => {
 
@@ -22,14 +26,13 @@ const CreateOfficeModal = ({ onClose }) => {
     const [registryPhoneNumberValid, setRegistryPhoneNumberValid] = useState(false);
 
     const [file, setFile] = useState(null);
-    const [preview, setPreview] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [fileName, setFileName] = useState('Project 1');
-    const [fileType, setFileType] = useState('');
+    const [imgPreview, setImgPreview] = useState(null);
+    const [imgLoading, setImgLoading] = useState(false);
+    const [uploadProgressPercent, setUploadProgressPercent] = useState(0);
+    const [imgFileName, setImgFileName] = useState('Project 1');
+    const [imgFileType, setImgFileType] = useState('');
 
-    const imagesTypes = ["jpeg", "png", "svg", "gif"];
-    const dropZoonRef = useRef(null);
+    const imgDropZoonRef = useRef(null);
     const fileInputRef = useRef(null);
 
     useEffect(() => {
@@ -46,18 +49,18 @@ const CreateOfficeModal = ({ onClose }) => {
         };
     }, [onClose]);
 
-    const handleDragOver = (e) => {
+    const handleDragOverImg = (e) => {
         e.preventDefault();
-        dropZoonRef.current.classList.add('drop-zoon--over');
+        imgDropZoonRef.current.classList.add('drop-zoon--over');
     };
 
-    const handleDragLeave = (e) => {
-        dropZoonRef.current.classList.remove('drop-zoon--over');
+    const handleDragLeaveImg = (e) => {
+        imgDropZoonRef.current.classList.remove('drop-zoon--over');
     };
 
-    const handleDrop = (e) => {
+    const handleDropImg = (e) => {
         e.preventDefault();
-        dropZoonRef.current.classList.remove('drop-zoon--over');
+        imgDropZoonRef.current.classList.remove('drop-zoon--over');
         const droppedFile = e.dataTransfer.files[0];
         if (validateFile(droppedFile)) {
             setFile(droppedFile);
@@ -65,11 +68,11 @@ const CreateOfficeModal = ({ onClose }) => {
         }
     };
 
-    const handleButtonClick = () => {
+    const handleButtonClickImg = () => {
         fileInputRef.current.click();
     };
 
-    const handleFileChange = (e) => {
+    const handleChangeImg = (e) => {
         const selectedFile = e.target.files[0];
         if (validateFile(selectedFile)) {
             setFile(selectedFile);
@@ -80,14 +83,14 @@ const CreateOfficeModal = ({ onClose }) => {
     const validateFile = (file) => {
         const fileType = file.type;
         const fileSize = file.size;
-        let isImage = imagesTypes.filter((type) => fileType.indexOf(`image/${type}`) !== -1);
+        let isImage = imageTypes.filter((type) => fileType.indexOf(`image/${type}`) !== -1);
 
         if (isImage.length !== 0) {
             if (fileSize <= 2000000) {
                 if (isImage[0] === 'jpeg') {
-                    setFileType('jpg');
+                    setImgFileType('jpg');
                 } else {
-                    setFileType(isImage[0]);
+                    setImgFileType(isImage[0]);
                 }
                 return true;
             } else {
@@ -104,19 +107,19 @@ const CreateOfficeModal = ({ onClose }) => {
         const fileReader = new FileReader();
         fileReader.readAsDataURL(file);
 
-        setLoading(true);
-        setPreview(null);
-        setProgress(0);
+        setImgLoading(true);
+        setImgPreview(null);
+        setUploadProgressPercent(0);
 
         fileReader.onload = () => {
             setTimeout(() => {
-                setLoading(false);
-                setPreview(fileReader.result);
+                setImgLoading(false);
+                setImgPreview(fileReader.result);
                 progressMove();
             }, 600);
         };
 
-        setFileName(file.name);
+        setImgFileName(file.name);
     };
 
     const progressMove = () => {
@@ -126,7 +129,7 @@ const CreateOfficeModal = ({ onClose }) => {
                 clearInterval(intervalId);
             } else {
                 counter += 10;
-                setProgress(counter);
+                setUploadProgressPercent(counter);
             }
         }, 100);
     };
@@ -149,7 +152,15 @@ const CreateOfficeModal = ({ onClose }) => {
     };
 
     const handleCityChange = (event) => {
-        setCity(event.target.value);
+        const inputValue = event.target.value;
+    
+        const cleanedValue = inputValue.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+
+        if (cleanedValue.length === 0 || cleanedValue.length === 1) {
+            setCity(cleanedValue);
+        } else if (cleanedValue.length > 1) {
+            setCity(cleanedValue);
+        }
     };
 
     const handleCityInput = (event) => {
@@ -184,7 +195,15 @@ const CreateOfficeModal = ({ onClose }) => {
     };
 
     const handleStreetChange = (event) => {
-        setStreet(event.target.value);
+        const inputValue = event.target.value;
+
+        const cleanedValue = inputValue.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+
+        if (cleanedValue.length === 0 || cleanedValue.length === 1) {
+            setStreet(cleanedValue); 
+        } else if (cleanedValue.length > 1) {
+            setStreet(cleanedValue);
+        }
     };
 
     const handleStreetInput = (event) => {
@@ -219,9 +238,17 @@ const CreateOfficeModal = ({ onClose }) => {
     };
 
     const handleHouseNumberChange = (event) => {
-        setHouseNumber(event.target.value);
-    };
+        const inputValue = event.target.value;
 
+        const cleanedValue = inputValue.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+
+        if (cleanedValue.length === 0 || cleanedValue.length === 1) {
+            setHouseNumber(cleanedValue); 
+        } else if (cleanedValue.length > 1) {
+            setHouseNumber(cleanedValue); 
+        }
+    };
+    
     const handleHouseNumberInput = (event) => {
         const input = event.target;
         const label = document.getElementById('create-office-houseNumber-label');
@@ -237,7 +264,15 @@ const CreateOfficeModal = ({ onClose }) => {
     };
 
     const handleOfficeNumberChange = (event) => {
-        setOfficeNumber(event.target.value);
+        const inputValue = event.target.value;
+
+        const cleanedValue = inputValue.replace(/^\s+|\s+$/g, '').replace(/\s+/g, ' ');
+    
+        if (cleanedValue.length === 0 || cleanedValue.length === 1) {
+            setOfficeNumber(cleanedValue);
+        } else if (cleanedValue.length > 1) {
+            setOfficeNumber(cleanedValue); 
+        }
     };
 
     const handleRegistryPhoneNumberBlur = (event) => {
@@ -295,13 +330,11 @@ const CreateOfficeModal = ({ onClose }) => {
 
     const isFormValid = cityValid && streetValid && houseNumberValid && registryPhoneNumberValid;
 
-    async function toggleCreateOfficeAsync() {
-        console.log("City:", city);
-        console.log("Street:", street);
-        console.log("House Number:", houseNumber);
-        console.log("Office Number:", officeNumber);
-        console.log("Registry Phone Number:", registryPhoneNumber);
-        console.log("Status:", status);
+    async function handleCreateOfficeAsync() {
+        const createOfficeModel = new OfficeModelRequest(city + " " + street + " " + houseNumber + ", " + officeNumber, registryPhoneNumber, status);
+
+        console.log(file);
+        await CreateOfficeFetchAsync(createOfficeModel);
     }
 
     const updateForm = (progression) => {
@@ -333,52 +366,22 @@ const CreateOfficeModal = ({ onClose }) => {
                 <div className="create-office-form-wrapper">
                     <div className="create-office-form" style={{ transform: `translateX(-${currentStage * 100}%)` }}>
                         <div className='stage'>
-                            <div className="upload-area__header">
-                                <h1 className="upload-area__title">Upload your image</h1>
-                                <div className="upload-area__paragraph">
-                                    File should be an image
-                                    <strong className="upload-area__tooltip">
-                                        Like
-                                        <span className="upload-area__tooltip-data">{imagesTypes.join(', .')}</span>
-                                    </strong>
-                                    <div className="drop-zoon__paragraph">or drop your file here or Click to browse</div>
-                                </div>
-                            </div>
-                            <div
-                                id="uploadArea"
-                                className="upload-area"
-                                style={{ backgroundImage: preview ? `url(${preview})` : 'none' }}
-                                ref={dropZoonRef}
-                                onDragOver={handleDragOver}
-                                onDragLeave={handleDragLeave}
-                                onDrop={handleDrop}
-                                onClick={handleButtonClick}>
-                                <span className="drop-zoon__icon">
-                                    <i className="bx bxs-file-image"></i>
-                                </span>
-                                <span id="loadingText" className={`drop-zoon__loading-text ${loading ? 'show' : ''}`}>Please Wait</span>
-                                <input
-                                    ref={fileInputRef}
-                                    type="file"
-                                    id="fileInput"
-                                    className="drop-zoon__file-input"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                />
-                                <div id="fileDetails" className="upload-area__file-details file-details">
-                                    <h3 className="file-details__title">Uploaded File</h3>
-                                    <div id="uploadedFile" className="uploaded-file">
-                                        <div className="uploaded-file__icon-container">
-                                            <i className="bx bxs-file-blank uploaded-file__icon"></i>
-                                            <span className="uploaded-file__icon-text">{fileType}</span>
-                                        </div>
-                                        <div id="uploadedFileInfo" className="uploaded-file__info">
-                                            <span className="uploaded-file__name">{fileName}</span>
-                                            <span className="uploaded-file__counter">{progress}%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <ImageUploader
+                                imgPreview={imgPreview}
+                                imgLoading={imgLoading}
+                                uploadProgressPercent={uploadProgressPercent}
+                                imgFileName={imgFileName}
+                                imgFileType={imgFileType}
+
+                                fileInputRef={fileInputRef}
+
+                                imgDropZoonRef={imgDropZoonRef}
+                                handleDragOverImg={handleDragOverImg}
+                                handleDragLeaveImg={handleDragLeaveImg}
+                                handleDropImg={handleDropImg}
+                                handleButtonClickImg={handleButtonClickImg}
+                                handleChangeImg={handleChangeImg}
+                            />
                         </div>
                         <div className='stage'>
                             <div className="create-office-inputs">
@@ -500,7 +503,7 @@ const CreateOfficeModal = ({ onClose }) => {
                     ) : (
                         <button
                             className={`primary-btn ${!isFormValid ? 'disabled-primary-btn' : ''}`}
-                            onClick={toggleCreateOfficeAsync}
+                            onClick={handleCreateOfficeAsync}
                             disabled={!isFormValid}
                         >
                             Confirm &#x27F6;

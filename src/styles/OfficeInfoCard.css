@@ -1,16 +1,16 @@
 :root {
-    --light-profile-card: #ffffff;
-    --dark-profile-card: #171717;
+    --light-office-info-card: #ffffff;
+    --dark-office-info-card: #171717;
 }
 
 [data-theme='light'] {
-    --profile-card-bg: var(--light-profile-card);
-    --profile-card-fg: var(--dark-profile-card);
+    --office-info-card-bg: var(--light-office-info-card);
+    --office-info-card-fg: var(--dark-office-info-card);
 }
 
 [data-theme='dark'] {
-    --profile-card-bg: var(--dark-profile-card);
-    --profile-card-fg: var(--light-profile-card);
+    --office-info-card-bg: var(--dark-office-info-card);
+    --office-info-card-fg: var(--light-office-info-card);
 }
 
 .office-info-wrapper {
@@ -23,7 +23,7 @@
 }
 
 .office-info-card {
-    background-color: var(--profile-card-bg);
+    background-color: var(--office-info-card-bg);
     border-radius: 15px;
     width: 100%;
     text-align: center;
@@ -73,9 +73,13 @@
 }
 
 .icon-container i {
-    color: var(--profile-card-bg); 
+    color: var(--office-info-card-fg); 
     font-size: 24px;
     cursor: pointer;
+}
+
+.icon-container i.invalid {
+    color: var(--office-info-card-bg);
 }
 
 .office-info-card-header:after {
@@ -114,7 +118,7 @@
 }
 
 .office-info-card-content h3 {
-    color: var(--profile-card-fg);
+    color: var(--office-info-card-fg);
     text-transform: capitalize;
     font-size: 25px;
     margin-top: 30px;
@@ -123,7 +127,7 @@
 }
 
 .office-info-card-content h4 {
-    color: var(--profile-card-fg);
+    color: var(--office-info-card-fg);
     text-transform: capitalize;
     font-size: 20px;
     margin-top: 10px;
@@ -132,7 +136,7 @@
 }
 
 .office-info-card-content p {
-    color: var(--profile-card-fg);
+    color: var(--office-info-card-fg);
     text-transform: capitalize;
 }
 
@@ -244,7 +248,7 @@
     top: -7px !important;
     color: var(--error) !important;
     font-size: 13px !important;
-    background-color: var(--profile-card-bg) !important;
+    background-color: var(--office-info-card-bg) !important;
     z-index: 2 !important;
 }
 
@@ -271,7 +275,7 @@
     top: -7px;
     color: var(--accent);
     font-size: 13px;
-    background-color: var(--profile-card-bg);
+    background-color: var(--office-info-card-bg);
     z-index: 2;
 }
 

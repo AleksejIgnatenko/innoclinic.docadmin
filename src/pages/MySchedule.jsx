@@ -70,10 +70,6 @@ function MySchedule() {
     setShowCalendar(!showCalendar);
   };
 
-  const handleSelectDate = (date) => {
-    setSelectedDate(date);
-  }
-
   //add search
 
   return (
@@ -90,7 +86,6 @@ function MySchedule() {
           currentDate={new Date(selectedDate)}
           onClose={toggleCalendarClick}
           setSelectedDate={setSelectedDate}
-          onSelectDate={handleSelectDate}
         />
       )}
 
