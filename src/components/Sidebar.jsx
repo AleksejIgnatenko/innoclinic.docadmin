@@ -8,8 +8,8 @@ import GetDoctorByAccountIdFromTokenFetchAsync from '../api/Profiles.API/GetDoct
 import GetReceptionistByAccountIdFromTokenFetchAsync from '../api/Profiles.API/GetReceptionistByAccountIdFromTokenFetchAsync';
 
 const Sidebar = () => {
-    const[account, setAccount] = useState(null);
-    const[profile, setProfile] = useState(null);
+    const [account, setAccount] = useState(null);
+    const [profile, setProfile] = useState(null);
 
     const [showSidebar, setShowSidebar] = useState(false);
     const [currentTheme, setCurrentTheme] = useState(() => {
@@ -18,25 +18,25 @@ const Sidebar = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-          try {   
-            const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
-            setAccount(fetchedAccount);
+            try {
+                const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
+                setAccount(fetchedAccount);
 
-            if (fetchedAccount.role === "Doctor") {
-                const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
-                setProfile(fetchedProfile);
-            } else if (fetchedAccount.role === "Receptionist") {
-                const fetchedProfile = await GetReceptionistByAccountIdFromTokenFetchAsync();
-                setProfile(fetchedProfile);
+                if (fetchedAccount.role === "Doctor") {
+                    const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
+                    setProfile(fetchedProfile);
+                } else if (fetchedAccount.role === "Receptionist") {
+                    const fetchedProfile = await GetReceptionistByAccountIdFromTokenFetchAsync();
+                    setProfile(fetchedProfile);
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
             }
-
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
         };
-    
+
         fetchData();
-      }, []);
+    }, []);
 
     useEffect(() => {
         const root = document.documentElement;
@@ -128,66 +128,12 @@ const Sidebar = () => {
                         </ul>
                     </li>
                     <li>
-                        <div className="icon-link">
-                            <Link to="/services">
-                                <i className='bx bx-collection'></i>
-                                <span className="link_name">Services</span>
-                            </Link>
-                            <i className='bx bxs-chevron-down arrow' onClick={handleSubMenuClick}></i>
-                        </div>
-                        <ul className="sub-menu">
-                            <li><Link className="link_name" to="/services">Services</Link></li>
-                            <li><Link to="/services?tab=Consultations">Consultations</Link></li>
-                            <li><Link to="/services?tab=Diagnostics">Diagnostics</Link></li>
-                            <li><Link to="/services?tab=Analyses">Analyses</Link></li>
-                        </ul>
-                    </li>
-                    <li onClick={handleSubMenuClick}>
-                        <div className="icon-link">
-                            <Link to="/">
-                                <i className='bx bx-book-alt'></i>
-                                <span className="link_name">Posts</span>
-                            </Link>
-                            <i className='bx bxs-chevron-down arrow'></i>
-                        </div>
-                        <ul className="sub-menu">
-                            <li><Link className="link_name" to="/">Posts</Link></li>
-                            <li><Link to="/">Web Design</Link></li>
-                            <li><Link to="/">Login Form</Link></li>
-                            <li><Link to="/">Card Design</Link></li>
-                        </ul>
-                    </li>
-                    <li onClick={handleSubMenuClick}>
-                        <div className="icon-link">
-                            <Link to="/">
-                                <i className='bx bx-plug'></i>
-                                <span className="link_name">Plugins</span>
-                            </Link>
-                            <i className='bx bxs-chevron-down arrow'></i>
-                        </div>
-                        <ul className="sub-menu">
-                            <li><Link className="link_name" to="/">Plugins</Link></li>
-                            <li><Link to="/">UI Face</Link></li>
-                            <li><Link to="/">Pigments</Link></li>
-                            <li><Link to="/">Box Icons</Link></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            <i className='bx bx-compass'></i>
-                            <span className="link_name">Explore</span>
+                        <Link to="/specialization">
+                            <i className='bx bx-collection'></i>
+                            <span className="link_name">Specialization</span>
                         </Link>
                         <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/">Explore</Link></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link to="/">
-                            <i className='bx bx-history'></i>
-                            <span className="link_name">History</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/">History</Link></li>
+                            <li><Link className="link_name" to="/specialization">Specialization</Link></li>
                         </ul>
                     </li>
                     <li>
@@ -207,11 +153,11 @@ const Sidebar = () => {
                                         <img src="https://th.bing.com/th/id/OIP.audMX4ZGbvT2_GJTx2c4GgAAAA?rs=1&pid=ImgDetMain" alt="profileImg" />
                                     </div>
                                     <div className="name-job">
-                                    <div className="profile_name">{`${profile.firstName} ${profile.lastName}`}</div>
+                                        <div className="profile_name">{`${profile.firstName} ${profile.lastName}`}</div>
                                         <div className="job">{account.role}</div>
                                     </div>
-                                    <i className='bx bx-log-out' onClick={handleLogOut}></i>
                                 </Link>
+                                <i className='bx bx-log-out' onClick={handleLogOut}></i>
                             </div>
                         </li>
                     ) : (

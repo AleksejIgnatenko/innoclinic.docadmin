@@ -10,6 +10,9 @@ async function UpdateOfficeFetchAsync(id, officeModel) {
             jwtToken = Cookies.get('accessToken');
         }
 
+        console.log(id);
+        console.log(officeModel);
+
         const response = await fetch(`${OfficesAPI}/Office/${id}`, {
             method: 'PUT',
             headers: {
@@ -18,6 +21,8 @@ async function UpdateOfficeFetchAsync(id, officeModel) {
             },
             body: JSON.stringify(officeModel)
         });
+
+        console.log(response);
 
         if (response.ok) {
             console.log("ok");

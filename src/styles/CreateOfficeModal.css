@@ -251,10 +251,9 @@
     color: var(--appointmentModal-fg);
 }
 
-/* .create-office-input:focus,
-.create-office-input:focus {
-    border: 2px solid #1a73e8;
-} */
+.create-office-input-wrapper input:focus {
+    border: 2px solid var(--accent);
+}
 
 .navigation-container {
     display: flex;

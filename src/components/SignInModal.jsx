@@ -2,6 +2,7 @@ import './../styles/SignInModal.css';
 import React, { useState, useEffect } from 'react';
 import SignInModelRequest from '../models/accountModels/SignInModelRequest';
 import SignInFetchAsync from '../api/Authorization.API/SignInFetchAsync';
+import Toast from './Toast';
 
 const SignInModal = ({ onClose, onOpenSignUp }) => {
     const [email, setEmail] = useState('');
@@ -9,6 +10,8 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
 
     const [isEmailValid, setIsEmailValid] = useState(false);
     const [isPasswordValid, setIsPasswordValid] = useState(false);
+
+    const [showToast, setShowToast] = useState(true);
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -102,27 +105,39 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
         }
     };
 
-    const isFormValid = () => {
-        return isEmailValid && isPasswordValid;
-    };
+    const isFormValid = isEmailValid && isPasswordValid;
+
+    // async function handleSignInAsync() {
+    //     const signInModel = new SignInModelRequest(email, password);
+    //     if ((5 < password.length) && (password.length < 16)) {
+    //         await SignInFetchAsync(signInModel)
+    //     } else {
+    //         const input = document.getElementById('sign-in-password-input');
+    //         const label = document.getElementById('sign-in-password-label');
+    //         if (input && label) { 
+    //             input.classList.add('error-input-border');
+    //             label.classList.add('sign-in-error-label');
+    //             label.textContent = "Количество символов в пароле должно быть от 6 до 15";
+    //         }
+    //     }
+    // }
 
     async function handleSignInAsync() {
         const signInModel = new SignInModelRequest(email, password);
-        if ((5 < password.length) && (password.length < 16)) {
-            await SignInFetchAsync(signInModel)
-        } else {
-            const input = document.getElementById('sign-in-password-input');
-            const label = document.getElementById('sign-in-password-label');
-            if (input && label) { 
-                input.classList.add('error-input-border');
-                label.classList.add('sign-in-error-label');
-                label.textContent = "Количество символов в пароле должно быть от 6 до 15";
-            }
+        if (isFormValid) {
+            // const response = await SignInFetchAsync(signInModel);
+            // if (response.success) {
+                setShowToast(true); 
+                setTimeout(() => {
+                    setShowToast(false);
+                }, 5000);
+            //}
         }
     }
 
     return (
         <div class="sign-in-container">
+            {showToast && <Toast onClose={() => setShowToast(false)} />}
             <div class="sign-in-top-content">
                 <button className="close-button" onClick={onClose}>X</button>
                 <h2>Sign in</h2>
@@ -159,9 +174,9 @@ const SignInModal = ({ onClose, onOpenSignUp }) => {
             </div>
             <div class="btn-group">
                 <button
-                    className={`sign-in-btn ${!isFormValid() ? 'disabled-sign-in-btn' : ''}`}
+                    className={`sign-in-btn ${!isFormValid ? 'disabled-sign-in-btn' : ''}`}
                     onClick={handleSignInAsync}
-                    disabled={!isFormValid()}
+                    disabled={!isFormValid}
                 >
                     Sign in
                 </button>

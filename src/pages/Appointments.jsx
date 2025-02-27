@@ -10,7 +10,7 @@ import AppointmentFilterModal from '../components/AppointmentFilterModal';
 import Toolbar from '../components/Toolbar';
 import Table from '../components/Table';
 import Calendar from '../components/Calendar';
-import UpdateAppointmentModelRequest from '../models/AppointmentModels/UpdateAppointmentModelRequest';
+import UpdateAppointmentModelRequest from '../models/appointmentModels/UpdateAppointmentModelRequest';
 import UpdateAppointmentFetchAsync from '../api/Appointments.API/UpdateAppointmentFetchAsync';
 import DeleteAppointmentFetchAsync from '../api/Appointments.API/DeleteAppointmentFetchAsync';
 

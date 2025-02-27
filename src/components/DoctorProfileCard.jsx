@@ -331,9 +331,9 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
         }
     };
 
-    const isFormValid = updateFirstName && updateLastName && updateDateofBirth && updateSelectedSpecializationId && updateSelectedOfficeId && updateCareerStartYear && updateSelectedStatus;
+    const isFormValid = firstNameValid && lastNameValid && cabinetNumberValid && updateDateofBirth && updateSelectedSpecializationId && updateSelectedOfficeId && updateCareerStartYear && updateSelectedStatus;
 
-    async function handleSave() {
+    async function handleUpdateDoctorSave() {
         setIsEditing(false);
         const updateDoctorModel = new UpdateDoctorModelRequest(updateFirstName, updateLastName, updateMiddleName,
             updateCabinetNumber, updateDateofBirth, updateSelectedSpecializationId, updateSelectedOfficeId, updateCareerStartYear, updateSelectedStatus);
@@ -353,7 +353,7 @@ const DoctorProfileCard = ({ doctor, specializations, offices }) => {
                             <>
                                 <i
                                     className={`bx bx-check ${!isFormValid ? 'invalid' : ''}`}
-                                    onClick={handleSave}
+                                    onClick={isFormValid ? handleUpdateDoctorSave : null} 
                                 ></i>
                                 <i className='bx bx-x' onClick={handleEditClick}></i>
                             </>

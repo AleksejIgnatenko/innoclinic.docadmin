@@ -291,7 +291,7 @@ const CreateOfficeModal = ({ onClose }) => {
             label.textContent = 'You’ve entered an invalid phone number';
             setRegistryPhoneNumberValid(false);
         } else {
-            label.textContent = 'Registry phone mumber';
+            label.textContent = 'Registry phone number (+375(xx)xxx-xx-xx)';
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             setRegistryPhoneNumberValid(true);
@@ -305,11 +305,20 @@ const CreateOfficeModal = ({ onClose }) => {
     const handleRegistryPhoneNumberInput = (event) => {
         const input = event.target;
         const label = document.getElementById('create-office-registryPhoneNumber-label');
-
+        const phoneNumberPattern = /^\+375\(\d{2}\)\d{3}-\d{2}-\d{2}$/;
+    
         if (!input.value) {
             setRegistryPhoneNumberValid(false);
+            label.textContent = 'Registry phone number is required.';
+            input.classList.add('error-input-border');
+            label.classList.add('error-label');
+        } else if (!phoneNumberPattern.test(input.value)) {
+            setRegistryPhoneNumberValid(false);
+            label.textContent = 'Invalid format. Use (+375(xx)xxx-xx-xx)';
+            input.classList.add('error-input-border');
+            label.classList.add('error-label');
         } else {
-            label.textContent = 'Registry phone number';
+            label.textContent = 'Registry phone number (+375(xx)xxx-xx-xx)';
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             setRegistryPhoneNumberValid(true);
@@ -331,8 +340,8 @@ const CreateOfficeModal = ({ onClose }) => {
     const isFormValid = cityValid && streetValid && houseNumberValid && registryPhoneNumberValid;
 
     async function handleCreateOfficeAsync() {
-        const createOfficeModel = new OfficeModelRequest(city + " " + street + " " + houseNumber + ", " + officeNumber, registryPhoneNumber, status);
-
+        const createOfficeModel = new OfficeModelRequest(city, street, houseNumber, officeNumber, registryPhoneNumber, status);
+        console.log(createOfficeModel);
         console.log(file);
         await CreateOfficeFetchAsync(createOfficeModel);
     }

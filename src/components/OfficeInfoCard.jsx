@@ -7,17 +7,17 @@ const OfficeInfoCard = ({ office }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState({
         id: office?.id || '',
-        address: office?.address || '',
+        address: office?.city + " " + office?.street + " " + office?.houseNumber + " " + office?.officeNumber || '',
         registryPhoneNumber: office?.registryPhoneNumber || '',
         isActive: office?.isActive || '',
     }); 
 
-    const [updateCity, setUpdateCity] = useState('');
-    const [updateStreet, setUpdateStreet] = useState('');
-    const [updateHouseNumber, setUpdateHouseNumber] = useState('');
-    const [updateOfficeNumber, setUpdateOfficeNumber] = useState('');
-    const [updateRegistryPhoneNumber, setUpdateRegistryPhoneNumber] = useState('');
-    const [updateIsActive, setUpdateIsActive] = useState(false);
+    const [updateCity, setUpdateCity] = useState(office?.city);
+    const [updateStreet, setUpdateStreet] = useState(office?.street);
+    const [updateHouseNumber, setUpdateHouseNumber] = useState(office?.houseNumber);
+    const [updateOfficeNumber, setUpdateOfficeNumber] = useState(office?.officeNumber);
+    const [updateRegistryPhoneNumber, setUpdateRegistryPhoneNumber] = useState(office?.registryPhoneNumber);
+    const [updateIsActive, setUpdateIsActive] = useState(office?.isActive);
 
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -60,7 +60,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleCityBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-city-label');
+        const label = document.getElementById('office-info-card-city-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -89,7 +89,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleCityInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-city-label');
+        const label = document.getElementById('office-info-card-city-label');
 
         if (!input.value) {
             setCityValid(false);
@@ -103,7 +103,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleStreetBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-street-label');
+        const label = document.getElementById('office-info-card-street-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -132,7 +132,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleStreetInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-street-label');
+        const label = document.getElementById('office-info-card-street-label');
 
         if (!input.value) {
             setStreetValid(false);
@@ -146,7 +146,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleHouseNumberBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-houseNumber-label');
+        const label = document.getElementById('office-info-card-houseNumber-label');
 
         if (!input.value) {
             input.classList.add('error-input-border');
@@ -175,7 +175,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleHouseNumberInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-houseNumber-label');
+        const label = document.getElementById('office-info-card-houseNumber-label');
 
         if (!input.value) {
             setHouseNumberValid(false);
@@ -201,7 +201,7 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleRegistryPhoneNumberBlur = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-registryPhoneNumber-label');
+        const label = document.getElementById('office-info-card-registryPhoneNumber-label');
         const phoneNumberPattern = /^\+375\(\d{2}\)\d{3}-\d{2}-\d{2}$/;
 
         if (!input.value) {
@@ -215,7 +215,7 @@ const OfficeInfoCard = ({ office }) => {
             label.textContent = 'You’ve entered an invalid phone number';
             setRegistryPhoneNumberValid(false);
         } else {
-            label.textContent = 'Registry phone mumber';
+            label.textContent = 'Registry phone number (+375(xx)xxx-xx-xx)';
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             setRegistryPhoneNumberValid(true);
@@ -228,12 +228,21 @@ const OfficeInfoCard = ({ office }) => {
 
     const handleRegistryPhoneNumberInput = (event) => {
         const input = event.target;
-        const label = document.getElementById('create-office-registryPhoneNumber-label');
-
+        const label = document.getElementById('office-info-card-registryPhoneNumber-label');
+        const phoneNumberPattern = /^\+375\(\d{2}\)\d{3}-\d{2}-\d{2}$/;
+    
         if (!input.value) {
             setRegistryPhoneNumberValid(false);
+            label.textContent = 'Registry phone number is required.';
+            input.classList.add('error-input-border');
+            label.classList.add('error-label');
+        } else if (!phoneNumberPattern.test(input.value)) {
+            setRegistryPhoneNumberValid(false);
+            label.textContent = 'Invalid format. Use (+375(xx)xxx-xx-xx)';
+            input.classList.add('error-input-border');
+            label.classList.add('error-label');
         } else {
-            label.textContent = 'Registry phone number';
+            label.textContent = 'Registry phone number (+375(xx)xxx-xx-xx)';
             input.classList.remove('error-input-border');
             label.classList.remove('error-label');
             setRegistryPhoneNumberValid(true);
@@ -254,15 +263,15 @@ const OfficeInfoCard = ({ office }) => {
 
     const isFormValid = cityValid && streetValid && houseNumberValid && registryPhoneNumberValid;
 
-    async function handleSave() {
+    async function handleUpdateOfficeSave() {
         setIsEditing(false);
-        const updateDoctorModel = new OfficeModelRequest(updateCity + " " + updateStreet + " " + updateHouseNumber + ", " + updateOfficeNumber, updateRegistryPhoneNumber, updateIsActive);
+        const updateDoctorModel = new OfficeModelRequest(updateCity, updateStreet, updateHouseNumber, updateOfficeNumber, updateRegistryPhoneNumber, updateIsActive);
         console.log(updateDoctorModel);
         await UpdateOfficeFetchAsync(office.id, updateDoctorModel);
 
         setFormData(prevFormData => ({
             ...prevFormData,
-            address: updateDoctorModel.address,
+            address: office?.city + " " + office?.street + " " + office?.houseNumber + " " + office?.officeNumber || '',
             registryPhoneNumber: updateRegistryPhoneNumber,
             isActive: updateIsActive,
         }));
@@ -280,7 +289,7 @@ const OfficeInfoCard = ({ office }) => {
                             <>
                                 <i
                                     className={`bx bx-check ${!isFormValid ? 'invalid' : ''}`}
-                                    onClick={handleSave}
+                                    onClick={isFormValid ? handleUpdateOfficeSave : null} 
                                 ></i>
                                 <i className='bx bx-x' onClick={handleEditClick}></i>
                             </>
@@ -310,25 +319,25 @@ const OfficeInfoCard = ({ office }) => {
                                     onInput={handleCityInput}
                                     type="text"
                                     name=""
-                                    id="create-office-city-input"
+                                    id="office-info-card-city-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label className="create-office-input-label" id="create-office-city-label">City</label>
+                                <label className="office-info-card-input-label" id="office-info-card-city-label">City</label>
                             </div>
                             <div className="office-info-card-input-wrapper">
                                 <input
-                                    value={updateCity}
+                                    value={updateStreet}
                                     onBlur={handleStreetBlur}
-                                    onChange={handleStreetChange}
+                                    onChange={handleStreetChange}   
                                     onInput={handleStreetInput}
                                     type="text"
                                     name=""
-                                    id="create-office-street-input"
+                                    id="office-info-card-street-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label className="create-office-input-label" id="create-office-street-label">Street</label>
+                                <label className="office-info-card-input-label" id="office-info-card-street-label">Street</label>
                             </div>
                             <div className="office-info-card-input-wrapper">
                                 <input
@@ -338,11 +347,11 @@ const OfficeInfoCard = ({ office }) => {
                                     onInput={handleHouseNumberInput}
                                     type="text"
                                     name=""
-                                    id="create-office-houseNumber-input"
+                                    id="office-info-card-houseNumber-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label className="create-office-input-label" id="create-office-houseNumber-label">House number</label>
+                                <label className="office-info-card-input-label" id="office-info-card-houseNumber-label">House number</label>
                             </div>
                             <div className="office-info-card-input-wrapper">
                                 <input
@@ -352,26 +361,11 @@ const OfficeInfoCard = ({ office }) => {
                                     //onInput={handleOfficeNumberInput}
                                     type="text"
                                     name=""
-                                    id="create-office-officeNumber-input"
+                                    id="office-info-card-officeNumber-input"
                                     class="input default-input-border"
                                     placeholder=" "
                                     required />
-                                <label className="create-office-input-label" id="create-office-officeNumber-label">Office number</label>
-                            </div>
-                            <div className="office-info-card-input-wrapper">
-                                <input
-                                    value={updateRegistryPhoneNumber}
-                                    onBlur={handleRegistryPhoneNumberBlur}
-                                    onChange={handleRegistryPhoneNumberChange}
-                                    onInput={handleRegistryPhoneNumberInput}
-                                    onKeyDown={handleRegistryPhoneNumberKeyDown}
-                                    type="tel"
-                                    name=""
-                                    id="create-office-registryPhoneNumber-input"
-                                    class="input default-input-border"
-                                    placeholder=" "
-                                    required />
-                                <label className="create-office-input-label" id="create-office-registryPhoneNumber-label">Registry phone number (+375(xx)xxx-xx-xx)</label>
+                                <label className="office-info-card-input-label" id="office-info-card-officeNumber-label">Office number</label>
                             </div>
                             <div className="office-info-card-input-wrapper">
                                 <input
@@ -380,10 +374,10 @@ const OfficeInfoCard = ({ office }) => {
                                     value={true}
                                     checked={updateIsActive === true}
                                     onChange={handleStatusChange}
-                                    id="create-office-status-input-true"
+                                    id="office-info-card-status-input-true"
                                     className="office-info-card-radio-input"
                                 />
-                                <label htmlFor="create-office-status-input-true" className="office-info-card-radio-label">Active</label>
+                                <label htmlFor="office-info-card-status-input-true" className="office-info-card-radio-label">Active</label>
 
                                 <input
                                     type="radio"
@@ -391,10 +385,10 @@ const OfficeInfoCard = ({ office }) => {
                                     value={false}
                                     checked={updateIsActive === false}
                                     onChange={handleStatusChange}
-                                    id="create-office-status-input-false"
+                                    id="office-info-card-status-input-false"
                                     className="office-info-card-radio-input"
                                 />
-                                <label htmlFor="create-office-status-input-false" className="office-info-card-radio-label">Inactive</label>
+                                <label htmlFor="office-info-card-status-input-false" className="office-info-card-radio-label">Inactive</label>
 
                                 <label className="office-info-card-input-label" id="office-info-card-isActive-label">Status</label>
                             </div>
@@ -404,6 +398,7 @@ const OfficeInfoCard = ({ office }) => {
                                     onChange={handleRegistryPhoneNumberChange}
                                     onBlur={handleRegistryPhoneNumberBlur}
                                     onInput={handleRegistryPhoneNumberInput}
+                                    onKeyDown={handleRegistryPhoneNumberKeyDown}
                                     type="text"
                                     name="RegistryPhoneNumber"
                                     id="office-info-card-registryPhoneNumber-input"
