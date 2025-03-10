@@ -1,0 +1,24 @@
+.input-base {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #666;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+    background-color: var(--input-bg);
+    color: var(--foreground);
+}
+
+.input-base::placeholder {
+    color: #666;
+}
+
+.input-base:focus:not(.error) {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.error-input {
+    outline: none !important;
+    border-color: var(--error) !important;
+}

@@ -1,43 +1,87 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Home from './pages/Home';
-import Sidebar from './components/Sidebar';
-import Doctors from './pages/Doctors';
-import Cookies from 'js-cookie';
-import SignInModal from './components/SignInModal';
-import MySchedule from './pages/MySchedule';
-import PatientProfile from './pages/PatientProfile';
-import Appointments from './pages/Appointments';
-import DoctorProfile from './pages/DoctorProfile';
+import FormModal from './components/organisms/FormModal';
+import { InputWrapper } from './components/molecules/InputWrapper';
+import { ButtonBase } from './components/atoms/ButtonBase';
+import useSignInForm from './hooks/useSignInForm';
+import Sidebar from './components/organisms/Sidebar';
 import Offices from './pages/Offices';
-import OfficeInfo from './pages/OfficeInfo';
+import Doctors from './pages/Doctors';
 
 function App() {
-  const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
-  //const isUserLoggedIn = true;
+  const [currentTheme, setCurrentTheme] = useState(() => {
+    return localStorage.getItem('theme') || 'light';
+  });
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.setAttribute('data-theme', currentTheme);
+    localStorage.setItem('theme', currentTheme);
+  }, [currentTheme]);
+
+  //const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
+  const isUserLoggedIn = true;
+
+  const { formData, errors, handleChange, handleBlur, isFormValid } = useSignInForm({
+    email: '',
+    password: ''
+  });
+
+  const toggleTheme = () => {
+    setCurrentTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
+};
+
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    console.log('Sign in attempt:', formData);
+  };
 
   return (
     <>
       <Router>
         {isUserLoggedIn ? (
           <>
-            <Sidebar />
+            <Sidebar currentTheme={currentTheme} toggleTheme={toggleTheme} isUserLoggedIn={isUserLoggedIn}/>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/doctors" element={<Doctors />} />
-                <Route path="/mySchedule" element={<MySchedule />} />
-                <Route path="/patientProfile/:patientId" element={<PatientProfile />} />
-                <Route path="/doctorProfile/:doctorId?" element={<DoctorProfile />} />  
-                <Route path="/appointments" element={<Appointments />} />
                 <Route path="/offices" element={<Offices />} />
-                <Route path="/OfficeInfo/:officeId" element={<OfficeInfo/>} />
               </Routes>
             </div>
           </>
         ) : (
-          <SignInModal />
+          <div>
+            <FormModal title="Sign in" onSubmit={handleSignIn}>
+              <div className="modal-inputs">
+                <InputWrapper
+                  type="email"
+                  label="Email"
+                  id="email"
+                  value={formData.email}
+                  onBlur={handleBlur('email')}
+                  onChange={handleChange('email')}
+                  required
+                />
+                <InputWrapper
+                  type="password"
+                  label="Password"
+                  id="password"
+                  value={formData.password}
+                  onBlur={handleBlur('password')}
+                  onChange={handleChange('password')}
+                  required
+                />
+              </div>
+              <div className="form-actions">
+                <ButtonBase type="submit" disabled={!isFormValid}>
+                  Sign in
+                </ButtonBase>
+              </div>
+            </FormModal>
+          </div>
         )}
       </Router>
     </>

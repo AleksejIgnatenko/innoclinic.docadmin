@@ -1,0 +1,53 @@
+.table-container {
+    margin: 5.5% 1%;
+    flex: 1;
+}
+
+.table-container table {
+    margin: auto;
+    width: 100%;
+    overflow: hidden;
+    background-color: var(--background);
+    border-radius: 10px;
+    position: relative;
+    border-collapse: collapse;
+    z-index: 1;
+    color: var(--foreground);
+    white-space: nowrap;
+}
+
+.table-container th,
+.table-container td {
+    padding: 1rem;
+    gap: 10px;
+    position: relative;
+    cursor: default;
+}
+
+.table-container th {
+    text-transform: uppercase;
+}
+
+.table-container tr td {
+    text-align: center;
+}
+
+.table-container tr,
+.table-container th {
+    border-bottom: 1px solid #333;
+}
+
+.table-container tr:last-child {
+    border-bottom: none; 
+}
+
+.table-container .table-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.table-link {
+    text-decoration: underline;
+    color: var(--foreground);
+}

@@ -1,0 +1,30 @@
+.label {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #666;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background-color: var(--label-bg);
+    padding: 0 4px;
+}
+
+.error-label {
+    color: #ff4d4f !important;
+}
+
+input:focus ~ .label,
+input:not(:placeholder-shown) ~ .label,
+select:focus ~ .label,
+select:not(:placeholder-shown) ~ .label {
+    top: 0;
+    font-size: 12px;
+    color: var(--accent);
+}
+
+input.input-error:focus ~ .label,
+input.input-error:not(:placeholder-shown) ~ .label {
+    color: var(--error);
+} 

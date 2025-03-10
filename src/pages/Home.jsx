@@ -1,23 +1,11 @@
 import React, { useState } from 'react';
-import "./../styles/Home.css";
+import "./../styles/pages/Home.css";
 
 function Home() {
  
   return (
-    <div>
-      <div className="card-container">
-        {/* <Card />
-        <Card />
-        <Card />
-        <Card /> */}
-
-        <div className="separator">
-          <hr />
-          <span>Разделитель</span>
-          <hr />
-        </div>
-        {/* <Card /> */}
-      </div>
+    <div className='home-page'>
+      <h1>HOME PAGE</h1>
     </div>
   );
 }

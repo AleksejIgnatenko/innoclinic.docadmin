@@ -1,0 +1,54 @@
+@import './Modal.css';
+
+.sort-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.sort-option {
+    width: 100%;
+}
+
+.sort-button {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sort-direction {
+    font-weight: bold;
+}
+
+.form-actions .btn {
+    margin-top: 10px;
+}
+
+.filter-section {
+    margin-bottom: 24px;
+}
+
+.filter-section h3 {
+    margin-bottom: 12px;
+    color: var(--foreground);
+}
+
+.filter-values {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-button {
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.sort-direction {
+    font-weight: bold;
+    margin-left: 4px;
+}
