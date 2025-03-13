@@ -6,8 +6,16 @@ const FieldNames = {
     medicalService: "Medical service",
 
     // Doctors
+    firstName: "First Name",
+    lastName: "Last Name",
+    middleName: "Middle Name",
+    dateOfBirth: "Date Of Birth",
+    email: "Email",
+    specialization: "Specialization",
+    office: "Office",
+    careerStartYear: "Career Start Year",
+    status: "Status",
     fullName: "full name",
-    dateOfBirth: "date of birth",
 
     // Offices
     city: "City",

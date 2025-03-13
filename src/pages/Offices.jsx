@@ -120,7 +120,7 @@ export default function Offices() {
             status: isActive ? 'Active' : 'Inactive',
             registryPhoneNumber,
         }));
-    
+
         setEditableOffices(filtered);
     }, [searchTerm, offices]);
 
@@ -146,8 +146,8 @@ export default function Offices() {
                 showAddIcon={true}
                 toggleCreateModalClick={toggleAddModal}
             />
-            {isLoading && <Loader />}
-            {!isLoading && (
+            {isLoading ? (<Loader />
+            ) : (
                 <div className="page">
                     {offices.length === 0 ? (
                         <p className="no-items">Offices not found</p>
@@ -169,7 +169,7 @@ export default function Offices() {
                     {isAddModalOpen && (
                         <FormModal title="Add office" onClose={toggleAddModal} onSubmit={handleAdd} showCloseButton={true}>
                             <div className="modal-inputs">
-                                <ImageUploader 
+                                <ImageUploader
                                     setImage={setImage}
                                 />
                                 <InputWrapper

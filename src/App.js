@@ -9,6 +9,9 @@ import useSignInForm from './hooks/useSignInForm';
 import Sidebar from './components/organisms/Sidebar';
 import Offices from './pages/Offices';
 import Doctors from './pages/Doctors';
+import Doctor from './pages/Doctor';
+import Appointments from './pages/Appointments';
+
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -47,8 +50,11 @@ function App() {
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />
+                <Route path="/appointments" element={<Appointments />} />
+                <Route path="/doctor/:id?" element={<Doctor />} />
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/offices" element={<Offices />} />
+                {/* <Route path="/my-schedule" element={<MySchedule />} /> */}
               </Routes>
             </div>
           </>

@@ -51,3 +51,13 @@
     text-decoration: underline;
     color: var(--foreground);
 }
+
+.approve-icon {
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.cancel-icon {
+    color: var(--error);
+    cursor: pointer;
+}

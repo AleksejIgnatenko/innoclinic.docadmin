@@ -1,0 +1,10 @@
+.filtred-list {
+    cursor: pointer;
+    max-height: 55px;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
+
+.filtred-list h5 {
+    color: var(--foreground);
+}

@@ -1,7 +1,8 @@
 import React from 'react';
 import '../../styles/atoms/ButtonBase.css';
 
-export const ButtonBase = ({ 
+export const ButtonBase = ({
+    type, 
     children, 
     variant = 'primary', 
     disabled = false, 
@@ -13,6 +14,7 @@ export const ButtonBase = ({
     
     return (
         <button 
+            type={type}
             className={`${baseClass} ${variantClass} ${className} ${disabled ? 'btn-disabled' : ''}`}
             onClick={onClick}
             disabled={disabled}

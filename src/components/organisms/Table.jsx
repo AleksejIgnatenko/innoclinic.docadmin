@@ -4,7 +4,7 @@ import FieldNames from '../../enums/FieldNames';
 import { IconBase } from '../atoms/IconBase';
 import { Link } from 'react-router-dom';
 
-const Table = ({ items }) => {
+const Table = ({ items, isActions = false, handleApprove, handleCancel }) => {
     const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
 
     const getUniqueKeys = (items) => {
@@ -54,13 +54,14 @@ const Table = ({ items }) => {
                     {uniqueKeys.map((key) => (
                         <th key={key} onClick={key === 'actions' ? undefined : () => requestSort(key)}>
                             {FieldNames[key] || key.charAt(0).toUpperCase() + key.slice(1)}
-                            {sortConfig.key === key && key !== 'actions' ? (
+                            {sortConfig.key === key && key !== 'actions' && (
                                 sortConfig.direction === 'ascending' ? 
                                     <IconBase name='bx-chevron-up' className='sort-icon' /> : 
                                     <IconBase name='bx-chevron-down' className='sort-icon' />
-                            ) : null}
+                            )}
                         </th>
                     ))}
+                    {isActions && <th>Actions</th>}
                     </tr>
                 </thead>
                 <tbody>
@@ -75,6 +76,13 @@ const Table = ({ items }) => {
                                     )}
                                 </td>
                             ))}
+                            {isActions && (
+                                <td>
+                                    <IconBase name='bx-check-circle' className='approve-icon' onClick={() => handleApprove(item.id)}/>
+                                    <IconBase name='bx-x-circle' className='cancel-icon' onClick={() => handleCancel(item.id)}/>
+                                    <IconBase name='bx-pencil' onClick={() => handleCancel(item.id)}/>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

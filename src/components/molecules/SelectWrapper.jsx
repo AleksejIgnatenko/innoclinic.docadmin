@@ -4,6 +4,7 @@ import { SelectBase } from '../atoms/SelectBase';
 import { LabelBase } from '../atoms/LabelBase';
 
 export const SelectWrapper = ({ 
+    items,
     value,
     onBlur, 
     onChange,
@@ -18,6 +19,7 @@ export const SelectWrapper = ({
     return (
         <div className={`select-wrapper`}>
             <SelectBase
+                items={items}
                 options={options}
                 id={id}
                 value={value}

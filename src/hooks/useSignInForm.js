@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FieldNames from '../enums/FieldNames';
 
 const useSignInForm = (initialValues) => {
   const [formData, setFormData] = useState(initialValues);
@@ -44,7 +45,7 @@ const useSignInForm = (initialValues) => {
         input.classList.remove('error-input');
         label.classList.remove('error-label');
 
-        label.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)}`;
+        label.textContent = `${FieldNames[field]}`;
       }
       setErrors(prev => ({
         ...prev,

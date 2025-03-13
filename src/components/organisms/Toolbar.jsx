@@ -4,6 +4,8 @@ import { IconBase } from "../atoms/IconBase";
 import { InputBase } from '../atoms/InputBase';
 const Toolbar = ({
     pageTitle,
+    
+    showSearch = false,
     setSearchTerm,
 
     showAddIcon = false,
@@ -25,19 +27,16 @@ const Toolbar = ({
             <div className='toolbar'>
                 <h2 className='pageName'>{pageTitle}</h2>
                 <div className="filter-search-container">
-                    <div className="search-bar">
-                        <IconBase name="bx-search" />
-                        <InputBase 
-                            type="search"
-                            placeholder="Search..."
-                            onChange={handleSearchChange}
-                        />
-                        {/* <input
-                            type="search"
-                            placeholder="Search..."
-                            onChange={handleSearchChange}
-                        /> */}
-                    </div>
+                    {showSearch && (
+                        <div className="search-bar">
+                            <IconBase name="bx-search" />
+                            <InputBase 
+                                type="search"
+                                placeholder="Search..."
+                                onChange={handleSearchChange}
+                            />
+                        </div>
+                    )}
                     {showAddIcon && (
                         <IconBase name="bx-plus" onClick={toggleCreateModalClick}/>
                     )}

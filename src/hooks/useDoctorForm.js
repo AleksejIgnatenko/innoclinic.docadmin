@@ -6,7 +6,7 @@ const useDoctorForm = (initialValues) => {
     const [errors, setErrors] = useState({
         firstName: false,
         lastName: false,
-        middleName: false,
+        // middleName: false,
         dateOfBirth: false,
         email: false,
         specializationId: false,
@@ -16,34 +16,65 @@ const useDoctorForm = (initialValues) => {
     });
 
     const updateInputState = (field, input, label) => {
-        if (!input.value.trim()) {
-            if (input && label) {
+        if (field !== 'middleName') {
+            let currentDate;
+            let inputDate;
+            if(field === 'dateOfBirth' || field === 'careerStartYear'){
+                currentDate = new Date();
+                inputDate = new Date(input.value);
+            }
+            if (!input.value.trim()) {
+                if (input && label) {
+                    input.classList.add('error-input');
+                    label.classList.add('error-label');
+                }
+                if (field === 'dateOfBirth') {
+                    label.textContent = `Please, select the date`;
+                } else {
+                    label.textContent = `Please, enter the ${FieldNames[field]}`;
+                }
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: false
+                }));
+            } else if (field === 'email' && !input.value.includes('@')) {
                 input.classList.add('error-input');
                 label.classList.add('error-label');
 
-                label.textContent = `Please, enter the office’s ${FieldNames[field]}`;
-            }
-            setErrors(prev => ({
-                ...prev,
-                [field]: false
-            }));
-        } else {
-            if (input && label) {
-                input.classList.remove('error-input');
-                label.classList.remove('error-label');
+                label.textContent = "You've entered an invalid email";
 
-                label.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)}`;
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: false
+                }));
+            } else if ((field === 'dateOfBirth' || field === 'careerStartYear') && (inputDate > currentDate)) {
+                input.classList.add('error-input');
+                label.classList.add('error-label');
+
+                label.textContent = "The date must be less than or equal to the current date.";
+
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: false
+                }));
+            } else {
+                if (input && label) {
+                    input.classList.remove('error-input');
+                    label.classList.remove('error-label');
+
+                    label.textContent = `${FieldNames[field]}`;
+                }
+                setErrors(prev => ({
+                    ...prev,
+                    [field]: true
+                }));
             }
-            setErrors(prev => ({
-                ...prev,
-                [field]: true
-            }));
         }
     };
 
     const handleChange = (field) => (e) => {
         const input = e.target;
-        const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
+        const label = document.querySelector(`label[for="${field}"]`);
 
         setFormData(prev => ({
             ...prev,
@@ -55,9 +86,14 @@ const useDoctorForm = (initialValues) => {
 
     const handleBlur = (field) => (event) => {
         const input = event.target;
-        const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
+        const label = document.querySelector(`label[for="${field}"]`);
 
         updateInputState(field, input, label);
+    };
+
+    const resetForm = () => {
+        setFormData(initialValues);
+        setErrors({});
     };
 
     return {
@@ -65,6 +101,7 @@ const useDoctorForm = (initialValues) => {
         errors,
         handleChange,
         handleBlur,
+        resetForm,
         isFormValid: Object.values(errors).every(value => value),
     };
 };

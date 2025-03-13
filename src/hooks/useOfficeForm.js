@@ -29,7 +29,7 @@ const useSignInForm = (initialValues) => {
         input.classList.remove('error-input');
         label.classList.remove('error-label');
 
-        label.textContent = `${field.charAt(0).toUpperCase() + field.slice(1)}`;
+        label.textContent = `${FieldNames[field]}`;
       }
       setErrors(prev => ({
         ...prev,
