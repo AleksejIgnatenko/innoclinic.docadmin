@@ -11,7 +11,10 @@ import Offices from './pages/Offices';
 import Doctors from './pages/Doctors';
 import Doctor from './pages/Doctor';
 import Appointments from './pages/Appointments';
-
+import MySchedule from './pages/MySchedule';
+import Patient from './pages/Patient';
+import Cookies from 'js-cookie';
+import SignInFetchAsync from './api/Authorization.API/SignInFetchAsync';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -38,7 +41,7 @@ function App() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    console.log('Sign in attempt:', formData);
+    await SignInFetchAsync(formData);
   };
 
   return (
@@ -54,14 +57,15 @@ function App() {
                 <Route path="/doctor/:id?" element={<Doctor />} />
                 <Route path="/doctors" element={<Doctors />} />
                 <Route path="/offices" element={<Offices />} />
-                {/* <Route path="/my-schedule" element={<MySchedule />} /> */}
+                <Route path="/my-schedule" element={<MySchedule />} />
+                <Route path="/patient/:id?" element={<Patient />} />
               </Routes>
             </div>
           </>
         ) : (
           <div>
             <FormModal title="Sign in" onSubmit={handleSignIn}>
-              <div className="modal-inputs">
+              <div className="modal-inputs sign-in-modal">
                 <InputWrapper
                   type="email"
                   label="Email"

@@ -1,29 +1,29 @@
 const FieldNames = {
-    // Appointments
-    fullNameOfTheDoctor: "Full name doctor",
-    fullNameOfThePatient: "Full name patient",
-    patientsPhoneNumber: "Patient phone number",
-    medicalService: "Medical service",
-
-    // Doctors
-    firstName: "First Name",
-    lastName: "Last Name",
-    middleName: "Middle Name",
-    dateOfBirth: "Date Of Birth",
-    email: "Email",
-    specialization: "Specialization",
-    office: "Office",
+    address: "Address",
+    cabinetNumber: "Cabinet Number",
     careerStartYear: "Career Start Year",
-    status: "Status",
-    fullName: "full name",
-
-    // Offices
     city: "City",
-    street: "Street",
+    dateOfBirth: "Date Of Birth",
+    doctorFullName: "Full name doctor",
+    email: "Email",
+    firstName: "First Name",
+    fullName: "Full name",
     houseNumber: "House Number",
+    isApproved: "Is Approved",
+    lastName: "Last Name",
+    medicalServiceName: "Medical service",
+    middleName: "Middle Name",
+    office: "Office",
+    officeAddress: "Office Address",
     officeNumber: "Office Number",
+    patientFullName: "Full name patient",
+    patientPhoneNumber: "Patient phone number",
+    password: "Password",
     registryPhoneNumber: "Registry phone number",
+    specialization: "Specialization",
+    street: "Street",
     status: "Status",
-}; 
+    time: "Time",
+};
 
 export default FieldNames;

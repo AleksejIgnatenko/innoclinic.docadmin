@@ -16,7 +16,7 @@ async function GetAllMedicalServiceFetchAsync() {
         }
     } catch (error) {
         console.error('Error in getting all medical service:', error);
-        alert('An error occurred while receiving all medical');
+        //alert('An error occurred while receiving all medical');
     }
 }
 

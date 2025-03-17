@@ -13,8 +13,17 @@ import { SelectWrapper } from "../components/molecules/SelectWrapper";
 import workStatuses from "../enums/WorkStatuses";
 import FilterModal from "../components/organisms/FilterModal";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
+import FieldNames from "../enums/FieldNames";
+import { useNavigate } from 'react-router-dom';
+
+import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
+import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
+import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
+
 
 export default function Doctors() {
+    const navigate = useNavigate();
+
     const [doctors, setDoctors] = useState([]);
     const [editableDoctors, setEditableDoctors] = useState([]);
     const [specializations, setSpecializations] = useState([]);
@@ -27,7 +36,7 @@ export default function Doctors() {
 
     const [image, setImage] = useState(null);
 
-    const { formData, errors, handleChange, handleBlur, resetForm, isFormValid } = useDoctorForm({
+    const { formData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -49,80 +58,23 @@ export default function Doctors() {
     const [selectedOffices, setSelectedOffices] = useState([]);
     const [selectedSpecializations, setSelectedSpecializations] = useState([]);
 
+    const columnNames = [
+        'doctorFullName',
+        'specialization',
+        'status',
+        'dateOfBirth',
+        'address',
+    ];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 toggleLoader(true);
 
-                const fetchedSpecializations = [
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77140",
-                        "specializationName": "postman",
-                        "isActive": true
-                    },
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77141",
-                        "specializationName": "postman1",
-                        "isActive": true
-                    },
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77142",
-                        "specializationName": "postman2",
-                        "isActive": true
-                    }
-                ]
+                const fetchedSpecializations = await GetAllSpecializationFetchAsync()
                 setSpecializations(fetchedSpecializations);
 
-                const fetchedOffices = [
-                    {
-                        "id": "eb2f16f7-b057-458b-832e-76bad03a178a",
-                        "city": "Гомель",
-                        "street": "пушкина",
-                        "houseNumber": "3",
-                        "officeNumber": "",
-                        "longitude": "52.43014",
-                        "latitude": "31.013527",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "788b5223-8e80-4a30-8744-639e5e80e3ad",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": false
-                    },
-                    {
-                        "id": "d324b5a6-4b90-4121-8270-4a18f17bd0ff",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "99601714-8256-489a-a33c-5ec08e1ffc1e",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "2",
-                        "officeNumber": "",
-                        "longitude": "53.926913",
-                        "latitude": "27.535717",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    }
-                ]
+                const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
                 const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
                     id,
@@ -130,108 +82,7 @@ export default function Doctors() {
                 }))
                 setOfficeOptions(officeOptions);
 
-                //const fetchedOffices = await GetAllOfficesFetchAsync();
-                const fetchedDoctors =
-                    [
-                        {
-                            "id": "3c0985c6-4ddb-40a2-a3b3-7bc1048952c7",
-                            "firstName": "Иванов",
-                            "lastName": "Иван",
-                            "middleName": "Иванович",
-                            "cabinetNumber": 1,
-                            "dateOfBirth": "2025-01-01",
-                            "account": {
-                                "id": "0821e73d-0163-444c-899a-940bfdc2311b",
-                                "email": "test@gmail.com",
-                                "password": "$2a$10$qllL3oCqCK2V8I3J9SmInOdzmtVAA7bB/92C2sikVPsH36Dr2B.x.",
-                                "phoneNumber": "",
-                                "role": 1
-                            },
-                            "specialization": {
-                                "id": "fb5d2407-8f2a-4b64-b65e-bf605da77140",
-                                "specializationName": "postman",
-                                "isActive": true
-                            },
-                            "office": {
-                                "id": "eb2f16f7-b057-458b-832e-76bad03a178a",
-                                "city": "Гомель",
-                                "street": "пушкина",
-                                "houseNumber": "3",
-                                "officeNumber": "",
-                                "photoId": "00000000-0000-0000-0000-000000000000",
-                                "registryPhoneNumber": "+375(00)000-00-00",
-                                "isActive": true
-                            },
-                            "careerStartYear": "2025-01-01",
-                            "status": "At work"
-                        },
-                        {
-                            "id": "e45d3e6c-9f7a-4d29-b5d3-9c3a2a7c2e0e",
-                            "firstName": "Петров",
-                            "lastName": "Петр",
-                            "middleName": "Петрович",
-                            "cabinetNumber": 2,
-                            "dateOfBirth": "2024-05-15",
-                            "account": {
-                                "id": "d1234567-89ab-cdef-0123-456789abcdef",
-                                "email": "petr@gmail.com",
-                                "password": "$2a$10$qllL3oCqCK2V8I3J9SmInOdzmtVAA7bB/92C2sikVPsH36Dr2B.x.",
-                                "phoneNumber": "+375(29)123-45-67",
-                                "role": 2
-                            },
-                            "specialization": {
-                                "id": "fa5d2407-8f2a-4b64-b65e-bf605da77141",
-                                "specializationName": "developer",
-                                "isActive": true
-                            },
-                            "office": {
-                                "id": "788b5223-8e80-4a30-8744-639e5e80e3ad",
-                                "city": "Минск",
-                                "street": "Победы",
-                                "houseNumber": "1",
-                                "officeNumber": "",
-                                "longitude": "53.927103",
-                                "latitude": "27.536687",
-                                "photoId": "00000000-0000-0000-0000-000000000000",
-                                "registryPhoneNumber": "+375(00)000-00-00",
-                                "isActive": false
-                            },
-                            "careerStartYear": "2023-09-01",
-                            "status": "On leave"
-                        },
-                        {
-                            "id": "c7b3d0f1-4e3b-4c8d-bf60-3e22f8c7f8c5",
-                            "firstName": "Сидоров",
-                            "lastName": "Сидор",
-                            "middleName": "Сидорович",
-                            "cabinetNumber": 3,
-                            "dateOfBirth": "1990-08-20",
-                            "account": {
-                                "id": "c2345678-9abc-def0-1234-56789abcdef0",
-                                "email": "sidor@gmail.com",
-                                "password": "$2a$10$qllL3oCqCK2V8I3J9SmInOdzmtVAA7bB/92C2sikVPsH36Dr2B.x.",
-                                "phoneNumber": "+375(33)765-43-21",
-                                "role": 3
-                            },
-                            "specialization": {
-                                "id": "fb5d2407-8f2a-4b64-b65e-bf605da77142",
-                                "specializationName": "manager",
-                                "isActive": true
-                            },
-                            "office": {
-                                "id": "cb2f16f7-b057-458b-832e-76bad03a178c",
-                                "city": "Брест",
-                                "street": "Советская",
-                                "houseNumber": "10",
-                                "officeNumber": "202",
-                                "photoId": "00000000-0000-0000-0000-000000000002",
-                                "registryPhoneNumber": "+375(44)123-45-67",
-                                "isActive": true
-                            },
-                            "careerStartYear": "2015-01-15",
-                            "status": "At work"
-                        }
-                    ]
+                const fetchedDoctors = await GetAllDoctorsFetchAsync();
                 setDoctors(fetchedDoctors);
 
                 const formattedDoctors = formatDoctors(fetchedDoctors);
@@ -265,7 +116,7 @@ export default function Doctors() {
     const formatDoctors = (doctors) => {
         return doctors.map(({ id, firstName, lastName, middleName, specialization, status, dateOfBirth, office }) => ({
             id,
-            fullName: `${firstName} ${lastName} ${middleName}`,
+            doctorFullName: `${firstName} ${lastName} ${middleName}`,
             specialization: specialization.specializationName,
             status,
             dateOfBirth,
@@ -373,9 +224,24 @@ export default function Doctors() {
                             )}
                             {editableDoctors.length > 0 && (
                                 <div className="table">
-                                    <Table
-                                        items={editableDoctors}
-                                    />
+                                    <Table>
+                                        <thead>
+                                            <tr>
+                                                {columnNames.map(columnName => (
+                                                    <th key={columnName}>{FieldNames[columnName]}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {editableDoctors.map(editableDoctor => (
+                                                <tr key={editableDoctor.id} onClick={() => navigate(`/doctor/${editableDoctor.id}`)}>
+                                                    {columnNames.map(columnName => (
+                                                        <td key={columnName}>{editableDoctor[columnName]}</td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             )}
                         </>
@@ -507,35 +373,43 @@ export default function Doctors() {
                             <div className="filter-section">
                                 <h2 className="filter-modal-title">Offices</h2>
                                 <div className="filter-checkbox-container">
-                                    {offices.map(office => (
-                                        <div className="filter-checkbox-group" key={office.id}>
-                                            <CheckboxWrapper
-                                                id={office.id}
-                                                name="office-address"
-                                                value={office.address}
-                                                checked={selectedOffices.some(selectedOffice => selectedOffice.id === office.id)}
-                                                onChange={() => handleFilterOfficeChange(office)}
-                                                label={office.city}
-                                            />
-                                        </div>
-                                    ))}
+                                    {offices.length > 0 ? (
+                                        offices.map(office => (
+                                            <div className="filter-checkbox-group" key={office.id}>
+                                                <CheckboxWrapper
+                                                    id={office.id}
+                                                    name="office-address"
+                                                    value={office.address}
+                                                    checked={selectedOffices.some(selectedOffice => selectedOffice.id === office.id)}
+                                                    onChange={() => handleFilterOfficeChange(office)}
+                                                    label={office.city}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>Offices not found.</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="filter-section">
                                 <h2 className="filter-modal-title">Specializations</h2>
                                 <div className="filter-checkbox-container">
-                                    {specializations.map(specialization => (
-                                        <div className="filter-checkbox-group" key={specialization.id}>
-                                            <CheckboxWrapper
-                                                id={specialization.id}
-                                                name="specialization-name"
-                                                value={specialization.specializationName}
-                                                checked={selectedSpecializations.some(selectedSpecialization => selectedSpecialization.id === specialization.id)}
-                                                onChange={() => handleFilterSpecializationChange(specialization)}
-                                                label={specialization.specializationName}
-                                            />
-                                        </div>
-                                    ))}
+                                    {specializations.length > 0 ? (
+                                        specializations.map(specialization => (
+                                            <div className="filter-checkbox-group" key={specialization.id}>
+                                                <CheckboxWrapper
+                                                    id={specialization.id}
+                                                    name="specialization-name"
+                                                    value={specialization.specializationName}
+                                                    checked={selectedSpecializations.some(selectedSpecialization => selectedSpecialization.id === specialization.id)}
+                                                    onChange={() => handleFilterSpecializationChange(specialization)}
+                                                    label={specialization.specializationName}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p>Specializations not found.</p>
+                                    )}
                                 </div>
                             </div>
                             <div className="form-actions">

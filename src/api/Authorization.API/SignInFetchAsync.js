@@ -36,12 +36,12 @@ async function SignInFetchAsync(signInModel) {
 
                 window.location.href = "/";
             } else {
-                alert('You entered the wrong password.');
+                //alert('You entered the wrong password.');
             }
         }
     } catch (error) {
         console.error('Error during sign in:', error);
-        alert('An error occurred during sign in');
+        //alert('An error occurred during sign in');
     }
 }
 

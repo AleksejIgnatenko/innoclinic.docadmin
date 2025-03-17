@@ -1,3 +1,13 @@
+.calendar-modal-container {
+  position: relative;
+  margin: auto;
+  background-color: var(--background);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 32px;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
 .calendar-container {
     width: max-content;
     position: relative;

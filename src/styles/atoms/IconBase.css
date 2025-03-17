@@ -28,3 +28,7 @@
 .sort-icon {
     font-size: 16px;
 }
+
+.approved {
+    filter: brightness(0.5);
+}

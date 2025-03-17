@@ -25,7 +25,7 @@ async function UpdateDoctorFetchAsync(doctorId, doctorModel) {
         }
     } catch (error) {
         console.error('Error in updating patient:', error);
-        alert('An error occurred while updating the patient');
+        //alert('An error occurred while updating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }

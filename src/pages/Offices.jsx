@@ -8,6 +8,9 @@ import { InputWrapper } from "../components/molecules/InputWrapper";
 import useOfficeForm from "../hooks/useOfficeForm";
 import ImageUploader from "../components/organisms/ImageUploader";
 import 'boxicons/css/boxicons.min.css';
+import FieldNames from "../enums/FieldNames";
+import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
+import { IconBase } from "../components/atoms/IconBase";
 
 export default function Offices() {
     const [offices, setOffices] = useState([]);
@@ -29,71 +32,21 @@ export default function Offices() {
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
+    const columnNames = [
+        'officeAddress',
+        'status',
+        'registryPhoneNumber',
+    ];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 toggleLoader(true);
 
-                //const fetchedOffices = await GetAllOfficesFetchAsync();
-                const fetchedOffices = [
-                    {
-                        "id": "eb2f16f7-b057-458b-832e-76bad03a178a",
-                        "city": "Гомель",
-                        "street": "пушкина",
-                        "houseNumber": "3",
-                        "officeNumber": "",
-                        "longitude": "52.43014",
-                        "latitude": "31.013527",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "788b5223-8e80-4a30-8744-639e5e80e3ad",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": false
-                    },
-                    {
-                        "id": "d324b5a6-4b90-4121-8270-4a18f17bd0ff",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "99601714-8256-489a-a33c-5ec08e1ffc1e",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "2",
-                        "officeNumber": "",
-                        "longitude": "53.926913",
-                        "latitude": "27.535717",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    }
-                ]
+                const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
 
-                const formattedOffices = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
-                    id,
-                    address: city + " " + street + " " + houseNumber + " " + officeNumber,
-                    status: isActive ? 'Active' : 'Inactive',
-                    registryPhoneNumber,
-                }));
-
+                const formattedOffices = formatOffices(fetchedOffices);
                 setEditableOffices(formattedOffices);
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -105,25 +58,14 @@ export default function Offices() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const lowerCaseSearchTerm = searchTerm.toLowerCase();
-        const filtered = offices.filter(item => {
-            return (
-                item.city.toLowerCase().includes(lowerCaseSearchTerm) ||
-                item.street.toLowerCase().includes(lowerCaseSearchTerm) ||
-                item.houseNumber.toString().includes(lowerCaseSearchTerm) ||
-                item.officeNumber.toString().includes(lowerCaseSearchTerm)
-            );
-        }).map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
+    const formatOffices = (offices) => {
+        return offices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
             id,
-            address: city + " " + street + " " + houseNumber + " " + officeNumber,
+            officeAddress: city + " " + street + " " + houseNumber + " " + officeNumber,
             status: isActive ? 'Active' : 'Inactive',
             registryPhoneNumber,
         }));
-
-        setEditableOffices(filtered);
-    }, [searchTerm, offices]);
-
+    };
 
     const toggleLoader = (status) => {
         setIsLoading(status);
@@ -158,9 +100,24 @@ export default function Offices() {
                             )}
                             {editableOffices.length > 0 && (
                                 <div className="table">
-                                    <Table
-                                        items={editableOffices}
-                                    />
+                                    <Table>
+                                        <thead>
+                                            <tr>
+                                                {columnNames.map(columnName => (
+                                                    <th key={columnName}>{FieldNames[columnName]}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {editableOffices.map(editableOffice => (
+                                                <tr key={editableOffice.id}>
+                                                    {columnNames.map(columnName => (
+                                                        <td key={columnName}>{editableOffice[columnName]}</td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
                                 </div>
                             )}
                         </>

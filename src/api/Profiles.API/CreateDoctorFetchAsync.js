@@ -27,7 +27,7 @@ async function CreateDoctorFetchAsync(doctorModel) {
         }
     } catch (error) {
         console.error('Error in creating patient:', error);
-        alert('An error occurred while creating the patient');
+        //alert('An error occurred while creating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }

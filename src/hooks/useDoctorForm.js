@@ -96,12 +96,28 @@ const useDoctorForm = (initialValues) => {
         setErrors({});
     };
 
+    const mapDoctorData = (doctor) => {
+        setFormData({
+            firstName: doctor.firstName || '',
+            lastName: doctor.lastName || '',
+            middleName: doctor.middleName || '', 
+            dateOfBirth: doctor.dateOfBirth || '',
+            email: doctor.email || '', 
+            specializationId: doctor.specialization.id || '', 
+            officeId: doctor.office.id || '', 
+            cabinetNumber: doctor.cabinetNumber || '', 
+            careerStartYear: doctor.careerStartYear || '', 
+            status: doctor.status || '',
+        });
+    };
+
     return {
         formData,
         errors,
         handleChange,
         handleBlur,
         resetForm,
+        mapDoctorData,
         isFormValid: Object.values(errors).every(value => value),
     };
 };

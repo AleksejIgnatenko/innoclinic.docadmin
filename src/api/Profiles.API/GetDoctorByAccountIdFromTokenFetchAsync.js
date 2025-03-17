@@ -28,7 +28,7 @@ async function GetDoctorByAccountIdFromTokenFetchAsync() {
         }
     } catch (error) {
         console.error('Error in account connection with the doctor:', error);
-        alert('An error occurred while connecting the account with the doctor');
+        //alert('An error occurred while connecting the account with the doctor');
         return null;
     }
 }

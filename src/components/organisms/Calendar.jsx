@@ -126,7 +126,7 @@ const Calendar = ({ onClose, handleSetSelectedDate, currentDate }) => {
 
     return (
         <div className="modal-overlay">
-            <div className="modal-container">
+            <div className="calendar-modal-container">
                 <div className="modal-form">
                     <CloseButton onClick={onClose} />
                     <div className="calendar-container">

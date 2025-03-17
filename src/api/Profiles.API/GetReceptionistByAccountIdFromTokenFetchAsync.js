@@ -28,7 +28,7 @@ async function GetReceptionistByAccountIdFromTokenFetchAsync() {
         }
     } catch (error) {
         console.error('Error in account connection with the receptionist:', error);
-        alert('An error occurred while connecting the account with the receptionist');
+        //alert('An error occurred while connecting the account with the receptionist');
         return null;
     }
 }

@@ -7,6 +7,12 @@ import useDoctorForm from "../hooks/useDoctorForm";
 import { InputWrapper } from "../components/molecules/InputWrapper";
 import { SelectWrapper } from "../components/molecules/SelectWrapper";
 import workStatuses from "../enums/WorkStatuses";
+import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
+import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
+import GetDoctorByIdFetchAsync from "../api/Profiles.API/GetDoctorByIdFetchAsync";
+import GetDoctorByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
+import UpdateDoctorModelRequest from "../models/doctorModels/UpdateDoctorModelRequest";
+import UpdateDoctorFetchAsync from "../api/Profiles.API/UpdateDoctorFetchAsync";
 
 function Doctor() {
     const { id } = useParams();
@@ -20,7 +26,7 @@ function Doctor() {
 
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
-    const { formData, errors, handleChange, handleBlur, resetForm, isFormValid } = useDoctorForm({
+    const { formData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -39,110 +45,34 @@ function Doctor() {
         const fetchData = async () => {
             try {
                 toggleLoader(true);
-
-                const fetchedSpecializations = [
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77140",
-                        "specializationName": "postman",
-                        "isActive": true
-                    },
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77141",
-                        "specializationName": "postman1",
-                        "isActive": true
-                    },
-                    {
-                        "id": "fb5d2407-8f2a-4b64-b65e-bf605da77142",
-                        "specializationName": "postman2",
-                        "isActive": true
-                    }
-                ]
+                errors.email = true;
+                const fetchedSpecializations = await GetAllSpecializationFetchAsync();
                 setSpecializations(fetchedSpecializations);
-
-                const fetchedOffices = [
-                    {
-                        "id": "eb2f16f7-b057-458b-832e-76bad03a178a",
-                        "city": "Гомель",
-                        "street": "пушкина",
-                        "houseNumber": "3",
-                        "officeNumber": "",
-                        "longitude": "52.43014",
-                        "latitude": "31.013527",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "788b5223-8e80-4a30-8744-639e5e80e3ad",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": false
-                    },
-                    {
-                        "id": "d324b5a6-4b90-4121-8270-4a18f17bd0ff",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "1",
-                        "officeNumber": "",
-                        "longitude": "53.927103",
-                        "latitude": "27.536687",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    },
-                    {
-                        "id": "99601714-8256-489a-a33c-5ec08e1ffc1e",
-                        "city": "Минск",
-                        "street": "Победы",
-                        "houseNumber": "2",
-                        "officeNumber": "",
-                        "longitude": "53.926913",
-                        "latitude": "27.535717",
-                        "photoId": "00000000-0000-0000-0000-000000000000",
-                        "registryPhoneNumber": "+375(00)000-00-00",
-                        "isActive": true
-                    }
-                ]
+                
+                const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
+                
                 const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
                     id,
                     value: `${city} ${street} ${houseNumber} ${officeNumber}`
                 }))
                 setOfficeOptions(officeOptions);
-
-                formData.firstName = 'Иванов';
-                formData.lastName = 'Ивано';
-                formData.middleName = 'Иванович';
-                formData.dateOfBirth = '2025-01-01';
-                formData.email = 'ivanov@gmail.com';
-                formData.specializationId = 'fb5d2407-8f2a-4b64-b65e-bf605da77140';
-                formData.officeId = '99601714-8256-489a-a33c-5ec08e1ffc1e';
-                formData.cabinetNumber = '1';
-                formData.careerStartYear = '2025-01-01';
-                formData.status = 'Sick Day';
-
-                setSelectSpecializationName(specializations.find(spec => spec.id === formData.specializationId)?.specializationName || '');
-
+                
+                let fetchedDoctor;
                 if (id) {
-                    //const fetchDoctor = await GetDoctorByIdFetchAsync(id);
-                    //setDoctor(fetchDoctor);
-
+                    fetchedDoctor = await GetDoctorByIdFetchAsync(id);
+                    if (fetchedDoctor) {
+                        mapDoctorData(fetchedDoctor);
+                        setDoctor(fetchedDoctor);
+                    }
                 } else {
-                    //const fetchDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
-                    //setDoctor(fetchDoctor);
+                    fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
+                    if (fetchedDoctor) {
+                        mapDoctorData(fetchedDoctor);
+                        setDoctor(fetchedDoctor);
+                    }
                 }
-
-                //const fetchedSpecializations = await GetAllSpecializationFetchAsync();
-                //setSpecializations(fetchedSpecializations);
-
-                //const fetchedOffices = await GetAllOfficesFetchAsync();
-                //setOffices(fetchedOffices);
+                setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
 
             } catch (error) {
                 console.error('Error fetching doctor:', error);
@@ -150,7 +80,7 @@ function Doctor() {
                 toggleLoader(false);
             }
         };
-
+    
         fetchData();
     }, []);
 
@@ -179,19 +109,33 @@ function Doctor() {
         setSelectSpecializationName(value);
     };
 
+    async function handleUpdateDoctor() {
+        setIsEditing(false);
+    
+        const updateDoctorModel = new UpdateDoctorModelRequest(
+            formData.firstName,
+            formData.lastName,
+            formData.middleName,
+            formData.cabinetNumber,
+            formData.dateOfBirth,
+            formData.specializationId,
+            formData.officeId,
+            formData.careerStartYear,
+            formData.status
+        );
+    
+        await UpdateDoctorFetchAsync(doctor.id, updateDoctorModel);
+    }
+
     return (
         <>
             {isLoading && <Loader />}
             {!isLoading && (
-                <ProfileCard
-                    doctor={doctor}
-                    specializations={specializations}
-                    offices={offices}
-                >
+                <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} />
+                                <IconBase name={"bx-check"} onClick={handleUpdateDoctor}/>
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 
@@ -238,15 +182,6 @@ function Doctor() {
                                 value={formData.dateOfBirth}
                                 onBlur={handleBlur('dateOfBirth')}
                                 onChange={handleChange('dateOfBirth')}
-                                required
-                            />
-                            <InputWrapper
-                                type="email"
-                                label="Email"
-                                id="email"
-                                value={formData.email}
-                                onBlur={handleBlur('email')}
-                                onChange={handleChange('email')}
                                 required
                             />
                             <div>

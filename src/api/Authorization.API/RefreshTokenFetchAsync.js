@@ -22,11 +22,11 @@ async function RefreshTokenFetchAsync() {
             const refreshTokenExpiry = 180;
 
             Cookies.set('accessToken', accessToken, { sameSite: 'strict', expires: accessTokenExpiry });
-            Cookies.set('refreshToken', refreshToken, { secure: true, sameSite: 'strict', expires: refreshTokenExpiry });
+            Cookies.set('refreshToken', refreshToken, { httpOnly: true, secure: true, sameSite: 'strict', expires: refreshTokenExpiry });
         }
     } catch (error) {
         console.error('Error during registration:', error);
-        alert('An error occurred during registration');
+        //alert('An error occurred during registration');
     }
 }
 

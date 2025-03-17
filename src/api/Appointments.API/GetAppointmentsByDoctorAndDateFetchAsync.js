@@ -31,7 +31,7 @@ async function GetAppointmentsByDoctorAndDateFetchAsync(selectedDate) {
         }
     } catch (error) {
         console.error('Error in fetching appointments:', error);
-        alert('An unexpected error occurred while fetching appointments. Please try again later.');
+        //alert('An unexpected error occurred while fetching appointments. Please try again later.');
         return [];
     }
 }

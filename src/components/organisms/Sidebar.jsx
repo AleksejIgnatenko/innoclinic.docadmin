@@ -62,7 +62,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     {/* {account && account.role === 'Receptionist' && ( */}
                         <li>
                             <Link to="/doctors">
-                                <IconBase className='bx-user-circle' />
+                                <IconBase name='bx-user-circle' />
                                 <span className="link_name">Doctors</span>
                             </Link>
                             <ul className="sub-menu blank">
@@ -72,18 +72,18 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     {/* )} */}
                     {/* {account && (account.role === 'Doctor' ? ( */}
                         <li>
-                            <Link to="/mySchedule">
-                                <IconBase className='bx-calendar'/>
+                            <Link to="/my-schedule">
+                                <IconBase name='bx-calendar'/>
                                 <span className="link_name">My schedule</span>
                             </Link>
                             <ul className="sub-menu blank">
-                                <li><Link to="/mySchedule" className="link_name">My schedule</Link></li>
+                                <li><Link to="/my-schedule" className="link_name">My schedule</Link></li>
                             </ul>
                         </li>
                     {/* ) : account && (account.role === 'Receptionist' ? ( */}
                         <li>
                             <Link to="/appointments">
-                                <IconBase className='bx-calendar' />
+                                <IconBase name='bx-calendar' />
                                 <span className="link_name">Appointments</span>
                             </Link>
                             <ul className="sub-menu blank">
@@ -93,7 +93,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     {/* ) : null))} */}
                     <li>
                         <Link to="/offices">
-                            <i className='bx bx-buildings'></i>
+                            <IconBase className='bx-buildings'></IconBase>
                             <span className="link_name">Offices</span>
                         </Link>
                         <ul className="sub-menu blank">
@@ -102,7 +102,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     </li>
                     <li>
                         <Link to="/specialization">
-                            <IconBase className='bx bx-collection' />
+                            <IconBase name='bx-collection' />
                             <span className="link_name">Specialization</span>
                         </Link>
                         <ul className="sub-menu blank">
@@ -140,7 +140,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                         <>
                             <li>
                                 <Link >
-                                    <IconBase className='bx bx-log-in' />
+                                    <IconBase name='bx-log-in' />
                                     <span className="link_name">Login</span>
                                 </Link>
                                 <ul className="sub-menu blank">
