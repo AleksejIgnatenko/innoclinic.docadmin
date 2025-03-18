@@ -10,7 +10,9 @@ import ImageUploader from "../components/organisms/ImageUploader";
 import 'boxicons/css/boxicons.min.css';
 import FieldNames from "../enums/FieldNames";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
-import { IconBase } from "../components/atoms/IconBase";
+import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
+import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
+import CreateOfficeFetchAsync from "../api/Offices.API/CreateOfficeFetchAsync";
 
 export default function Offices() {
     const [offices, setOffices] = useState([]);
@@ -18,13 +20,13 @@ export default function Offices() {
 
     const [image, setImage] = useState(null);
 
-    const { formData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
         city: '',
         street: '',
         houseNumber: '',
         officeNumber: '',
         registryPhoneNumber: '+',
-        status: true,
+        status: false,
     });
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -75,9 +77,20 @@ export default function Offices() {
         setIsAddModalOpen(!isAddModalOpen);
     };
 
-    const handleAdd = (e) => {
+    const handleCheckboxChange = (e) => {
+        const value = e.target.value === 'true'; 
+        console.log(value); 
+    
+        setFormData(prev => ({
+            ...prev,
+            status: value,
+        }));
+    };
+
+    async function handleAdd (e) {
         e.preventDefault();
-        console.log(formData);
+        const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber, formData.registryPhoneNumber, formData.status);
+        await CreateOfficeFetchAsync(createOfficeModel);
     }
 
     return (
@@ -175,24 +188,22 @@ export default function Offices() {
                                     onKeyDown={handleRegistryPhoneNumberKeyDown}
                                     required
                                 />
-                                <InputWrapper
+                                <CheckboxWrapper
                                     type="radio"
                                     label="Status active"
-                                    id="registryPhoneNumber"
+                                    id="statusActive"
                                     value={true}
                                     checked={formData.status === true}
-                                    onBlur={handleBlur('status')}
-                                    onChange={handleChange('status')}
+                                    onChange={handleCheckboxChange} 
                                     required
                                 />
-                                <InputWrapper
+                                <CheckboxWrapper
                                     type="radio"
                                     label="Status inactive"
-                                    id="registryPhoneNumber"
+                                    id="statusInactive"
                                     value={false}
                                     checked={formData.status === false}
-                                    onBlur={handleBlur('Status')}
-                                    onChange={handleChange('status')}
+                                    onChange={handleCheckboxChange}
                                     required
                                 />
                             </div>

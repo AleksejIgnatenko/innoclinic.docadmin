@@ -6,7 +6,7 @@ const useDoctorForm = (initialValues) => {
     const [errors, setErrors] = useState({
         firstName: false,
         lastName: false,
-        // middleName: false,
+        middleName: true,
         dateOfBirth: false,
         email: false,
         specializationId: false,

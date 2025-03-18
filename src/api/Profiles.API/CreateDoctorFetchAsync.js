@@ -19,9 +19,7 @@ async function CreateDoctorFetchAsync(doctorModel) {
             body: JSON.stringify(doctorModel)
         });
 
-        if (response.ok) {
-            console.log("ok");
-        } else if (response.status === 400) {
+        if (response.status === 400) {
             const data = await response.json();
             console.log(data);
         }

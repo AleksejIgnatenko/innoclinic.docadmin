@@ -7,7 +7,7 @@ const useSignInForm = (initialValues) => {
     city: false,
     street: false,
     houseNumber: false,
-    officeNumber: false,
+    officeNumber: true,
     registryPhoneNumber: false,
     status: true,
   });
@@ -67,6 +67,7 @@ const useSignInForm = (initialValues) => {
 
   return {
     formData,
+    setFormData,
     errors,
     handleChange,
     handleBlur,

@@ -15,6 +15,9 @@ import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync"
 import GetAppointmentsByDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDateFetchAsync";
 import GetAccountsByIdsFetchAsync from "../api/Authorization.API/GetAccountsByIdsFetchAsync";
 import { IconBase } from "../components/atoms/IconBase";
+import UpdateAppointmentModelRequest from "../models/appointmentModels/UpdateAppointmentModelRequest";
+import UpdateAppointmentFetchAsync from "../api/Appointments.API/UpdateAppointmentFetchAsync";
+import DeleteAppointmentFetchAsync from "../api/Appointments.API/DeleteAppointmentFetchAsync";
 
 export default function Appointments() {
     const [appointments, setAppointments] = useState([]);
@@ -127,7 +130,6 @@ export default function Appointments() {
 
     const handleSetSelectedDate = (date) => {
         setSelectedDate(date);
-        console.log(date);
     }
 
     const handleFilterDoctorChange = (doctor) => {
@@ -195,23 +197,40 @@ export default function Appointments() {
         setIsFilterModalOpen(!isFilterModalOpen);
     }
 
-    const handleApproveAppointment = (id) => {
-        setEditableAppointments(prevAppointments => {
-            return prevAppointments.map(appointment => {
-                if (appointment.id === id) {
-                    return { ...appointment, isApproved: 'Approved' };
-                }
-                return appointment;
+    async function handleApproveAppointment(id) {
+        const appointment = appointments.find(a => a.id === id);
+
+        const updateAppointmentModelRequest = new UpdateAppointmentModelRequest(
+            appointment.id, appointment.doctor.id, appointment.medicalService.id, appointment.patient.id, appointment.date, appointment.time, true);
+
+        const resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
+        if (resultResponseStatus === 200) {
+            setEditableAppointments(prevAppointments => {
+                return prevAppointments.map(appointment => {
+                    if (appointment.id === id) {
+                        return { ...appointment, isApproved: 'Approved' };
+                    }
+                    return appointment;
+                });
             });
-        });
-        console.log(id);
+        }
     };
 
-    const handleCancelAppointment = (id) => {
-        console.log(id);
+    async function handleCancelAppointment(id) {
+        const confirmCancel = window.confirm("Are you sure you want to cancel the appointment?");
+
+        if (confirmCancel) {
+            const resultResponseStatus = await DeleteAppointmentFetchAsync(id);
+            if (resultResponseStatus === 200) {
+                setEditableAppointments(prevAppointments =>
+                    prevAppointments.filter(a => a.id !== id)
+                );
+                setAppointments(prevAppointments =>
+                    prevAppointments.filter(a => a.id !== id)
+                );
+            }
+        }
     }
-
-
 
     return (
         <>

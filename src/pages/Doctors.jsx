@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom';
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
+import CreateDoctorModelRequest from "../models/doctorModels/CreateDoctorModelRequest";
+import CreateDoctorFetchAsync from "../api/Profiles.API/CreateDoctorFetchAsync";
 
 
 export default function Doctors() {
@@ -197,9 +199,10 @@ export default function Doctors() {
         setIsFilterModalOpen(!isFilterModalOpen);
     }
 
-    const handleAdd = (e) => {
+    async function handleAdd (e) {
         e.preventDefault();
-        console.log(formData);
+        const createDoctorRequest = new CreateDoctorModelRequest(formData.firstName, formData.lastName, formData.middleName, formData.cabinetNumber, formData.dateOfBirth, formData.email, formData.specializationId, formData.officeId, formData.careerStartYear, formData.status)
+        await CreateDoctorFetchAsync(createDoctorRequest);
     }
 
     return (
