@@ -2,6 +2,7 @@
     font-size: 20px;
     color: var(--foreground);
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
 }
 
 .bx.menu-icon {
@@ -31,4 +32,5 @@
 
 .approved {
     filter: brightness(0.5);
+    cursor: default;
 }

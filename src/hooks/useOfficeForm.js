@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FieldNames from '../enums/FieldNames';
 
-const useSignInForm = (initialValues) => {
+const useOfficeForm = (initialValues) => {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({
     city: false,
@@ -76,4 +76,4 @@ const useSignInForm = (initialValues) => {
   };
 };
 
-export default useSignInForm;
+export default useOfficeForm;

@@ -15,6 +15,7 @@ import MySchedule from './pages/MySchedule';
 import Patient from './pages/Patient';
 import Cookies from 'js-cookie';
 import SignInFetchAsync from './api/Authorization.API/SignInFetchAsync';
+import Office from './pages/Office';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -56,6 +57,7 @@ function App() {
                 <Route path="/appointments" element={<Appointments />} />
                 <Route path="/doctor/:id?" element={<Doctor />} />
                 <Route path="/doctors" element={<Doctors />} />
+                <Route path="/office/:id?" element={<Office />} />
                 <Route path="/offices" element={<Offices />} />
                 <Route path="/my-schedule" element={<MySchedule />} />
                 <Route path="/patient/:id?" element={<Patient />} />

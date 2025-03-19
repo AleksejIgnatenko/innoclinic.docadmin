@@ -1,20 +1,8 @@
 .upload-area {
-    display: flex;
-    justify-content: center; 
-    align-items: center;
+    position: relative;
     height: 150px;
     width: 150px;
-    border: 2px dashed var(--accent);
-    border-radius: 100%;
-    margin-bottom: 10px;
-    padding: 0; 
-    text-align: center;
-    background-size: contain;
-    background-repeat: no-repeat;
-    cursor: pointer;
     overflow: hidden;
-    position: relative;
-    margin-left: 28%;
 }
 
 .drop-zoon-file-input {
@@ -22,12 +10,20 @@
 }
 
 .upload-area img {
-    width: 100%; 
-    height: 100%;
-    object-fit: cover; 
     position: absolute;
-    top: 50%; 
-    left: 50%; 
+    top: 0;
+    left: 0;
+    width: 100%; 
+    height: 100%; 
+    cursor: pointer;
+}
+
+.upload-area i {
+    position: absolute;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
-    margin: 0; 
+    color: white; 
+    font-size: 24px;
+    cursor: pointer;
 }

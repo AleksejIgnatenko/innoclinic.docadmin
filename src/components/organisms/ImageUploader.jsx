@@ -2,8 +2,8 @@ import React, { useRef, useState } from 'react';
 import '../../styles/organisms/ImageUploader.css';
 import { IconBase } from '../atoms/IconBase';
 
-const ImageUploader = ({ setImage }) => {
-    const [imgPreview, setImgPreview] = useState(null);
+const ImageUploader = ({ photo, setPhoto }) => {
+    const [imgPreview, setImgPreview] = useState(photo ? photo : null);
     const imageInputRef = useRef(null);
 
     const openFileExplorer = () => {
@@ -24,7 +24,7 @@ const ImageUploader = ({ setImage }) => {
 
     const handleChangeImg = (e) => {
         const selectedFile = e.target.files[0];
-        setImage(selectedFile);
+        setPhoto(selectedFile);
         uploadFile(selectedFile);
     };
 
@@ -39,7 +39,7 @@ const ImageUploader = ({ setImage }) => {
     const handleDrop = (e) => {
         e.preventDefault();
         const file = e.dataTransfer.files[0];
-        setImage(file);
+        setPhoto(file);
         uploadFile(file);
     };
 
@@ -53,7 +53,7 @@ const ImageUploader = ({ setImage }) => {
             onDrop={handleDrop}
             onClick={openFileExplorer}
         >
-            {imgPreview && <img src={imgPreview} alt="Uploaded" />}
+            {imgPreview && <img src={imgPreview} alt="" />}
             <IconBase className='bx-file' />
             <input
                 ref={imageInputRef}

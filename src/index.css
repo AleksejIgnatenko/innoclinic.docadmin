@@ -159,3 +159,19 @@ input[type='date']::-webkit-calendar-picker-indicator {
   align-items: center;
   min-height: calc(100vh - 200px);
 }
+
+.img-container {
+  height: 150px;
+  width: 150px;
+  border: 2px dashed var(--accent);
+  overflow: hidden;
+  margin: 10px auto 20px auto;
+  border-radius: 50%;
+}
+
+.img-container img {
+  width: 150px; 
+  height: 150px;
+  background: var(--background);
+  border-radius: 50%;
+}

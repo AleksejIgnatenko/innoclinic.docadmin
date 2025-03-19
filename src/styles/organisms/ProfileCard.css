@@ -13,22 +13,9 @@
     padding: 10px;
 }
 
-.profile-img {
-    width: 160px;
-    height: 160px;
-    margin: 10px auto 20px auto;
-    border-radius: 50%;
-}
-
-.profile-img img {
-    width: 100%;
-    background: var(--background);
-    border-radius: 50%;
-}
-
 .profile-content {
     text-align: center;
-    width: 320px;
+    width: 380px;
     margin: 0 auto;
 }
 

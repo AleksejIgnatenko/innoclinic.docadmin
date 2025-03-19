@@ -21,7 +21,7 @@
     padding: 1rem;
     gap: 10px;
     position: relative;
-    cursor: default;
+    /* cursor: default; */
 }
 
 .table-container th {

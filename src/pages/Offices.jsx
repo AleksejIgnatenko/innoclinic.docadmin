@@ -13,12 +13,16 @@ import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync"
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
 import CreateOfficeFetchAsync from "../api/Offices.API/CreateOfficeFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
+import { useNavigate } from "react-router-dom";
 
 export default function Offices() {
+    const navigate = useNavigate();
+
     const [offices, setOffices] = useState([]);
     const [editableOffices, setEditableOffices] = useState([]);
 
-    const [image, setImage] = useState(null);
+    const [photo, setPhoto] = useState(null);
 
     const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
         city: '',
@@ -78,18 +82,21 @@ export default function Offices() {
     };
 
     const handleCheckboxChange = (e) => {
-        const value = e.target.value === 'true'; 
-        console.log(value); 
-    
+        const value = e.target.value === 'true';
+        console.log(value);
+
         setFormData(prev => ({
             ...prev,
             status: value,
         }));
     };
 
-    async function handleAdd (e) {
+    async function handleAdd(e) {
         e.preventDefault();
-        const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber, formData.registryPhoneNumber, formData.status);
+        const photoId = await CreatePhotoFetchAsync(photo);
+
+        const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
+            photoId, formData.registryPhoneNumber, formData.status);
         await CreateOfficeFetchAsync(createOfficeModel);
     }
 
@@ -123,7 +130,9 @@ export default function Offices() {
                                         </thead>
                                         <tbody>
                                             {editableOffices.map(editableOffice => (
-                                                <tr key={editableOffice.id}>
+                                                <tr key={editableOffice.id} onClick={() => navigate(`/office/${editableOffice.id}`)}
+                                                    style={{cursor: 'pointer'}}
+                                                >
                                                     {columnNames.map(columnName => (
                                                         <td key={columnName}>{editableOffice[columnName]}</td>
                                                     ))}
@@ -139,9 +148,11 @@ export default function Offices() {
                     {isAddModalOpen && (
                         <FormModal title="Add office" onClose={toggleAddModal} onSubmit={handleAdd} showCloseButton={true}>
                             <div className="modal-inputs">
-                                <ImageUploader
-                                    setImage={setImage}
-                                />
+                                <div class="img-container">
+                                    <ImageUploader
+                                        setPhoto={setPhoto}
+                                    />
+                                </div>
                                 <InputWrapper
                                     type="text"
                                     label="City"
@@ -194,7 +205,7 @@ export default function Offices() {
                                     id="statusActive"
                                     value={true}
                                     checked={formData.status === true}
-                                    onChange={handleCheckboxChange} 
+                                    onChange={handleCheckboxChange}
                                     required
                                 />
                                 <CheckboxWrapper
