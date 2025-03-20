@@ -29,6 +29,7 @@ export default function Offices() {
         street: '',
         houseNumber: '',
         officeNumber: '',
+        photoId: '',
         registryPhoneNumber: '+',
         status: false,
     });

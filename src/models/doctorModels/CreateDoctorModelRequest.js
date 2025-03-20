@@ -9,7 +9,8 @@ class CreateDoctorModelRequest {
         specializationId,
         officeId,
         careerStartYear,
-        status
+        status,
+        photoId,
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -21,6 +22,7 @@ class CreateDoctorModelRequest {
         this.officeId = officeId; 
         this.careerStartYear = careerStartYear;
         this.status = status;
+        this.photoId = photoId;
     }
 }
 

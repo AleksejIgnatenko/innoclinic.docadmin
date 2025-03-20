@@ -2,7 +2,7 @@ import { DocumentsAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function GetPhotoByNameAsync(fileName) {
+async function UpdatePhotoFetchAsync(photoFile, photoName) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,27 +10,28 @@ async function GetPhotoByNameAsync(fileName) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${DocumentsAPI}/Photo?photoName=${fileName}`, {
-            method: 'GET',
+        const formData = new FormData();
+        formData.append('photo', photoFile);
+
+        const response = await fetch(`${DocumentsAPI}/Photo?photoName=${photoName}`, {
+            method: 'PUT',
             headers: {
-                "Authorization": `Bearer ${jwtToken}`
-            }
+                "Authorization": `Bearer ${jwtToken}`, 
+            },
+            body: formData
         });
 
         if (response.ok) {
-            const blob = await response.blob();
-            const imageUrl = URL.createObjectURL(blob); 
-            return imageUrl;
-        } else if (response.status === 404) {
-            console.log('Photo not found');
-        } else {
+            const responseText = await response.text(); 
+            return responseText;
+        } else if (response.status === 400) {
             const data = await response.json();
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in getting photo:', error);
+        console.error('Error in creating photo:', error);
         return { status: 500, error: 'Internal Server Error' };
     }
 }
 
-export default GetPhotoByNameAsync;
+export default UpdatePhotoFetchAsync;

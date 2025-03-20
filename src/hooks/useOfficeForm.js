@@ -8,6 +8,7 @@ const useOfficeForm = (initialValues) => {
     street: false,
     houseNumber: false,
     officeNumber: true,
+    photoId: true,
     registryPhoneNumber: false,
     status: true,
   });

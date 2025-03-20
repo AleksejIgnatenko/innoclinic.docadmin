@@ -10,6 +10,9 @@ import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import '../styles/pages/Office.css';
+import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
+import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
+import UpdateOfficeFetchAsync from "../api/Offices.API/UpdateOfficeFetchAsync";
 
 function Office() {
     const { id } = useParams();
@@ -19,10 +22,12 @@ function Office() {
 
     const [editingPhoto, setEditingPhoto] = useState(null);
     const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
+        id: '',
         city: '',
         street: '',
         houseNumber: '',
         officeNumber: '',
+        photoId: '',
         registryPhoneNumber: '+',
         status: false,
     });
@@ -59,6 +64,9 @@ function Office() {
     };
 
     const toggleEditClick = () => {
+        if (isEditing) {
+            setFormData(office);
+        }
         setIsEditing(!isEditing);
     };
 
@@ -72,22 +80,22 @@ function Office() {
         }));
     };
 
-    async function handleUpdateOffice() {
-        // setIsEditing(false);
+    async function handleUpdate() {
+        setIsEditing(false);
 
-        // const updateDoctorModel = new UpdateDoctorModelRequest(
-        //     formData.firstName,
-        //     formData.lastName,
-        //     formData.middleName,
-        //     formData.cabinetNumber,
-        //     formData.dateOfBirth,
-        //     formData.specializationId,
-        //     formData.officeId,
-        //     formData.careerStartYear,
-        //     formData.status
-        // );
+        if((editingPhoto instanceof Blob)) {
+            const imageUrl = URL.createObjectURL(editingPhoto);
+            setPhoto(imageUrl)
+            
+            await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
+        }
 
-        // await UpdateDoctorFetchAsync(doctor.id, updateDoctorModel);
+        const updateofficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
+            formData.photoId, formData.registryPhoneNumber, formData.status);
+
+        setOffice(updateofficeModel)
+
+        await UpdateOfficeFetchAsync(office.id, updateofficeModel);
     }
 
     return (
@@ -98,12 +106,12 @@ function Office() {
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} onClick={handleUpdateOffice} style={{cursor: 'pointer'}} />
+                                <IconBase name={"bx-check"} onClick={handleUpdate} style={{ cursor: 'pointer' }} />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 
                         ) : (
-                            <IconBase name={"bx-pencil"} onClick={toggleEditClick} style={{cursor: 'pointer'}} />
+                            <IconBase name={"bx-pencil"} onClick={toggleEditClick} style={{ cursor: 'pointer' }} />
                         )}
                     </div>
                     {isEditing ? (
@@ -186,13 +194,19 @@ function Office() {
                                 required
                             />
                         </div>) : (
-                        <div class="profile-content">
-                            <p>City: {formData.city}</p>
-                            <p>Street: {formData.street}</p>
-                            <p>House Number: {formData.middleName}</p>
-                            <p>Office Number: {formData.officeNumber}</p>
-                            <p>Registry Phone Number: {formData.registryPhoneNumber}</p>
-                            <p>Status: {formData.status}</p>
+                        <div className="profile-content">
+                            {office ? (
+                                <>
+                                    <p>City: {office.city}</p>
+                                    <p>Street: {office.street}</p>
+                                    <p>House Number: {office.houseNumber}</p>
+                                    <p>Office Number: {office.officeNumber}</p>
+                                    <p>Registry Phone Number: {office.registryPhoneNumber}</p>
+                                    <p>Status: {office.status ? "Active" : "Inactive"}</p>
+                                </>
+                            ) : (
+                                <p>No office information available</p>
+                            )}
                         </div>
                     )}
                 </ProfileCard>

@@ -14,6 +14,9 @@ import GetDoctorByIdFetchAsync from "../api/Profiles.API/GetDoctorByIdFetchAsync
 import GetDoctorByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
 import UpdateDoctorModelRequest from "../models/doctorModels/UpdateDoctorModelRequest";
 import UpdateDoctorFetchAsync from "../api/Profiles.API/UpdateDoctorFetchAsync";
+import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
+import ImageUploader from "../components/organisms/ImageUploader";
+import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 
 function Doctor() {
     const { id } = useParams();
@@ -23,11 +26,14 @@ function Doctor() {
     const [offices, setOffices] = useState([]);
     const [officeOptions, setOfficeOptions] = useState([]);
 
+    const [photo, setPhoto] = useState(null);
+    const [editingPhoto, setEditingPhoto] = useState(null);
+
     const [filteredSpecializations, setFilteredSpecializations] = useState([]);
 
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
-    const { formData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -36,7 +42,8 @@ function Doctor() {
         specializationId: '',
         officeId: '',
         careerStartYear: '',
-        status: '',
+        status: false,
+        photoId: '',
     });
 
     const [isEditing, setIsEditing] = useState(false);
@@ -65,15 +72,26 @@ function Doctor() {
                     if (fetchedDoctor) {
                         mapDoctorData(fetchedDoctor);
                         setDoctor(fetchedDoctor);
+                        setFormData(fetchedDoctor);
+
+                        const formattedDocto = formatDoctor(fetchedDoctor);
+                        setFormData(formattedDocto);
+                        console.log(formattedDocto);
                     }
                 } else {
                     fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
                     if (fetchedDoctor) {
                         mapDoctorData(fetchedDoctor);
                         setDoctor(fetchedDoctor);
+                        setFormData(fetchedDoctor);
                     }
                 }
+
                 setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
+
+                const fetchedPhoto = await GetPhotoByNameAsync(fetchedDoctor.photoId);
+                setPhoto(fetchedPhoto);
+                setEditingPhoto(fetchedPhoto);
 
             } catch (error) {
                 console.error('Error fetching doctor:', error);
@@ -84,6 +102,22 @@ function Doctor() {
     
         fetchData();
     }, []);
+
+    const formatDoctor = (doctor) => {
+        return doctor.map(({ id, firstName, lastName, middleName, dateOfBirth, email, specialization, office, careerStartYear, status, photoId }) => ({
+            id,
+            firstName,
+            lastName,
+            middleName,
+            dateOfBirth,
+            email,
+            specializationId: specialization.id,
+            officeId: office.id,
+            careerStartYear,
+            status,
+            photoId,
+        }));
+    };
 
     const toggleLoader = (status) => {
         setIsLoading(status);
@@ -112,6 +146,15 @@ function Doctor() {
 
     async function handleUpdateDoctor() {
         setIsEditing(false);
+
+        if((editingPhoto instanceof Blob)) {
+            const imageUrl = URL.createObjectURL(editingPhoto);
+            setPhoto(imageUrl)
+            
+            await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
+        }
+
+        console.log(formData);
     
         const updateDoctorModel = new UpdateDoctorModelRequest(
             formData.firstName,
@@ -122,8 +165,13 @@ function Doctor() {
             formData.specializationId,
             formData.officeId,
             formData.careerStartYear,
-            formData.status
+            formData.status,
+            formData.photoId,
         );
+
+        console.log(updateDoctorModel);
+
+        setDoctor(updateDoctorModel);
     
         await UpdateDoctorFetchAsync(doctor.id, updateDoctorModel);
     }
@@ -144,9 +192,19 @@ function Doctor() {
                             <IconBase name={"bx-pencil"} onClick={toggleEditClick} />
                         )}
                     </div>
-                    <div class="profile-img">
-                        <img src="https://th.bing.com/th/id/OIP.audMX4ZGbvT2_GJTx2c4GgAAAA?rs=1&pid=ImgDetMain" alt="" />
-                    </div>
+                    {isEditing ? (
+                        <div class="img-container">
+                            <ImageUploader
+                                photo={photo}
+                                setPhoto={setEditingPhoto}
+                            />
+                        </div>
+                    ) : (
+                        <div class="img-container">
+                            <img src={photo} alt="" />
+                        </div>
+                    )}
+
                     {isEditing ? (
                         <div>
                             <InputWrapper

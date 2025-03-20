@@ -13,6 +13,7 @@ const useDoctorForm = (initialValues) => {
         officeId: false,
         careerStartYear: false,
         status: false,
+        photoId: true,
     });
 
     const updateInputState = (field, input, label) => {
@@ -113,6 +114,7 @@ const useDoctorForm = (initialValues) => {
 
     return {
         formData,
+        setFormData,
         errors,
         handleChange,
         handleBlur,

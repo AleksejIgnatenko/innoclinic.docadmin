@@ -21,10 +21,13 @@ import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync"
 import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
 import CreateDoctorModelRequest from "../models/doctorModels/CreateDoctorModelRequest";
 import CreateDoctorFetchAsync from "../api/Profiles.API/CreateDoctorFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 
 
 export default function Doctors() {
     const navigate = useNavigate();
+
+    const [photo, setPhoto] = useState(null);
 
     const [doctors, setDoctors] = useState([]);
     const [editableDoctors, setEditableDoctors] = useState([]);
@@ -36,9 +39,8 @@ export default function Doctors() {
 
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
-    const [image, setImage] = useState(null);
 
-    const { formData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -199,9 +201,17 @@ export default function Doctors() {
         setIsFilterModalOpen(!isFilterModalOpen);
     }
 
-    async function handleAdd (e) {
+    async function handleAdd(e) {
         e.preventDefault();
-        const createDoctorRequest = new CreateDoctorModelRequest(formData.firstName, formData.lastName, formData.middleName, formData.cabinetNumber, formData.dateOfBirth, formData.email, formData.specializationId, formData.officeId, formData.careerStartYear, formData.status)
+
+        const photoId = await CreatePhotoFetchAsync(photo);
+        console.log(photoId);
+
+        const createDoctorRequest = new CreateDoctorModelRequest(formData.firstName, formData.lastName, formData.middleName,
+            formData.cabinetNumber, formData.dateOfBirth, formData.email, formData.specializationId, formData.officeId,
+            formData.careerStartYear, formData.status, photoId)
+
+        console.log(createDoctorRequest);
         await CreateDoctorFetchAsync(createDoctorRequest);
     }
 
@@ -253,9 +263,11 @@ export default function Doctors() {
                     {isAddModalOpen && (
                         <FormModal title="Add doctor" onClose={toggleAddModalClick} onSubmit={handleAdd} showCloseButton={true}>
                             <div className="modal-inputs">
-                                <ImageUploader
-                                    setImage={setImage}
-                                />
+                                <div class="img-container">
+                                    <ImageUploader
+                                        setPhoto={setPhoto}
+                                    />
+                                </div>
                                 <InputWrapper
                                     type="text"
                                     label="First Name"
