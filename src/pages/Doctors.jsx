@@ -241,13 +241,17 @@ export default function Doctors() {
                                         <thead>
                                             <tr>
                                                 {columnNames.map(columnName => (
-                                                    <th key={columnName}>{FieldNames[columnName]}</th>
+                                                    <th key={columnName}>
+                                                        {FieldNames[columnName]}
+                                                    </th>
                                                 ))}
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {editableDoctors.map(editableDoctor => (
-                                                <tr key={editableDoctor.id} onClick={() => navigate(`/doctor/${editableDoctor.id}`)}>
+                                                <tr key={editableDoctor.id} onClick={() => navigate(`/doctor/${editableDoctor.id}`)}
+                                                    style={{cursor: 'pointer'}}
+                                                >
                                                     {columnNames.map(columnName => (
                                                         <td key={columnName}>{editableDoctor[columnName]}</td>
                                                     ))}

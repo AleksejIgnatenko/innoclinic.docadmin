@@ -10,6 +10,7 @@ const FieldNames = {
     fullName: "Full name",
     houseNumber: "House Number",
     isApproved: "Is Approved",
+    isActive: "Is Active",
     lastName: "Last Name",
     medicalServiceName: "Medical service",
     middleName: "Middle Name",
@@ -20,10 +21,14 @@ const FieldNames = {
     patientPhoneNumber: "Patient phone number",
     password: "Password",
     registryPhoneNumber: "Registry phone number",
+    serviceName: "Service Name",
     specialization: "Specialization",
+    specializationName: "Specialization Name",
     street: "Street",
     status: "Status",
     time: "Time",
+    price: "Price",
+    categoryName: "Category Name",
 };
 
 export default FieldNames;

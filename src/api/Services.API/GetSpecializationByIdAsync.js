@@ -1,8 +1,8 @@
-import { OfficesAPI } from "../api";
+import { ServicesAPI } from "../api";
 
-async function GetOfficeByIdFetchAsync(id) {
+async function GetSpecializationByIdAsync(id) {
     try {
-        const response = await fetch(`${OfficesAPI}/Office/${id}`, {
+        const response = await fetch(`${ServicesAPI}/Specialization/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -15,9 +15,9 @@ async function GetOfficeByIdFetchAsync(id) {
            return data;
         }
     } catch (error) {
-        console.error('Error while fetching office by Id:', error);
+        console.error('Error while fetching specialization by Id:', error);
         //alert('An error occurred while trying to fetch the office details. Please try again later.');
     }
 }
 
-export default GetOfficeByIdFetchAsync;
+export default GetSpecializationByIdAsync;

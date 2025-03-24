@@ -101,12 +101,12 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                         </ul>
                     </li>
                     <li>
-                        <Link to="/specialization">
+                        <Link to="/specializations">
                             <IconBase name='bx-collection' />
                             <span className="link_name">Specialization</span>
                         </Link>
                         <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/specialization">Specialization</Link></li>
+                            <li><Link className="link_name" to="/specializations">Specialization</Link></li>
                         </ul>
                     </li>
                     <li>

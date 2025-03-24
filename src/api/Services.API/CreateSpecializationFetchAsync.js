@@ -1,8 +1,8 @@
-import { OfficesAPI } from "../api";
+import { ServicesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function UpdateOfficeFetchAsync(id, office) {
+async function CreateSpecializationFetchAsync(specialization) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,13 +10,13 @@ async function UpdateOfficeFetchAsync(id, office) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${OfficesAPI}/Office/${id}`, {
-            method: 'PUT',
+        const response = await fetch(`${ServicesAPI}/Specialization`, {
+            method: 'POST',
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify(office)
+            body: JSON.stringify(specialization)
         });
 
         if (response.ok) {
@@ -27,9 +27,8 @@ async function UpdateOfficeFetchAsync(id, office) {
         }
     } catch (error) {
         console.error('Error in creating patient:', error);
-        //alert('An error occurred while creating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }
 
-export default UpdateOfficeFetchAsync;
+export default CreateSpecializationFetchAsync;

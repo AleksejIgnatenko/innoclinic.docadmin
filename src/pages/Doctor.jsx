@@ -41,8 +41,9 @@ function Doctor() {
         email: '',
         specializationId: '',
         officeId: '',
+        cabinetNumber: '',
         careerStartYear: '',
-        status: false,
+        status: '',
         photoId: '',
     });
 
@@ -76,7 +77,6 @@ function Doctor() {
 
                         const formattedDocto = formatDoctor(fetchedDoctor);
                         setFormData(formattedDocto);
-                        console.log(formattedDocto);
                     }
                 } else {
                     fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
@@ -104,7 +104,22 @@ function Doctor() {
     }, []);
 
     const formatDoctor = (doctor) => {
-        return doctor.map(({ id, firstName, lastName, middleName, dateOfBirth, email, specialization, office, careerStartYear, status, photoId }) => ({
+        const {
+            id,
+            firstName,
+            lastName,
+            middleName,
+            dateOfBirth,
+            email,
+            specialization,
+            office,
+            cabinetNumber,
+            careerStartYear,
+            status,
+            photoId
+        } = doctor;
+    
+        return {
             id,
             firstName,
             lastName,
@@ -113,10 +128,11 @@ function Doctor() {
             email,
             specializationId: specialization.id,
             officeId: office.id,
+            cabinetNumber,
             careerStartYear,
             status,
             photoId,
-        }));
+        };
     };
 
     const toggleLoader = (status) => {
@@ -153,8 +169,6 @@ function Doctor() {
             
             await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
         }
-
-        console.log(formData);
     
         const updateDoctorModel = new UpdateDoctorModelRequest(
             formData.firstName,
@@ -168,8 +182,6 @@ function Doctor() {
             formData.status,
             formData.photoId,
         );
-
-        console.log(updateDoctorModel);
 
         setDoctor(updateDoctorModel);
     

@@ -84,7 +84,6 @@ export default function Offices() {
 
     const handleCheckboxChange = (e) => {
         const value = e.target.value === 'true';
-        console.log(value);
 
         setFormData(prev => ({
             ...prev,

@@ -90,12 +90,12 @@ function Office() {
             await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
         }
 
-        const updateofficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
+        const updateOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
             formData.photoId, formData.registryPhoneNumber, formData.status);
 
-        setOffice(updateofficeModel)
+        setOffice(updateOfficeModel)
 
-        await UpdateOfficeFetchAsync(office.id, updateofficeModel);
+        await UpdateOfficeFetchAsync(office.id, updateOfficeModel);
     }
 
     return (
