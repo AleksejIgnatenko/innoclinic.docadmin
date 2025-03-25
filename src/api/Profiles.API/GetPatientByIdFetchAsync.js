@@ -23,11 +23,11 @@ async function GetPatientByIdFetchAsync(patientId) {
         if (response.ok) {
             return data;
         } else {
-            console.error("Error connecting account with patient:", data);
+            console.error("Error in getting by id patients:", data);
             return null;
         }
     } catch (error) {
-        console.error('Error in account connection with the patient:', error);
+        console.error('Error in getting by id patients:', error);
         //alert('An error occurred while connecting the account with the patient');
         return null;
     }

@@ -70,6 +70,15 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                             </ul>
                         </li>
                     {/* )} */}
+                    <li>
+                            <Link to="/patients">
+                                <IconBase name='bx-group' />
+                                <span className="link_name">Patients</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link to="/patients" className="link_name">Patients</Link></li>
+                            </ul>
+                        </li>
                     {/* {account && (account.role === 'Doctor' ? ( */}
                         <li>
                             <Link to="/my-schedule">

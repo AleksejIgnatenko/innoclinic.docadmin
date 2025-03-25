@@ -28,7 +28,7 @@ async function GetAppointmentsByDoctorFetchAsync() {
             return;
         }
     } catch (error) {
-        console.error('Error in fetching appointments:', error);
+        console.error('Error in fetching get appointments:', error);
         //alert('An unexpected error occurred while fetching appointments. Please try again later.');
     }
 }

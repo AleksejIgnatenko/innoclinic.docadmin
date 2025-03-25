@@ -20,7 +20,7 @@ async function DeleteAppointmentFetchAsync(appointmentId) {
 
         return response.status;
     } catch (error) {
-        console.error('Error in fetching update appointment:', error);
+        console.error('Error in fetching delete appointment:', error);
         //alert('An unexpected error occurred while fetching update appointment. Please try again later.');
         return 500;
     }

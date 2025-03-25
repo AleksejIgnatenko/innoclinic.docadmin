@@ -23,11 +23,11 @@ async function GetReceptionistByAccountIdFromTokenFetchAsync() {
         if (response.ok) {
             return data;
         } else {
-            console.error("Error connecting account with doctor:", data);
+            console.error("Error in getting by account id receptionist:", data);
             return null;
         }
     } catch (error) {
-        console.error('Error in account connection with the receptionist:', error);
+        console.error('Error in getting by account id receptionist:', error);
         //alert('An error occurred while connecting the account with the receptionist');
         return null;
     }

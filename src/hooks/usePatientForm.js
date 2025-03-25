@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import FieldNames from '../enums/FieldNames';
 
 const usePatientForm = (initialValues) => {
@@ -6,13 +6,18 @@ const usePatientForm = (initialValues) => {
     const [errors, setErrors] = useState({
         firstName: false,
         lastName: false,
-        middleName: false,
+        middleName: true,
         dateOfBirth: false,
-        email: false,
-        isLinkedToAccount: false,
     });
 
     const updateInputState = (field, input, label) => {
+        let currentDate;
+        let inputDate;
+        if (field === 'dateOfBirth') {
+            currentDate = new Date();
+            inputDate = new Date(input.value);
+        }
+
         if (!input.value.trim()) {
             if (input && label) {
                 input.classList.add('error-input');
@@ -23,10 +28,12 @@ const usePatientForm = (initialValues) => {
                 ...prev,
                 [field]: false
             }));
-        } else if (field === 'email' && !input.value.includes('@')) {
+        } else if ((field === 'dateOfBirth') && (inputDate > currentDate)) {
             input.classList.add('error-input');
             label.classList.add('error-label');
-            label.textContent = "You've entered an invalid email";
+
+            label.textContent = "The date must be less than or equal to the current date.";
+
             setErrors(prev => ({
                 ...prev,
                 [field]: false
@@ -70,6 +77,7 @@ const usePatientForm = (initialValues) => {
 
     return {
         formData,
+        setFormData,
         errors,
         handleChange,
         handleBlur,

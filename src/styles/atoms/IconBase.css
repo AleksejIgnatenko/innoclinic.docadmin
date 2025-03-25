@@ -34,3 +34,7 @@
     filter: brightness(0.5);
     cursor: default;
 }
+
+.delete-icon {
+    color: var(--error);
+}

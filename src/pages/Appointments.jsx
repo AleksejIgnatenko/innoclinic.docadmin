@@ -9,12 +9,13 @@ import FilterModal from "../components/organisms/FilterModal";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import Calendar from "../components/organisms/Calendar";
 import FieldNames from "../enums/FieldNames";
+import { IconBase } from "../components/atoms/IconBase";
+
 import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
 import GetAllMedicalServiceFetchAsync from "../api/Services.API/GetAllMedicalServiceFetchAsync";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import GetAppointmentsByDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDateFetchAsync";
 import GetAccountsByIdsFetchAsync from "../api/Authorization.API/GetAccountsByIdsFetchAsync";
-import { IconBase } from "../components/atoms/IconBase";
 import UpdateAppointmentModelRequest from "../models/appointmentModels/UpdateAppointmentModelRequest";
 import UpdateAppointmentFetchAsync from "../api/Appointments.API/UpdateAppointmentFetchAsync";
 import DeleteAppointmentFetchAsync from "../api/Appointments.API/DeleteAppointmentFetchAsync";

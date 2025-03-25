@@ -15,7 +15,7 @@ async function GetServicesBySpecializationIdFetchAsync(id) {
            return data;
         }
     } catch (error) {
-        console.error('Error while fetching services by Id:', error);
+        console.error('Error in getting services by id:', error);
         //alert('An error occurred while trying to fetch the office details. Please try again later.');
     }
 }

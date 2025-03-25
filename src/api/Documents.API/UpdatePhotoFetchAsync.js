@@ -29,7 +29,7 @@ async function UpdatePhotoFetchAsync(photoFile, photoName) {
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in creating photo:', error);
+        console.error('Error in updating photo:', error);
         return { status: 500, error: 'Internal Server Error' };
     }
 }

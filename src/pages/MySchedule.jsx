@@ -7,6 +7,7 @@ import '../styles/pages/Doctors.css';
 import Calendar from "../components/organisms/Calendar";
 import FieldNames from "../enums/FieldNames";
 import { Link } from "react-router-dom";
+import GetAppointmentsByDoctorAndDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDoctorAndDateFetchAsync";
 
 export default function MySchedule() {
     const [appointments, setAppointments] = useState([]);
@@ -25,73 +26,30 @@ export default function MySchedule() {
     ]);
 
     useEffect(() => {
+        const getData = async () => {
+            toggleLoader(true);
+
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            setSelectedDate(formattedDate);
+
+            toggleLoader(false);
+        };
+
+        getData();
+    }, []);
+
+    useEffect(() => {
         const fetchData = async () => {
             try {
                 toggleLoader(true);
 
-                const fetchedAppointments = [
-                    {
-                        "id": "8918c0b3-194d-43bc-9d50-576af108e2fb",
-                        "patient": {
-                            "id": "371add01-a140-4a54-9d46-14c6dfe8376e",
-                            "firstName": "Иванов",
-                            "lastName": "Иван",
-                            "middleName": "Иванович",
-                            "accountId": "d7144e1d-2ab3-4153-8026-355dcebdcae6"
-                        },
-                        "doctor": {
-                            "id": "e45d3e6c-9f7a-4d29-b5d3-9c3a2a7c2e0e",
-                            "accountId": "b3f51cf4-4a5d-483d-a72b-798243d938e2",
-                            "firstName": "Петров",
-                            "lastName": "Петр",
-                            "middleName": "Петрович",
-                            "cabinetNumber": 1,
-                            "status": "At work"
-                        },
-                        "medicalService": {
-                            "id": "0340c827-240e-4b2a-887a-dc10c836e7cf",
-                            "serviceName": "MedicalService",
-                            "price": 0,
-                            "isActive": true
-                        },
-                        "date": "2025-03-12",
-                        "time": "08:00 - 08:30",
-                        "isApproved": false
-                    },
-                    {
-                        "id": "8918c0b3-194d-43bc-9d50-576af108e2fc",
-                        "patient": {
-                            "id": "371add01-a140-4a54-9d46-14c6dfe8376e",
-                            "firstName": "Иванов",
-                            "lastName": "Иван",
-                            "middleName": "Иванович",
-                            "accountId": "d7144e1d-2ab3-4153-8026-355dcebdcae6"
-                        },
-                        "doctor": {
-                            "id": "3c0985c6-4ddb-40a2-a3b3-7bc1048952c7",
-                            "accountId": "b3f51cf4-4a5d-483d-a72b-798243d938e2",
-                            "firstName": "Иванов",
-                            "lastName": "Иван",
-                            "middleName": "Иванович",
-                            "cabinetNumber": 1,
-                            "status": "At work"
-                        },
-                        "medicalService": {
-                            "id": "0340c827-240e-4b2a-887a-dc10c836e7cf",
-                            "serviceName": "MedicalService",
-                            "price": 0,
-                            "isActive": true
-                        },
-                        "date": "2025-03-12",
-                        "time": "08:00 - 08:30",
-                        "isApproved": true
-                    }
-                ]
+                const fetchedAppointments = await GetAppointmentsByDoctorAndDateFetchAsync(selectedDate);
                 setAppointments(fetchedAppointments);
 
                 const formattedAppointments = formatAppointments(fetchedAppointments);
                 setEditableAppointments(formattedAppointments);
-
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -100,7 +58,7 @@ export default function MySchedule() {
         };
 
         fetchData();
-    }, []);
+    }, [selectedDate]);
 
     const formatAppointments = (appointments) => {
         return appointments.map(({ id, time, patient, medicalService, isApproved }) => ({
@@ -160,9 +118,9 @@ export default function MySchedule() {
                                                         {columnNames.map(columnName => (
                                                             <td key={columnName}>
                                                                 {(columnName === 'patientFullName' && editableAppointment.isApproved === 'Approved') ? (
-                                                                    <Link to={`/patient/${editableAppointment.id}`} className="link_name">
-                                                                        {editableAppointment[columnName]}
-                                                                    </Link>
+                                                                    <Link to={`/patient/${appointments.find(a => a.id === editableAppointment.id).patient.id}?tab=PersonalInformation`} className="link_name">
+                                                                    {editableAppointment[columnName]}
+                                                                </Link>
                                                                 ) : (
                                                                     editableAppointment[columnName]
                                                                 )}

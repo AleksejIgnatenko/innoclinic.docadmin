@@ -26,7 +26,7 @@ async function CreateOfficeFetchAsync(officeModel) {
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in creating patient:', error);
+        console.error('Error in creating office:', error);
         return { status: 500, error: 'Internal Server Error' };
     }
 }

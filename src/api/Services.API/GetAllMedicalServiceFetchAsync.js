@@ -15,7 +15,7 @@ async function GetAllMedicalServiceFetchAsync() {
            return data;
         }
     } catch (error) {
-        console.error('Error in getting all medical service:', error);
+        console.error('Error in getting all services specialization:', error);
         //alert('An error occurred while receiving all medical');
     }
 }

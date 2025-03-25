@@ -15,7 +15,7 @@ async function GetAllOfficesFetchAsync() {
            return data;
         }
     } catch (error) {
-        console.error('Error in fetching all offices:', error);
+        console.error('Error in fetching get all offices:', error);
         //alert('An error occurred while fetching the offices.');
 
         return [];

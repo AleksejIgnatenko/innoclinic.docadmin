@@ -18,6 +18,7 @@ import SignInFetchAsync from './api/Authorization.API/SignInFetchAsync';
 import Office from './pages/Office';
 import Specializations from './pages/Specializations';
 import Specialization from './pages/Specialization';
+import Patients from './pages/Patients';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -30,8 +31,8 @@ function App() {
     localStorage.setItem('theme', currentTheme);
   }, [currentTheme]);
 
-  //const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
-  const isUserLoggedIn = true;
+  const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
+  //const isUserLoggedIn = true;
 
   const { formData, errors, handleChange, handleBlur, isFormValid } = useSignInForm({
     email: '',
@@ -62,6 +63,7 @@ function App() {
                 <Route path="/office/:id?" element={<Office />} />
                 <Route path="/offices" element={<Offices />} />
                 <Route path="/my-schedule" element={<MySchedule />} />
+                <Route path="/patients" element={<Patients />} />
                 <Route path="/patient/:id?" element={<Patient />} />
                 <Route path="/specializations" element={<Specializations />} />
                 <Route path="/specialization/:id?" element={<Specialization />} />

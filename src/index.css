@@ -50,6 +50,8 @@
   
   --border-color: var(--gray-400);
 
+  --button-bg: var(--gray-300);
+
   --input-bg: var(--gray-100);
   --input-fg: var(--gray-700);
 
@@ -74,13 +76,18 @@
 [data-theme='dark'] {
   --background: var(--background-dark);
   --foreground: var(--foreground-dark);
+
   --border-color: var(--gray-600);
+
   --input-bg: var(--gray-700);
   --input-fg: var(--gray-100);
+  
   --disabled-bg: var(--gray-600);
 
   --background-page: var(--background-page-dark);
   --foreground-page: var(--foreground-page-dark);
+
+  --button-bg: var(--gray-600);
 
   --input-bg: var(--input-bg-dark);
 

@@ -24,7 +24,7 @@ async function GetAccountsByIdsFetchAsync(accountIds) {
         if (response.ok) {
             return data;
         } else {
-            console.error('Error fetching accounts:', data);
+            console.error('Error fetching get accounts:', data);
             //alert(`Error: ${data.message || 'Failed to retrieve accounts.'}`);
         }
     } catch (error) {

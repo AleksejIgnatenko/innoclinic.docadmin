@@ -26,7 +26,7 @@ async function CreateSpecializationFetchAsync(specialization) {
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in creating patient:', error);
+        console.error('Error in creating specialization:', error);
         return { status: 500, error: 'Internal Server Error' };
     }
 }
