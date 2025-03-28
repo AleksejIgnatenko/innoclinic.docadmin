@@ -17,6 +17,8 @@ import UpdateDoctorFetchAsync from "../api/Profiles.API/UpdateDoctorFetchAsync";
 import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
+import AddImageInAccountFetchAsync from "../api/Authorization.API/AddImageInAccountFetchAsync";
 
 function Doctor() {
     const { id } = useParams();
@@ -57,16 +59,16 @@ function Doctor() {
                 errors.email = true;
                 const fetchedSpecializations = await GetAllSpecializationFetchAsync();
                 setSpecializations(fetchedSpecializations);
-                
+
                 const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
-                
+
                 const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
                     id,
                     value: `${city} ${street} ${houseNumber} ${officeNumber}`
                 }))
                 setOfficeOptions(officeOptions);
-                
+
                 let fetchedDoctor;
                 if (id) {
                     fetchedDoctor = await GetDoctorByIdFetchAsync(id);
@@ -86,12 +88,15 @@ function Doctor() {
                         setFormData(fetchedDoctor);
                     }
                 }
+                console.log(fetchedDoctor);
 
                 setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
 
-                const fetchedPhoto = await GetPhotoByNameAsync(fetchedDoctor.photoId);
-                setPhoto(fetchedPhoto);
-                setEditingPhoto(fetchedPhoto);
+                if (fetchedDoctor.account.photoId) {
+                    const fetchedPhoto = await GetPhotoByNameAsync(fetchedDoctor.account.photoId);
+                    setPhoto(fetchedPhoto);
+                    setEditingPhoto(fetchedPhoto);
+                }
 
             } catch (error) {
                 console.error('Error fetching doctor:', error);
@@ -99,7 +104,7 @@ function Doctor() {
                 toggleLoader(false);
             }
         };
-    
+
         fetchData();
     }, []);
 
@@ -118,7 +123,7 @@ function Doctor() {
             status,
             photoId
         } = doctor;
-    
+
         return {
             id,
             firstName,
@@ -160,16 +165,21 @@ function Doctor() {
         setSelectSpecializationName(value);
     };
 
-    async function handleUpdateDoctor() {
+    async function handleUpdate() {
         setIsEditing(false);
 
-        if((editingPhoto instanceof Blob)) {
+        if (!doctor.photoId && editingPhoto) {
+            const photoId = await CreatePhotoFetchAsync(editingPhoto);
+            formData.photoId = photoId;
+
+            await AddImageInAccountFetchAsync(doctor.account.id, photoId);
+        } else if ((editingPhoto instanceof Blob)) {
             const imageUrl = URL.createObjectURL(editingPhoto);
             setPhoto(imageUrl)
-            
-            await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
+
+            await UpdatePhotoFetchAsync(editingPhoto, doctor.photoId);
         }
-    
+
         const updateDoctorModel = new UpdateDoctorModelRequest(
             formData.firstName,
             formData.lastName,
@@ -184,7 +194,7 @@ function Doctor() {
         );
 
         setDoctor(updateDoctorModel);
-    
+
         await UpdateDoctorFetchAsync(doctor.id, updateDoctorModel);
     }
 
@@ -196,7 +206,7 @@ function Doctor() {
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} onClick={handleUpdateDoctor}/>
+                                <IconBase name={"bx-check"} onClick={handleUpdate} />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 
@@ -286,13 +296,13 @@ function Doctor() {
                                 options={officeOptions}
                             />
                             <InputWrapper
-                                    type="number"
-                                    label="Cabinet Number"
-                                    id="cabinetNumber"
-                                    value={formData.cabinetNumber}
-                                    onBlur={handleBlur('cabinetNumber')}
-                                    onChange={handleChange('cabinetNumber')}
-                                    required
+                                type="number"
+                                label="Cabinet Number"
+                                id="cabinetNumber"
+                                value={formData.cabinetNumber}
+                                onBlur={handleBlur('cabinetNumber')}
+                                onChange={handleChange('cabinetNumber')}
+                                required
                             />
                             <InputWrapper
                                 type="date"

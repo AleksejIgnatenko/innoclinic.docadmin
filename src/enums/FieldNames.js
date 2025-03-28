@@ -29,6 +29,7 @@ const FieldNames = {
     time: "Time",
     price: "Price",
     categoryName: "Category Name",
+    receptionistFullName: "Receptionist Full Name"
 };
 
 export default FieldNames;

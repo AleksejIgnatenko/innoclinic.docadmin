@@ -12,6 +12,10 @@ import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import { ButtonBase } from "../components/atoms/ButtonBase";
 import SpecializationModelRequest from "../models/specializationModels/SpecializationModelRequest";
 import CreateSpecializationFetchAsync from "../api/Services.API/CreateSpecializationFetchAsync";
+import useServiceForm from "../hooks/useServiceForm";
+import { SelectWrapper } from "../components/molecules/SelectWrapper";
+import GetAllServiceCategoryFetchAsync from "../api/Services.API/GetAllServiceCategoryFetchAsync";
+import CreateMedicalServiceAsync from "../api/Services.API/CreateMedicalServiceAsync";
 
 
 export default function Specializations() {
@@ -20,12 +24,27 @@ export default function Specializations() {
     const [specializations, setSpecializations] = useState([]);
     const [editableSpecializations, setEditableSpecializations] = useState([]);
 
+    const [specializationOptions, setSpecializationOptions] = useState([]);
+    const [categoryOptions, setcategoryOptions] = useState([]);
+
+
+    const [category, setCategories] = useState([]);
+
     const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useSpecializationForm({
         specializationName: '',
         isActive: false,
     });
 
+    const { serviceFormData, setServiceFormData, serviceErrors, handleChangeService, handleBlurService, resetFormService, isServiceFormValid } = useServiceForm({
+        serviceName: '',
+        price: 0,
+        serviceCategoryId: '',
+        specializationId: '',
+        isActive: false,
+    });
+
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isServiceAddModalOpen, setIsServiceAddModalOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +64,20 @@ export default function Specializations() {
                 const formattedSpecializations = formatSpecializations(fetchedSpecializations);
                 setEditableSpecializations(formattedSpecializations);
 
+                const specializationOptions = fetchedSpecializations.map(({ id, specializationName }) => ({
+                    id,
+                    value: specializationName
+                }))
+                setSpecializationOptions(specializationOptions);
+
+                const fetchedCategories = await GetAllServiceCategoryFetchAsync()
+                setCategories(fetchedCategories);
+                
+                const categoryOptions = fetchedCategories.map(({ id, categoryName }) => ({
+                    id,
+                    value: categoryName
+                }))
+                setcategoryOptions(categoryOptions);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -77,10 +110,32 @@ export default function Specializations() {
         });
     };
 
+    const toggleServiceAddModalClick = () => {
+        setIsAddModalOpen(!isAddModalOpen);
+
+        setIsServiceAddModalOpen((prev) => {
+            const newState = !prev;
+            if (!newState) {
+                resetFormService();
+            }
+            return newState;
+        });
+    };
+
     const handleCheckboxChange = (e) => {
         const value = e.target.value === 'true';
 
         setFormData(prev => ({
+            ...prev,
+            isActive: value,
+        }));
+    };
+
+    const handleCheckboxChangeService = (e) => {
+        const value = e.target.value === 'true';
+        console.log(value);
+
+        setServiceFormData(prev => ({
             ...prev,
             isActive: value,
         }));
@@ -92,6 +147,12 @@ export default function Specializations() {
 
         const createSpecializationModel = new SpecializationModelRequest(formData.specializationName, formData.isActive);
         await CreateSpecializationFetchAsync(createSpecializationModel);
+    }
+
+    async function handleAddService(e) {
+        e.preventDefault();
+
+        await CreateMedicalServiceAsync(serviceFormData);
     }
 
     return (
@@ -126,7 +187,7 @@ export default function Specializations() {
                                         <tbody>
                                             {editableSpecializations.map(editableSpecialization => (
                                                 <tr key={editableSpecialization.id} onClick={() => navigate(`/specialization/${editableSpecialization.id}`)}
-                                                    style={{cursor: 'pointer'}}
+                                                    style={{ cursor: 'pointer' }}
                                                 >
                                                     {columnNames.map(columnName => (
                                                         <td key={columnName}>{editableSpecialization[columnName]}</td>
@@ -175,7 +236,81 @@ export default function Specializations() {
                                 <ButtonBase type="submit" disabled={!isFormValid}>
                                     Confirm
                                 </ButtonBase>
+                                <ButtonBase onClick={toggleServiceAddModalClick}>
+                                    Add Service
+                                </ButtonBase>
                                 <ButtonBase variant="secondary" onClick={toggleAddModalClick}>
+                                    Cancel
+                                </ButtonBase>
+                            </div>
+                        </FormModal>
+                    )}
+
+                    {isServiceAddModalOpen && (
+                        <FormModal title="Add service" onClose={toggleServiceAddModalClick} onSubmit={handleAddService} showCloseButton={true}>
+                            <div className="modal-inputs">
+                                <InputWrapper
+                                    type="text"
+                                    label="Service Name"
+                                    id="serviceName"
+                                    value={serviceFormData.serviceName}
+                                    onBlur={handleBlurService('serviceName')}
+                                    onChange={handleChangeService('serviceName')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="number"
+                                    label="Price"
+                                    id="price"
+                                    value={serviceFormData.price}
+                                    onBlur={handleBlurService('price')}
+                                    onChange={handleChangeService('price')}
+                                    required
+                                />
+                                <SelectWrapper
+                                    label="Category"
+                                    id="category"
+                                    value={serviceFormData.serviceCategoryId}
+                                    onBlur={handleBlurService('serviceCategoryId')}
+                                    onChange={handleChangeService('serviceCategoryId')}
+                                    required
+                                    placeholder={serviceFormData.serviceCategoryId ? "" : "Selecl category"}
+                                    options={categoryOptions}
+                                />
+                                <SelectWrapper
+                                    label="Specialization"
+                                    id="specialization"
+                                    value={serviceFormData.specializationId}
+                                    onBlur={handleBlurService('specializationId')}
+                                    onChange={handleChangeService('specializationId')}
+                                    required
+                                    placeholder={serviceFormData.specializationId ? "" : "Selecl specialization"}
+                                    options={specializationOptions}
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status active"
+                                    id="statusServiceActive"
+                                    value={true}
+                                    checked={serviceFormData.isActive === true}
+                                    onChange={handleCheckboxChangeService}
+                                    required
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status inactive"
+                                    id="statusServiceInactive"
+                                    value={false}
+                                    checked={serviceFormData.isActive === false}
+                                    onChange={handleCheckboxChangeService}
+                                    required
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <ButtonBase type="submit" disabled={!isServiceFormValid}>
+                                    Confirm
+                                </ButtonBase>
+                                <ButtonBase variant="secondary" onClick={toggleServiceAddModalClick}>
                                     Cancel
                                 </ButtonBase>
                             </div>

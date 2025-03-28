@@ -1,8 +1,8 @@
-import { DocumentsAPI } from "../api";
+import { ServicesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function UpdatePhotoFetchAsync(photoFile, id) {
+async function UpdateMedicalServiceFetchAsync(id, service) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,28 +10,26 @@ async function UpdatePhotoFetchAsync(photoFile, id) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const formData = new FormData();
-        formData.append('photo', photoFile);
-
-        const response = await fetch(`${DocumentsAPI}/Photo/${id}`, {
+        const response = await fetch(`${ServicesAPI}/MedicalService/${id}`, {
             method: 'PUT',
             headers: {
-                "Authorization": `Bearer ${jwtToken}`, 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${jwtToken}`,
             },
-            body: formData
+            body: JSON.stringify(service)
         });
 
         if (response.ok) {
-            const responseText = await response.text(); 
-            return responseText;
+            console.log("Medical service updated successfully");
         } else if (response.status === 400) {
             const data = await response.json();
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in updating photo:', error);
+        console.error('Error in updating medical service:', error);
+        //alert('An error occurred while updating the medical service');
         return { status: 500, error: 'Internal Server Error' };
     }
 }
 
-export default UpdatePhotoFetchAsync;
+export default UpdateMedicalServiceFetchAsync;

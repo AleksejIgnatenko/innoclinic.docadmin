@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import FieldNames from '../enums/FieldNames';
 
-const useOfficeForm = (initialValues) => {
+const useReceptionistForm = (initialValues) => {
   const [formData, setFormData] = useState(initialValues);
   const [errors, setErrors] = useState({
-    city: false,
-    street: false,
-    houseNumber: false,
-    registryPhoneNumber: false,
+    firstName: false,
+    lastName: false,
+    middleName: true,
+    email: false,
+    officeId: false,
+    status: false,
+    photoId: true,
   });
 
   const updateInputState = (field, input, label) => {
@@ -16,7 +19,7 @@ const useOfficeForm = (initialValues) => {
         input.classList.add('error-input');
         label.classList.add('error-label');
 
-        label.textContent = `Please, enter the office’s ${FieldNames[field]}`;
+        label.textContent = `Please, enter the ${FieldNames[field]}`;
       }
       setErrors(prev => ({
         ...prev,
@@ -61,6 +64,11 @@ const useOfficeForm = (initialValues) => {
     if (event.key === 'Backspace' && input.value === '+') {
         event.preventDefault();
     }
+  };
+
+  const resetForm = () => {
+    setFormData(initialValues);
+    setErrors({});
 };
 
   return {
@@ -70,8 +78,9 @@ const useOfficeForm = (initialValues) => {
     handleChange,
     handleBlur,
     handleRegistryPhoneNumberKeyDown,
+    resetForm,
     isFormValid: Object.values(errors).every(value => value),
   };
 };
 
-export default useOfficeForm;
+export default useReceptionistForm;

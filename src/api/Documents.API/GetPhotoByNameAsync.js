@@ -2,7 +2,7 @@ import { DocumentsAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function GetPhotoByNameAsync(fileName) {
+async function GetPhotoByNameAsync(id) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,7 +10,7 @@ async function GetPhotoByNameAsync(fileName) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${DocumentsAPI}/Photo?photoName=${fileName}`, {
+        const response = await fetch(`${DocumentsAPI}/Photo/${id}`, {
             method: 'GET',
             headers: {
                 "Authorization": `Bearer ${jwtToken}`

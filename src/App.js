@@ -19,6 +19,9 @@ import Office from './pages/Office';
 import Specializations from './pages/Specializations';
 import Specialization from './pages/Specialization';
 import Patients from './pages/Patients';
+import Service from './pages/Service';
+import Receptionists from './pages/Receptionists';
+import Receptionist from './pages/Receptionist';
 
 function App() {
   const [currentTheme, setCurrentTheme] = useState(() => {
@@ -67,6 +70,9 @@ function App() {
                 <Route path="/patient/:id?" element={<Patient />} />
                 <Route path="/specializations" element={<Specializations />} />
                 <Route path="/specialization/:id?" element={<Specialization />} />
+                <Route path="/service/:id?" element={<Service />} />
+                <Route path="/receptionists" element={<Receptionists />} />
+                <Route path="/receptionist/:id?" element={<Receptionist />} />
               </Routes>
             </div>
           </>

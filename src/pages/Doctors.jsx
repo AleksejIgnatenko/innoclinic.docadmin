@@ -51,6 +51,7 @@ export default function Doctors() {
         cabinetNumber: '',
         careerStartYear: '',
         status: '',
+        photoId: '',
     });
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -204,14 +205,14 @@ export default function Doctors() {
     async function handleAdd(e) {
         e.preventDefault();
 
-        const photoId = await CreatePhotoFetchAsync(photo);
-        console.log(photoId);
+        if (photo) {
+            formData.photoId = await CreatePhotoFetchAsync(photo);
+        }
 
         const createDoctorRequest = new CreateDoctorModelRequest(formData.firstName, formData.lastName, formData.middleName,
             formData.cabinetNumber, formData.dateOfBirth, formData.email, formData.specializationId, formData.officeId,
-            formData.careerStartYear, formData.status, photoId)
+            formData.careerStartYear, formData.status, formData.photoId);
 
-        console.log(createDoctorRequest);
         await CreateDoctorFetchAsync(createDoctorRequest);
     }
 
@@ -250,7 +251,7 @@ export default function Doctors() {
                                         <tbody>
                                             {editableDoctors.map(editableDoctor => (
                                                 <tr key={editableDoctor.id} onClick={() => navigate(`/doctor/${editableDoctor.id}`)}
-                                                    style={{cursor: 'pointer'}}
+                                                    style={{ cursor: 'pointer' }}
                                                 >
                                                     {columnNames.map(columnName => (
                                                         <td key={columnName}>{editableDoctor[columnName]}</td>
@@ -344,7 +345,7 @@ export default function Doctors() {
                                     onBlur={handleBlur('officeId')}
                                     onChange={handleChange('officeId')}
                                     required
-                                    placeholder={formData.officeId ? "" : "Выберите офис"}
+                                    placeholder={formData.officeId ? "" : "Select office"}
                                     options={officeOptions}
                                 />
                                 <InputWrapper

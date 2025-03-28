@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import FieldNames from '../enums/FieldNames';
 
-const useOfficeForm = (initialValues) => {
-  const [formData, setFormData] = useState(initialValues);
-  const [errors, setErrors] = useState({
-    city: false,
-    street: false,
-    houseNumber: false,
-    registryPhoneNumber: false,
+const useAppointmentResultForm = (initialValues) => {
+  const [appointmentFormData, setAppointmentFormData] = useState(initialValues);
+  const [appointmentErrors, setAppointmentErrors] = useState({
+    complaints: false,
+    conclusion: false,
+    recommendations: false,
+    appointmentId: false,
   });
 
   const updateInputState = (field, input, label) => {
@@ -18,7 +18,7 @@ const useOfficeForm = (initialValues) => {
 
         label.textContent = `Please, enter the office’s ${FieldNames[field]}`;
       }
-      setErrors(prev => ({
+      setAppointmentErrors(prev => ({
         ...prev,
         [field]: false
       }));
@@ -29,18 +29,18 @@ const useOfficeForm = (initialValues) => {
 
         label.textContent = `${FieldNames[field]}`;
       }
-      setErrors(prev => ({
+      setAppointmentErrors(prev => ({
         ...prev,
         [field]: true
       }));
     }
   };
 
-  const handleChange = (field) => (e) => {
+  const handleChangeAppointment = (field) => (e) => {
     const input = e.target;
     const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
 
-    setFormData(prev => ({
+    setAppointmentFormData(prev => ({
       ...prev,
       [field]: input.value
     }));
@@ -48,30 +48,21 @@ const useOfficeForm = (initialValues) => {
     updateInputState(field, input, label);
   };
 
-  const handleBlur = (field) => (event) => {
+  const handleBlurAppointment = (field) => (event) => {
     const input = event.target;
     const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
 
     updateInputState(field, input, label);
   };
 
-  const handleRegistryPhoneNumberKeyDown = (event) => {
-    const input = event.target;
-
-    if (event.key === 'Backspace' && input.value === '+') {
-        event.preventDefault();
-    }
-};
-
   return {
-    formData,
-    setFormData,
-    errors,
-    handleChange,
-    handleBlur,
-    handleRegistryPhoneNumberKeyDown,
-    isFormValid: Object.values(errors).every(value => value),
+    appointmentFormData,
+    setAppointmentFormData,
+    appointmentErrors,
+    handleChangeAppointment,
+    handleBlurAppointment,
+    isAppointmentFormValid: Object.values(appointmentErrors).every(value => value),
   };
 };
 
-export default useOfficeForm;
+export default useAppointmentResultForm;

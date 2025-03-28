@@ -13,6 +13,7 @@ import '../styles/pages/Office.css';
 import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import UpdateOfficeFetchAsync from "../api/Offices.API/UpdateOfficeFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 
 function Office() {
     const { id } = useParams();
@@ -29,7 +30,7 @@ function Office() {
         officeNumber: '',
         photoId: '',
         registryPhoneNumber: '+',
-        status: false,
+        isActive: false,
     });
 
     const [isEditing, setIsEditing] = useState(false);
@@ -44,10 +45,13 @@ function Office() {
                     const fetchedOffice = await GetOfficeByIdFetchAsync(id);
                     setFormData(fetchedOffice);
                     setOffice(fetchedOffice);
+                    console.log(fetchedOffice);
 
-                    const fetchedPhoto = await GetPhotoByNameAsync(fetchedOffice.photoId);
-                    setPhoto(fetchedPhoto);
-                    setEditingPhoto(fetchedPhoto);
+                    if (fetchedOffice.photoId) {
+                        const fetchedPhoto = await GetPhotoByNameAsync(fetchedOffice.photoId);
+                        setPhoto(fetchedPhoto);
+                        setEditingPhoto(fetchedPhoto);
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching office:', error);
@@ -83,11 +87,15 @@ function Office() {
     async function handleUpdate() {
         setIsEditing(false);
 
-        if((editingPhoto instanceof Blob)) {
+        if (!office.photoId && editingPhoto) {
+            const photoId = await CreatePhotoFetchAsync(editingPhoto);
+            console.log(photoId);
+            formData.photoId = photoId;
+        } else if ((editingPhoto instanceof Blob)) {
             const imageUrl = URL.createObjectURL(editingPhoto);
             setPhoto(imageUrl)
-            
-            await UpdatePhotoFetchAsync(editingPhoto, formData.photoId);
+
+            await UpdatePhotoFetchAsync(editingPhoto, office.photoId);
         }
 
         const updateOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
@@ -100,8 +108,7 @@ function Office() {
 
     return (
         <>
-            {isLoading && <Loader />}
-            {!isLoading && (
+            {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
@@ -123,7 +130,7 @@ function Office() {
                         </div>
                     ) : (
                         <div class="img-container">
-                            <img src={photo} alt="" />
+                            <img src={photo} alt="" className="img-area"/>
                         </div>
                     )}
 
@@ -180,7 +187,7 @@ function Office() {
                                 label="Status active"
                                 id="statusActive"
                                 value={true}
-                                checked={formData.status === true}
+                                checked={formData.isActive === true}
                                 onChange={handleCheckboxChange}
                                 required
                             />
@@ -189,7 +196,7 @@ function Office() {
                                 label="Status inactive"
                                 id="statusInactive"
                                 value={false}
-                                checked={formData.status === false}
+                                checked={formData.isActive === false}
                                 onChange={handleCheckboxChange}
                                 required
                             />
@@ -202,7 +209,7 @@ function Office() {
                                     <p>House Number: {office.houseNumber}</p>
                                     <p>Office Number: {office.officeNumber}</p>
                                     <p>Registry Phone Number: {office.registryPhoneNumber}</p>
-                                    <p>Status: {office.status ? "Active" : "Inactive"}</p>
+                                    <p>Status: {office.isActive ? "Active" : "Inactive"}</p>
                                 </>
                             ) : (
                                 <p>No office information available</p>

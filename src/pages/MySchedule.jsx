@@ -8,6 +8,10 @@ import Calendar from "../components/organisms/Calendar";
 import FieldNames from "../enums/FieldNames";
 import { Link } from "react-router-dom";
 import GetAppointmentsByDoctorAndDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDoctorAndDateFetchAsync";
+import useAppointmentResultForm from "../hooks/useAppointmentResultForm";
+import FormModal from "../components/organisms/FormModal";
+import { InputWrapper } from "../components/molecules/InputWrapper";
+import { ButtonBase } from "../components/atoms/ButtonBase";
 
 export default function MySchedule() {
     const [appointments, setAppointments] = useState([]);
@@ -18,12 +22,21 @@ export default function MySchedule() {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
 
+    const [isAppointmentAddModalOpen, setIsAppointmentAddModalOpen] = useState(false);
+
     const [columnNames, setColumnNames] = useState([
         'time',
         'patientFullName',
         'medicalServiceName',
         'isApproved',
     ]);
+
+    const { appointmentFormData, setAppointmentFormData, appointmentErrors, handleChangeAppointment, handleBlurAppointment, isAppointmentFormValid } = useAppointmentResultForm({
+        complaints: '',
+        conclusion: '',
+        recommendations: '',
+        appointmentId: '',
+    });
 
     useEffect(() => {
         const getData = async () => {
@@ -82,6 +95,27 @@ export default function MySchedule() {
         setSelectedDate(date);
     }
 
+    const toggleAddModalAppointment = () => {
+        setIsAppointmentAddModalOpen(!isAppointmentAddModalOpen);
+    };
+
+    const handleAppointmentResultsLinkClick = (id) => (event) => {
+        event.preventDefault();
+        checkAppointmentResultsExistence(id);
+    };
+
+    async function checkAppointmentResultsExistence(id) {
+        console.log(id);
+
+        console.log(appointmentFormData);
+    }
+
+    async function handleAddAppointment(e) {
+        e.preventDefault();
+
+        console.log(appointmentFormData);
+    }
+
     return (
         <>
             <Toolbar
@@ -119,8 +153,8 @@ export default function MySchedule() {
                                                             <td key={columnName}>
                                                                 {(columnName === 'patientFullName' && editableAppointment.isApproved === 'Approved') ? (
                                                                     <Link to={`/patient/${appointments.find(a => a.id === editableAppointment.id).patient.id}?tab=PersonalInformation`} className="link_name">
-                                                                    {editableAppointment[columnName]}
-                                                                </Link>
+                                                                        {editableAppointment[columnName]}
+                                                                    </Link>
                                                                 ) : (
                                                                     editableAppointment[columnName]
                                                                 )}
@@ -128,7 +162,7 @@ export default function MySchedule() {
                                                         ))}
                                                         <td>
                                                             {editableAppointment.isApproved === 'Approved' ? (
-                                                                <Link to="/appointment-medical-results" className="link_name">
+                                                                <Link onClick={handleAppointmentResultsLinkClick(editableAppointment.id)} className="link_name">
                                                                     Appointment Medical Results
                                                                 </Link>
                                                             ) : (
@@ -146,6 +180,22 @@ export default function MySchedule() {
 
                         {isCalendarOpen && (
                             <Calendar onClose={toggleCalendarClick} handleSetSelectedDate={handleSetSelectedDate} currentDate={selectedDate} />
+                        )}
+
+                        {isAppointmentAddModalOpen && (
+                            <FormModal title="Add office" onClose={toggleAddModalAppointment} onSubmit={handleAddAppointment} showCloseButton={true}>
+                                <div className="modal-inputs">
+
+                                </div>
+                                <div className="form-actions">
+                                    <ButtonBase type="submit" disabled={!isAppointmentFormValid}>
+                                        Confirm
+                                    </ButtonBase>
+                                    <ButtonBase variant="secondary" onClick={toggleAddModalAppointment}>
+                                        Cancel
+                                    </ButtonBase>
+                                </div>
+                            </FormModal>
                         )}
                     </div>
                 </>

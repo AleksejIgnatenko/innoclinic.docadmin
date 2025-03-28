@@ -59,7 +59,7 @@ const ImageUploader = ({ photo, setPhoto }) => {
                 ref={imageInputRef}
                 type="file"
                 id="fileInput"
-                className="drop-zoon-file-input"
+                className="img-area"
                 accept="image/*"
                 onChange={handleChangeImg}
             />

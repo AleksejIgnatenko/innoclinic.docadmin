@@ -61,6 +61,17 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     </li>
                     {/* {account && account.role === 'Receptionist' && ( */}
                         <li>
+                            <Link to="/receptionists">
+                                <IconBase name='bx-cool' />
+                                <span className="link_name">Receptionists</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link to="/doctors" className="link_name">Receptionists</Link></li>
+                            </ul>
+                        </li>
+                    {/* )} */}
+                    {/* {account && account.role === 'Receptionist' && ( */}
+                        <li>
                             <Link to="/doctors">
                                 <IconBase name='bx-user-circle' />
                                 <span className="link_name">Doctors</span>

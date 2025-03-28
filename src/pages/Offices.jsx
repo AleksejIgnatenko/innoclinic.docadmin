@@ -36,7 +36,6 @@ export default function Offices() {
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
-    const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const columnNames = [
@@ -93,7 +92,11 @@ export default function Offices() {
 
     async function handleAdd(e) {
         e.preventDefault();
-        const photoId = await CreatePhotoFetchAsync(photo);
+
+        let photoId = ''
+        if (photo) {
+            photoId = await CreatePhotoFetchAsync(photo);
+        }
 
         const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
             photoId, formData.registryPhoneNumber, formData.status);
@@ -104,7 +107,6 @@ export default function Offices() {
         <>
             <Toolbar
                 pageTitle="Offices"
-                setSearchTerm={setSearchTerm}
                 showAddIcon={true}
                 toggleCreateModalClick={toggleAddModal}
             />
@@ -131,7 +133,7 @@ export default function Offices() {
                                         <tbody>
                                             {editableOffices.map(editableOffice => (
                                                 <tr key={editableOffice.id} onClick={() => navigate(`/office/${editableOffice.id}`)}
-                                                    style={{cursor: 'pointer'}}
+                                                    style={{ cursor: 'pointer' }}
                                                 >
                                                     {columnNames.map(columnName => (
                                                         <td key={columnName}>{editableOffice[columnName]}</td>
@@ -187,7 +189,6 @@ export default function Offices() {
                                     value={formData.officeNumber}
                                     onBlur={handleBlur('officeNumber')}
                                     onChange={handleChange('officeNumber')}
-                                    required
                                 />
                                 <InputWrapper
                                     type="phone"
