@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import useReceptionistForm from "../hooks/useReceptionistForm";
 import GetReceptionistByIdFetchAsync from "../api/Profiles.API/GetReceptionistByIdFetchAsync";
-import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
+import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import Loader from "../components/organisms/Loader";
 import ProfileCard from "../components/organisms/ProfileCard";
 import { IconBase } from "../components/atoms/IconBase";

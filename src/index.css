@@ -24,6 +24,9 @@
   --light-sidebar: #fff;
   --dark-sidebar: #171717;
 
+  --profile-info-bg-light: #f3f1f6;
+  --profile-info-bg-dark: #333;
+
   /* Акцентные цвета */
   --accent: #00FF7F;
   --error: #dc3545;
@@ -71,6 +74,8 @@
 
   --sidebar-bg: var(--light-sidebar);
   --sidebar-fg: var(--dark-sidebar);
+
+  --profile-info-bg: var(--profile-info-bg-light);
 }
 
 [data-theme='dark'] {
@@ -100,6 +105,8 @@
 
   --sidebar-bg: var(--dark-sidebar);
   --sidebar-fg: var(--light-sidebar);
+
+  --profile-info-bg: var(--profile-info-bg-dark);
 }
 
 html,

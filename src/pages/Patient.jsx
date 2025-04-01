@@ -5,15 +5,19 @@ import Loader from "../components/organisms/Loader";
 import ProfileCard from "../components/organisms/ProfileCard";
 import GetPatientByIdFetchAsync from "../api/Profiles.API/GetPatientByIdFetchAsync";
 import "./../styles/pages/Patient.css";
+import Toolbar from "../components/organisms/Toolbar";
+import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByIdAsync";
 
 function Patient() {
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
     const [patient, setPatient] = useState(null);
-    const [photo, setPhoto] = useState(null);
 
-    const [activeTab, setActiveTab] = useState('PersonalInformation');
+    const [photo, setPhoto] = useState(null);
+    const [editingPhoto, setEditingPhoto] = useState(null);
+
+    const [activeTab, setActiveTab] = useState('personal-information');
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +25,6 @@ function Patient() {
         firstName: '',
         lastName: '',
         middleName: '',
-        isLinkedToAccount: false,
         dateOfBirth: '',
     });
 
@@ -31,8 +34,18 @@ function Patient() {
                 toggleLoader(true);
 
                 const fetchPatient = await GetPatientByIdFetchAsync(id);
+
+                if (fetchPatient.account.photoId) {
+                    const fetchedPhoto = await GetPhotoByNameAsync(fetchPatient.account.photoId);
+                    setPhoto(fetchedPhoto);
+                    setEditingPhoto(fetchedPhoto);
+                }
+
                 setPatient(fetchPatient);
-                setFormData(fetchPatient);
+
+                const formattedPatient = formatPatient(fetchPatient);
+                setFormData(formattedPatient);
+
 
             } catch (error) {
                 console.error('Error fetching patient:', error);
@@ -51,9 +64,29 @@ function Patient() {
         }
     }, [location]);
 
+    const formatPatient = (patient) => {
+        const {
+            id,
+            firstName,
+            lastName,
+            middleName,
+            account,
+            dateOfBirth,
+        } = patient;
+
+        return {
+            id,
+            firstName,
+            lastName,
+            middleName,
+            phoneNumber: account.phoneNumber,
+            dateOfBirth,
+        };
+    };
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
-        navigate(`/patient/${id}?tab=${tab}`);
+        navigate(`/profile?tab=${tab}`);
     };
 
     const toggleLoader = (status) => {
@@ -62,40 +95,55 @@ function Patient() {
 
     return (
         <>
-            <div className="tabs">
-                <ul className="tabs-content">
-                    <button
-                        className={`tabs-button ${activeTab === 'PersonalInformation' ? 'is-active' : ''}`}
-                        onClick={() => handleTabClick('PersonalInformation')}
-                    >
-                        Personal Information
-                    </button>
-                    <button
-                        className={`tabs-button ${activeTab === 'AppointmentResults' ? 'is-active' : ''}`}
-                        onClick={() => handleTabClick('AppointmentResults')}
-                    >
-                        Appointment Results
-                    </button>
-                </ul>
-            </div>
+            <Toolbar pageTitle="Profile" />
             {isLoading ? (
                 <Loader />
             ) : (
-                <ProfileCard>
-                    <div data-content className={activeTab === 'PersonalInformation' ? 'is-active' : ''} id="personalInformation">
-                        <div className="profile-img">
-                            <div class="img-container">
-                                <img src={photo} alt="" />
-                            </div>
-                        </div>
-                        <div className="profile-content">
-                            <p>First name: {formData.firstName}</p>
-                            <p>Last name: {formData.lastName}</p>
-                            <p>Middle name: {formData.middleName}</p>
-                            <p>Date of birth: {formData.dateOfBirth}</p>
-                        </div>
+                <>
+                    <div className="tabs">
+                        <ul className="tabs-content">
+                            <button
+                                className={`tabs-button ${activeTab === 'personal-information' ? 'is-active' : ''}`}
+                                onClick={() => handleTabClick('personal-information')}
+                            >
+                                Personal Information
+                            </button>
+                            <button
+                                className={`tabs-button ${activeTab === 'appointment-results' ? 'is-active' : ''}`}
+                                onClick={() => handleTabClick('appointment-results')}
+                            >
+                                Appointment Results
+                            </button>
+                        </ul>
                     </div>
-                </ProfileCard>
+
+                    {activeTab === 'personal-information' && (
+                        <ProfileCard>
+                            <div data-content className={activeTab === 'personal-information' ? 'is-active' : ''} id="personalInformation">
+                                <div className="profile-img">
+                                    <div class="img-container">
+                                        <img src={photo} alt="" />
+                                    </div>
+                                </div>
+                                <div className="profile-content">
+                                    <p>First name: {formData.firstName}</p>
+                                    <p>Last name: {formData.lastName}</p>
+                                    <p>Middle name: {formData.middleName}</p>
+                                    <p>Phone Number: {formData.middleName}</p>
+                                    <p>Date of birth: {formData.dateOfBirth}</p>
+                                </div>
+                            </div>
+                        </ProfileCard>
+                    )}
+
+                    {activeTab === 'appointment-results' && (
+                        <ProfileCard>
+                            <div data-content className={activeTab === 'appointment-results' ? 'is-active' : ''} id="personalInformation">
+                                <h1>Appointment results</h1>
+                            </div>
+                        </ProfileCard>
+                    )}
+                </>
             )}
         </>
     );

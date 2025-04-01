@@ -5,28 +5,46 @@ import '../../styles/organisms/Sidebar.css';
 import 'boxicons/css/boxicons.min.css';
 import Cookies from 'js-cookie';
 
-export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
-    const [account, setAccount] = useState(null);
+import GetAccountByAccountIdFromTokenFetchAsync from "../../api/Authorization.API/GetAccountByAccountIdFromTokenFetchAsync";
+import GetDoctorByAccountIdFromTokenFetchAsync from "../../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
+import GetReceptionistByAccountIdFromTokenFetchAsync from "../../api/Profiles.API/GetReceptionistByAccountIdFromTokenFetchAsync";
+import GetPhotoByIdAsync from "../../api/Documents.API/GetPhotoByIdAsync";
+
+export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
+
+    const [photo, setPhoto] = useState(null);
     const [profile, setProfile] = useState(null);
     const [showSidebar, setShowSidebar] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
-            // try {
-            //     const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
-            //     setAccount(fetchedAccount);
+            try {
+                const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
 
-            //     if (fetchedAccount.role === "Doctor") {
-            //         const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
-            //         setProfile(fetchedProfile);
-            //     } else if (fetchedAccount.role === "Receptionist") {
-            //         const fetchedProfile = await GetReceptionistByAccountIdFromTokenFetchAsync();
-            //         setProfile(fetchedProfile);
-            //     }
+                if (fetchedAccount.role === "Doctor") {
+                    const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
+                    console.log(fetchedProfile);
 
-            // } catch (error) {
-            //     console.error('Error fetching data:', error);
-            // }
+                    if (fetchedProfile.account.photoId) {
+                        const fetchedPhoto = await GetPhotoByIdAsync(fetchedProfile.account.photoId);
+                        setPhoto(fetchedPhoto);
+                    }
+
+                    setProfile(fetchedProfile);
+                } else if (fetchedAccount.role === "Receptionist") {
+                    const fetchedProfile = await GetReceptionistByAccountIdFromTokenFetchAsync();
+
+                    if (fetchedProfile.account.photoId) {
+                        const fetchedPhoto = await GetPhotoByIdAsync(fetchedProfile.account.photoId);
+                        setPhoto(fetchedPhoto);
+                    }
+
+                    setProfile(fetchedProfile);
+                }
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         };
 
         fetchData();
@@ -39,7 +57,13 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
     const handleLogOut = () => {
         Cookies.remove('accessToken');
         Cookies.remove('refreshToken');
+        Cookies.remove('isLoggedIn');
         window.location.href = "/";
+    };
+
+    const truncateName = (name) => {
+        if (!name) return '';
+        return name.length > 10 ? name.substring(0, 10) + '...' : name;
     };
 
     return (
@@ -59,7 +83,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                             <li><Link to="/" className="link_name">Home</Link></li>
                         </ul>
                     </li>
-                    {/* {account && account.role === 'Receptionist' && ( */}
+                    {profile && profile.account.role === 'Receptionist' && (
                         <li>
                             <Link to="/receptionists">
                                 <IconBase name='bx-cool' />
@@ -69,8 +93,8 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                                 <li><Link to="/doctors" className="link_name">Receptionists</Link></li>
                             </ul>
                         </li>
-                    {/* )} */}
-                    {/* {account && account.role === 'Receptionist' && ( */}
+                    )}
+                    {profile && profile.account.role === 'Receptionist' && (
                         <li>
                             <Link to="/doctors">
                                 <IconBase name='bx-user-circle' />
@@ -80,27 +104,27 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                                 <li><Link to="/doctors" className="link_name">Doctors</Link></li>
                             </ul>
                         </li>
-                    {/* )} */}
+                    )}
                     <li>
-                            <Link to="/patients">
-                                <IconBase name='bx-group' />
-                                <span className="link_name">Patients</span>
-                            </Link>
-                            <ul className="sub-menu blank">
-                                <li><Link to="/patients" className="link_name">Patients</Link></li>
-                            </ul>
-                        </li>
-                    {/* {account && (account.role === 'Doctor' ? ( */}
+                        <Link to="/patients">
+                            <IconBase name='bx-group' />
+                            <span className="link_name">Patients</span>
+                        </Link>
+                        <ul className="sub-menu blank">
+                            <li><Link to="/patients" className="link_name">Patients</Link></li>
+                        </ul>
+                    </li>
+                    {profile && (profile.account.role === 'Doctor' ? (
                         <li>
                             <Link to="/my-schedule">
-                                <IconBase name='bx-calendar'/>
+                                <IconBase name='bx-calendar' />
                                 <span className="link_name">My schedule</span>
                             </Link>
                             <ul className="sub-menu blank">
                                 <li><Link to="/my-schedule" className="link_name">My schedule</Link></li>
                             </ul>
                         </li>
-                    {/* ) : account && (account.role === 'Receptionist' ? ( */}
+                    ) : profile && (profile.account.role === 'Receptionist' ? (
                         <li>
                             <Link to="/appointments">
                                 <IconBase name='bx-calendar' />
@@ -110,7 +134,7 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                                 <li><Link to="/appointments" className="link_name">Appointments</Link></li>
                             </ul>
                         </li>
-                    {/* ) : null))} */}
+                    ) : null))}
                     <li>
                         <Link to="/offices">
                             <IconBase className='bx-buildings'></IconBase>
@@ -131,8 +155,8 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                     </li>
                     <li>
                         <Link onClick={toggleTheme}>
-                            <IconBase 
-                                name={currentTheme === 'light' ? 'bx-moon' : 'bx-sun sun'} 
+                            <IconBase
+                                name={currentTheme === 'light' ? 'bx-moon' : 'bx-sun sun'}
                                 className="nav-icon"
                             />
                             <span className="link_name">Switching themes</span>
@@ -141,16 +165,26 @@ export default function Sidebar({currentTheme, toggleTheme, isUserLoggedIn}) {
                             <li><Link className="link_name" onClick={toggleTheme}>Switching themes</Link></li>
                         </ul>
                     </li>
-                    {isUserLoggedIn && account && profile ? (
+                    {isLoggedIn ? (
                         <li>
                             <div className="profile-details">
-                                <Link to="/doctorProfile">
+                                <Link to="/profile">
                                     <div className="profile-content">
-                                        <img src="https://th.bing.com/th/id/OIP.audMX4ZGbvT2_GJTx2c4GgAAAA?rs=1&pid=ImgDetMain" alt="profileImg" />
+                                        <img src={photo} alt="profileImg" />
                                     </div>
-                                    <div className="name-job">
-                                        <div className="profile_name">{`${profile.firstName} ${profile.lastName}`}</div>
-                                        <div className="job">{account.role}</div>
+                                    <div className="profile-info">
+                                        {profile ? (
+                                            <>
+                                                <div className="profile_name">{`${truncateName(`${profile.firstName} ${profile.lastName}`)}`}</div>
+                                                <div className="role">{profile.role || 'Role'}</div>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <div className="profile_name">Name</div>
+                                                <div className="role">Role</div>
+                                            </>
+                                        )}
+
                                     </div>
                                 </Link>
                                 <i className='bx bx-log-out' onClick={handleLogOut}></i>

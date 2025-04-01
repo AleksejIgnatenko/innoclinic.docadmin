@@ -152,7 +152,7 @@ export default function MySchedule() {
                                                         {columnNames.map(columnName => (
                                                             <td key={columnName}>
                                                                 {(columnName === 'patientFullName' && editableAppointment.isApproved === 'Approved') ? (
-                                                                    <Link to={`/patient/${appointments.find(a => a.id === editableAppointment.id).patient.id}?tab=PersonalInformation`} className="link_name">
+                                                                    <Link to={`/patient/${appointments.find(a => a.id === editableAppointment.id).patient.id}?tab=personal-information`} className="link_name">
                                                                         {editableAppointment[columnName]}
                                                                     </Link>
                                                                 ) : (

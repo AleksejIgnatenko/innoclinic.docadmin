@@ -6,7 +6,7 @@ import { IconBase } from "../components/atoms/IconBase";
 import { InputWrapper } from "../components/molecules/InputWrapper";
 import useOfficeForm from "../hooks/useOfficeForm";
 import GetOfficeByIdFetchAsync from "../api/Offices.API/GetOfficeByIdFetchAsync";
-import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
+import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import '../styles/pages/Office.css';

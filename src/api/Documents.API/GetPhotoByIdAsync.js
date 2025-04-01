@@ -2,7 +2,7 @@ import { DocumentsAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function GetPhotoByNameAsync(id) {
+async function GetPhotoByIdAsync(id) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -33,4 +33,4 @@ async function GetPhotoByNameAsync(id) {
     }
 }
 
-export default GetPhotoByNameAsync;
+export default GetPhotoByIdAsync;

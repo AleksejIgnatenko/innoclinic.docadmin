@@ -44,6 +44,7 @@ export default function Patients() {
 
                 const fetchedPatients = await GetAllPatientsFetchAsync()
                 setPatients(fetchedPatients);
+                console.log(fetchedPatients);
 
                 const formattedPatients = formatPatients(fetchedPatients);
                 setEditablePatients(formattedPatients);
@@ -146,7 +147,7 @@ export default function Patients() {
                                         </thead>
                                         <tbody>
                                             {editablePatients.map(editablePatient => (
-                                                <tr key={editablePatient.id} onClick={() => navigate(`/patient/${editablePatient.id}?tab=PersonalInformation`)} style={{ cursor: 'pointer' }}>
+                                                <tr key={editablePatient.id} onClick={() => navigate(`/patient/${editablePatient.id}?tab=personal-information`)} style={{ cursor: 'pointer' }}>
                                                 {columnNames.map(columnName => (
                                                     <td key={columnName}>{editablePatient[columnName]}</td>
                                                 ))}

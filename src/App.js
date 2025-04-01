@@ -34,8 +34,7 @@ function App() {
     localStorage.setItem('theme', currentTheme);
   }, [currentTheme]);
 
-  const isUserLoggedIn = Boolean(Cookies.get('refreshToken'));
-  //const isUserLoggedIn = true;
+  const isLoggedIn = Boolean(Cookies.get('isLoggedIn'));
 
   const { formData, errors, handleChange, handleBlur, isFormValid } = useSignInForm({
     email: '',
@@ -54,9 +53,9 @@ function App() {
   return (
     <>
       <Router>
-        {isUserLoggedIn ? (
+        {isLoggedIn ? (
           <>
-            <Sidebar currentTheme={currentTheme} toggleTheme={toggleTheme} isUserLoggedIn={isUserLoggedIn}/>
+            <Sidebar currentTheme={currentTheme} toggleTheme={toggleTheme} isLoggedIn={isLoggedIn}/>
             <div className="App">
               <Routes>
                 <Route path="/" element={<Home />} />

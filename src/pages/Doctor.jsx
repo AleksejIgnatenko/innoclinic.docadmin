@@ -11,10 +11,10 @@ import workStatuses from "../enums/WorkStatuses";
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import GetDoctorByIdFetchAsync from "../api/Profiles.API/GetDoctorByIdFetchAsync";
-import GetDoctorByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
+
 import UpdateDoctorModelRequest from "../models/doctorModels/UpdateDoctorModelRequest";
 import UpdateDoctorFetchAsync from "../api/Profiles.API/UpdateDoctorFetchAsync";
-import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByNameAsync";
+import GetPhotoByIdAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
@@ -69,31 +69,16 @@ function Doctor() {
                 }))
                 setOfficeOptions(officeOptions);
 
-                let fetchedDoctor;
-                if (id) {
-                    fetchedDoctor = await GetDoctorByIdFetchAsync(id);
-                    if (fetchedDoctor) {
-                        mapDoctorData(fetchedDoctor);
-                        setDoctor(fetchedDoctor);
-                        setFormData(fetchedDoctor);
+                const fetchedDoctor = await GetDoctorByIdFetchAsync(id);
+                setDoctor(fetchedDoctor);
 
-                        const formattedDocto = formatDoctor(fetchedDoctor);
-                        setFormData(formattedDocto);
-                    }
-                } else {
-                    fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
-                    if (fetchedDoctor) {
-                        mapDoctorData(fetchedDoctor);
-                        setDoctor(fetchedDoctor);
-                        setFormData(fetchedDoctor);
-                    }
-                }
-                console.log(fetchedDoctor);
+                const formattedDocto = formatDoctor(fetchedDoctor);
+                setFormData(formattedDocto);
 
                 setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
 
                 if (fetchedDoctor.account.photoId) {
-                    const fetchedPhoto = await GetPhotoByNameAsync(fetchedDoctor.account.photoId);
+                    const fetchedPhoto = await GetPhotoByIdAsync(fetchedDoctor.account.photoId);
                     setPhoto(fetchedPhoto);
                     setEditingPhoto(fetchedPhoto);
                 }
@@ -200,8 +185,7 @@ function Doctor() {
 
     return (
         <>
-            {isLoading && <Loader />}
-            {!isLoading && (
+            {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
