@@ -84,6 +84,7 @@ const useServiceForm = (initialValues) => {
         serviceFormData,
         setServiceFormData,
         serviceErrors,
+        setServiceErrors,
         handleChangeService,
         handleBlurService,
         resetFormService,

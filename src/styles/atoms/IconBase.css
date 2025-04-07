@@ -38,3 +38,7 @@
 .delete-icon {
     color: var(--error);
 }
+
+.icon-invalid {
+    color: #555;
+}

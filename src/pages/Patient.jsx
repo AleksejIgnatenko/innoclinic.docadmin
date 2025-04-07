@@ -5,14 +5,21 @@ import Loader from "../components/organisms/Loader";
 import ProfileCard from "../components/organisms/ProfileCard";
 import GetPatientByIdFetchAsync from "../api/Profiles.API/GetPatientByIdFetchAsync";
 import "./../styles/pages/Patient.css";
+import "./../styles/organisms/Tab.css";
 import Toolbar from "../components/organisms/Toolbar";
 import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByIdAsync";
+import GetAllAppointmentsByPatientIdFetchAsync from "../api/Appointments.API/GetAllAppointmentsByPatientIdFetchAsync";
+import FieldNames from "../enums/FieldNames";
+import Table from "../components/organisms/Table";
+import { IconBase } from "../components/atoms/IconBase";
 
 function Patient() {
     const { id } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
+
     const [patient, setPatient] = useState(null);
+    const [appointments, setAppointments] = useState([]);
 
     const [photo, setPhoto] = useState(null);
     const [editingPhoto, setEditingPhoto] = useState(null);
@@ -28,25 +35,34 @@ function Patient() {
         dateOfBirth: '',
     });
 
+    const columnNames = [
+        'date',
+        'time',
+        'doctorFullName',
+        'medicalServiceName',
+    ];
+
     useEffect(() => {
         const fetchData = async () => {
             try {
                 toggleLoader(true);
 
-                const fetchPatient = await GetPatientByIdFetchAsync(id);
+                const fetchedPatient = await GetPatientByIdFetchAsync(id);
 
-                if (fetchPatient.account.photoId) {
-                    const fetchedPhoto = await GetPhotoByNameAsync(fetchPatient.account.photoId);
+                if (fetchedPatient.account.photoId) {
+                    const fetchedPhoto = await GetPhotoByNameAsync(fetchedPatient.account.photoId);
                     setPhoto(fetchedPhoto);
                     setEditingPhoto(fetchedPhoto);
                 }
 
-                setPatient(fetchPatient);
+                const fetchedAppointments = await GetAllAppointmentsByPatientIdFetchAsync(fetchedPatient.id);
+                const formattedAppointments = formatAppointment(fetchedAppointments);
+                setAppointments(formattedAppointments);
 
-                const formattedPatient = formatPatient(fetchPatient);
+                setPatient(fetchedPatient);
+
+                const formattedPatient = formatPatient(fetchedPatient);
                 setFormData(formattedPatient);
-
-
             } catch (error) {
                 console.error('Error fetching patient:', error);
             } finally {
@@ -84,9 +100,19 @@ function Patient() {
         };
     };
 
+    const formatAppointment = (appointments) => {
+        return appointments.map(({ id, date, time, doctor, medicalService }) => ({
+            id,
+            date: date,
+            time: time,
+            doctorFullName: `${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`,
+            medicalServiceName: medicalService.serviceName,
+        }));
+    };
+
     const handleTabClick = (tab) => {
         setActiveTab(tab);
-        navigate(`/profile?tab=${tab}`);
+        navigate(`/patient/${id}?tab=${tab}`);
     };
 
     const toggleLoader = (status) => {
@@ -95,7 +121,7 @@ function Patient() {
 
     return (
         <>
-            <Toolbar pageTitle="Profile" />
+            <Toolbar pageTitle="PAtient" />
             {isLoading ? (
                 <Loader />
             ) : (
@@ -137,11 +163,44 @@ function Patient() {
                     )}
 
                     {activeTab === 'appointment-results' && (
-                        <ProfileCard>
-                            <div data-content className={activeTab === 'appointment-results' ? 'is-active' : ''} id="personalInformation">
-                                <h1>Appointment results</h1>
-                            </div>
-                        </ProfileCard>
+                        <div data-content className={activeTab === 'appointment-results' ? 'is-active' : ''} id="personalInformation">
+                            <>
+                                {appointments.length === 0 && (
+                                    <p className="no-items">Nothing was found</p>
+                                )}
+                                {appointments.length > 0 && (
+                                    <div className="table">
+                                        <Table>
+                                            <thead>
+                                                <tr>
+                                                    {columnNames.map(columnName => (
+                                                        <th key={columnName}>
+                                                            {FieldNames[columnName]}
+                                                        </th>
+                                                    ))}
+                                                    <th>Medical Results</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {appointments.map(appointment => (
+                                                    <tr key={appointment.id}>
+                                                        {columnNames.map(columnName => (
+                                                            <td key={columnName}>{appointment[columnName]}</td>
+                                                        ))}
+                                                        <td
+                                                            onClick={() => navigate(`/appointment-results/${appointment.id}/${patient.id}`)}
+                                                            style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                                        >
+                                                            Appointment Results
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                )}
+                            </>
+                        </div>
                     )}
                 </>
             )}

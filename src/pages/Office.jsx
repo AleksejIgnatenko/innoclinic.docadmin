@@ -22,7 +22,7 @@ function Office() {
     const [photo, setPhoto] = useState(null);
 
     const [editingPhoto, setEditingPhoto] = useState(null);
-    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
+    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
         id: '',
         city: '',
         street: '',
@@ -45,7 +45,6 @@ function Office() {
                     const fetchedOffice = await GetOfficeByIdFetchAsync(id);
                     setFormData(fetchedOffice);
                     setOffice(fetchedOffice);
-                    console.log(fetchedOffice);
 
                     if (fetchedOffice.photoId) {
                         const fetchedPhoto = await GetPhotoByNameAsync(fetchedOffice.photoId);
@@ -69,14 +68,23 @@ function Office() {
 
     const toggleEditClick = () => {
         if (isEditing) {
+            const confirmCancel = window.confirm("Do you really want to cancel? Changes will not be saved.");
+            if (!confirmCancel) {
+                return;
+            }
             setFormData(office);
         }
+        setErrors({
+            city: true,
+            street: true,
+            houseNumber: true,
+            registryPhoneNumber: true,
+        });
         setIsEditing(!isEditing);
     };
 
     const handleCheckboxChange = (e) => {
         const value = e.target.value === 'true';
-        console.log(value);
 
         setFormData(prev => ({
             ...prev,
@@ -89,7 +97,6 @@ function Office() {
 
         if (!office.photoId && editingPhoto) {
             const photoId = await CreatePhotoFetchAsync(editingPhoto);
-            console.log(photoId);
             formData.photoId = photoId;
         } else if ((editingPhoto instanceof Blob)) {
             const imageUrl = URL.createObjectURL(editingPhoto);
@@ -108,12 +115,18 @@ function Office() {
 
     return (
         <>
+        <Toolbar pageTitle="Office" />
             {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} onClick={handleUpdate} style={{ cursor: 'pointer' }} />
+                                <IconBase
+                                    name={"bx-check"}
+                                    onClick={isFormValid ? handleUpdate : null}
+                                    style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                                    className={isFormValid ? '' : 'icon-invalid'}
+                                />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 
@@ -130,7 +143,7 @@ function Office() {
                         </div>
                     ) : (
                         <div class="img-container">
-                            <img src={photo} alt="" className="img-area"/>
+                            <img src={photo} alt="" className="img-area" />
                         </div>
                     )}
 

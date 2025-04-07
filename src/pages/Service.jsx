@@ -23,7 +23,7 @@ function Service() {
     const [specializationOptions, setSpecializationOptions] = useState([]);
     const [categoryOptions, setcategoryOptions] = useState([]);
 
-    const { serviceFormData, setServiceFormData, serviceErrors, handleChangeService, handleBlurService, resetFormService, isServiceFormValid } = useServiceForm({
+    const { serviceFormData, setServiceFormData, serviceErrors, setServiceErrors, handleChangeService, handleBlurService, resetFormService, isServiceFormValid } = useServiceForm({
         serviceName: '',
         price: 0,
         serviceCategoryId: '',
@@ -100,8 +100,19 @@ function Service() {
 
     const toggleEditClick = () => {
         if (isEditing) {
+            const confirmCancel = window.confirm("Do you really want to cancel? Changes will not be saved.");
+            if (!confirmCancel) {
+                return;
+            }
             setServiceFormData(service);
         }
+        setServiceErrors({
+            serviceCategoryId: true,
+            serviceName: true,
+            price: true,
+            specializationId: true,
+            isActive: true,
+        });
         setIsEditing(!isEditing);
     };
 
@@ -122,12 +133,18 @@ function Service() {
 
     return (
         <>
+            <Toolbar pageTitle="Service" />
             {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} onClick={handleUpdate} style={{ cursor: 'pointer' }} />
+                                <IconBase
+                                    name={"bx-check"}
+                                    onClick={isServiceFormValid ? handleUpdate : null}
+                                    style={{ cursor: isServiceFormValid ? 'pointer' : 'not-allowed' }}
+                                    className={isServiceFormValid ? '' : 'icon-invalid'}
+                                />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 

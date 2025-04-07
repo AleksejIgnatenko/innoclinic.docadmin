@@ -19,6 +19,8 @@ import ImageUploader from "../components/organisms/ImageUploader";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 import AddImageInAccountFetchAsync from "../api/Authorization.API/AddImageInAccountFetchAsync";
+import Toolbar from "../components/organisms/Toolbar";
+import GetDoctorByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
 
 function Doctor() {
     const { id } = useParams();
@@ -35,7 +37,7 @@ function Doctor() {
 
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
-    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
+    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, resetForm, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -57,6 +59,7 @@ function Doctor() {
             try {
                 toggleLoader(true);
                 errors.email = true;
+
                 const fetchedSpecializations = await GetAllSpecializationFetchAsync();
                 setSpecializations(fetchedSpecializations);
 
@@ -69,8 +72,14 @@ function Doctor() {
                 }))
                 setOfficeOptions(officeOptions);
 
-                const fetchedDoctor = await GetDoctorByIdFetchAsync(id);
-                setDoctor(fetchedDoctor);
+                let fetchedDoctor;
+                if (id) {
+                    fetchedDoctor = await GetDoctorByIdFetchAsync(id);
+                    setDoctor(fetchedDoctor);
+                } else {
+                    fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
+                    setDoctor(fetchedDoctor);
+                }
 
                 const formattedDocto = formatDoctor(fetchedDoctor);
                 setFormData(formattedDocto);
@@ -130,6 +139,25 @@ function Doctor() {
     };
 
     const toggleEditClick = () => {
+        if (isEditing) {
+            const confirmCancel = window.confirm("Do you really want to cancel? Changes will not be saved.");
+            if (!confirmCancel) {
+                return;
+            }
+            setFormData(doctor);
+        }
+        setErrors({
+            firstName: true,
+            lastName: true,
+            middleName: true,
+            dateOfBirth: true,
+            email: true,
+            specializationId: true,
+            officeId: true,
+            careerStartYear: true,
+            status: true,
+            photoId: true,
+        });
         setIsEditing(!isEditing);
     };
 
@@ -185,12 +213,18 @@ function Doctor() {
 
     return (
         <>
+            <Toolbar pageTitle="Doctor" />
             {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
                         {isEditing ? (
                             <>
-                                <IconBase name={"bx-check"} onClick={handleUpdate} />
+                                <IconBase
+                                        name={"bx-check"}
+                                        onClick={isFormValid ? handleUpdate : null}
+                                        style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                                        className={isFormValid ? '' : 'icon-invalid'}
+                                />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
 

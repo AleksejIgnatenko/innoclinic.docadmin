@@ -34,7 +34,7 @@ function Specialization() {
 
     const [isServiceAddModalOpen, setIsServiceAddModalOpen] = useState(false);
 
-    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useSpecializationForm({
+    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, isFormValid } = useSpecializationForm({
         specializationName: '',
         isActive: false,
     });
@@ -115,8 +115,15 @@ function Specialization() {
 
     const toggleEditClick = () => {
         if (isEditing) {
+            const confirmCancel = window.confirm("Do you really want to cancel? Changes will not be saved.");
+            if (!confirmCancel) {
+                return;
+            }
             setFormData(specialization);
         }
+        setErrors({
+            specializationName: true,
+        });
         setIsEditing(!isEditing);
     };
 
@@ -167,13 +174,19 @@ function Specialization() {
 
     return (
         <>
+            <Toolbar pageTitle="Specialization" />
             {isLoading ? <Loader /> : (
                 <div>
                     <ProfileCard>
                         <div className="profile-icon-container">
                             {isEditing ? (
                                 <>
-                                    <IconBase name={"bx-check"} onClick={handleUpdate} style={{ cursor: 'pointer' }} />
+                                    <IconBase
+                                        name={"bx-check"}
+                                        onClick={isFormValid ? handleUpdate : null}
+                                        style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                                        className={isFormValid ? '' : 'icon-invalid'}
+                                    />
                                     <IconBase name={"bx-x"} onClick={toggleEditClick} />
                                     <IconBase name={"bx-plus"} onClick={toggleServiceAddModalClick} />
                                 </>
@@ -251,75 +264,75 @@ function Specialization() {
                     </div>
 
                     {isServiceAddModalOpen && (
-                            <FormModal title="Add service" onClose={toggleServiceAddModalClick} onSubmit={handleAddService} showCloseButton={true}>
-                                <div className="modal-inputs">
-                                    <InputWrapper
-                                        type="text"
-                                        label="Service Name"
-                                        id="serviceName"
-                                        value={serviceFormData.serviceName}
-                                        onBlur={handleBlurService('serviceName')}
-                                        onChange={handleChangeService('serviceName')}
-                                        required
-                                    />
-                                    <InputWrapper
-                                        type="number"
-                                        label="Price"
-                                        id="price"
-                                        value={serviceFormData.price}
-                                        onBlur={handleBlurService('price')}
-                                        onChange={handleChangeService('price')}
-                                        required
-                                    />
-                                    <SelectWrapper
-                                        label="Category"
-                                        id="category"
-                                        value={serviceFormData.serviceCategoryId}
-                                        onBlur={handleBlurService('serviceCategoryId')}
-                                        onChange={handleChangeService('serviceCategoryId')}
-                                        required
-                                        placeholder={serviceFormData.serviceCategoryId ? "" : "Selecl category"}
-                                        options={categoryOptions}
-                                    />
-                                    <SelectWrapper
-                                        label="Specialization"
-                                        id="specialization"
-                                        value={serviceFormData.specializationId}
-                                        onBlur={handleBlurService('specializationId')}
-                                        onChange={handleChangeService('specializationId')}
-                                        required
-                                        placeholder={serviceFormData.specializationId ? "" : "Selecl specialization"}
-                                        options={specializationOptions}
-                                    />
-                                    <CheckboxWrapper
-                                        type="radio"
-                                        label="Status active"
-                                        id="statusServiceActive"
-                                        value={true}
-                                        checked={serviceFormData.isActive === true}
-                                        onChange={handleCheckboxChangeService}
-                                        required
-                                    />
-                                    <CheckboxWrapper
-                                        type="radio"
-                                        label="Status inactive"
-                                        id="statusServiceInactive"
-                                        value={false}
-                                        checked={serviceFormData.isActive === false}
-                                        onChange={handleCheckboxChangeService}
-                                        required
-                                    />
-                                </div>
-                                <div className="form-actions">
-                                    <ButtonBase type="submit" disabled={!isServiceFormValid}>
-                                        Confirm
-                                    </ButtonBase>
-                                    <ButtonBase variant="secondary" onClick={toggleServiceAddModalClick}>
-                                        Cancel
-                                    </ButtonBase>
-                                </div>
-                            </FormModal>
-                        )}
+                        <FormModal title="Add service" onClose={toggleServiceAddModalClick} onSubmit={handleAddService} showCloseButton={true}>
+                            <div className="modal-inputs">
+                                <InputWrapper
+                                    type="text"
+                                    label="Service Name"
+                                    id="serviceName"
+                                    value={serviceFormData.serviceName}
+                                    onBlur={handleBlurService('serviceName')}
+                                    onChange={handleChangeService('serviceName')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="number"
+                                    label="Price"
+                                    id="price"
+                                    value={serviceFormData.price}
+                                    onBlur={handleBlurService('price')}
+                                    onChange={handleChangeService('price')}
+                                    required
+                                />
+                                <SelectWrapper
+                                    label="Category"
+                                    id="category"
+                                    value={serviceFormData.serviceCategoryId}
+                                    onBlur={handleBlurService('serviceCategoryId')}
+                                    onChange={handleChangeService('serviceCategoryId')}
+                                    required
+                                    placeholder={serviceFormData.serviceCategoryId ? "" : "Selecl category"}
+                                    options={categoryOptions}
+                                />
+                                <SelectWrapper
+                                    label="Specialization"
+                                    id="specialization"
+                                    value={serviceFormData.specializationId}
+                                    onBlur={handleBlurService('specializationId')}
+                                    onChange={handleChangeService('specializationId')}
+                                    required
+                                    placeholder={serviceFormData.specializationId ? "" : "Selecl specialization"}
+                                    options={specializationOptions}
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status active"
+                                    id="statusServiceActive"
+                                    value={true}
+                                    checked={serviceFormData.isActive === true}
+                                    onChange={handleCheckboxChangeService}
+                                    required
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status inactive"
+                                    id="statusServiceInactive"
+                                    value={false}
+                                    checked={serviceFormData.isActive === false}
+                                    onChange={handleCheckboxChangeService}
+                                    required
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <ButtonBase type="submit" disabled={!isServiceFormValid}>
+                                    Confirm
+                                </ButtonBase>
+                                <ButtonBase variant="secondary" onClick={toggleServiceAddModalClick}>
+                                    Cancel
+                                </ButtonBase>
+                            </div>
+                        </FormModal>
+                    )}
                 </div>
             )}
         </>

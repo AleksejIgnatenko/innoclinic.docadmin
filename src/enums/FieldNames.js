@@ -3,8 +3,12 @@ const FieldNames = {
     cabinetNumber: "Cabinet Number",
     careerStartYear: "Career Start Year",
     city: "City",
+    complaints: "Complaints",
+    conclusion: "Conclusion",
     dateOfBirth: "Date Of Birth",
+    date: "Date",
     doctorFullName: "Full name doctor",
+    diagnosis: "Diagnosis",
     email: "Email",
     firstName: "First Name",
     fullName: "Full name",
@@ -28,8 +32,10 @@ const FieldNames = {
     status: "Status",
     time: "Time",
     price: "Price",
+    receptionistFullName: "Receptionist Full Name",
     categoryName: "Category Name",
-    receptionistFullName: "Receptionist Full Name"
+    receptionistFullName: "Receptionist Full Name",
+    recommendations: "Recommendations",
 };
 
 export default FieldNames;

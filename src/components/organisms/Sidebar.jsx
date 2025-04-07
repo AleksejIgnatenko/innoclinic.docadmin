@@ -9,21 +9,23 @@ import GetAccountByAccountIdFromTokenFetchAsync from "../../api/Authorization.AP
 import GetDoctorByAccountIdFromTokenFetchAsync from "../../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
 import GetReceptionistByAccountIdFromTokenFetchAsync from "../../api/Profiles.API/GetReceptionistByAccountIdFromTokenFetchAsync";
 import GetPhotoByIdAsync from "../../api/Documents.API/GetPhotoByIdAsync";
+import LogOutFetchAsync from "../../api/Authorization.API/LogOutFetchAsync";
 
 export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
 
     const [photo, setPhoto] = useState(null);
     const [profile, setProfile] = useState(null);
+    const [account, setAccount] = useState(null);
     const [showSidebar, setShowSidebar] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
+                setAccount(fetchedAccount);
 
                 if (fetchedAccount.role === "Doctor") {
                     const fetchedProfile = await GetDoctorByAccountIdFromTokenFetchAsync();
-                    console.log(fetchedProfile);
 
                     if (fetchedProfile.account.photoId) {
                         const fetchedPhoto = await GetPhotoByIdAsync(fetchedProfile.account.photoId);
@@ -54,11 +56,8 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
         setShowSidebar(!showSidebar);
     };
 
-    const handleLogOut = () => {
-        Cookies.remove('accessToken');
-        Cookies.remove('refreshToken');
-        Cookies.remove('isLoggedIn');
-        window.location.href = "/";
+    async function handleLogOut() {
+        await LogOutFetchAsync();
     };
 
     const truncateName = (name) => {
@@ -83,7 +82,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                             <li><Link to="/" className="link_name">Home</Link></li>
                         </ul>
                     </li>
-                    {profile && profile.account.role === 'Receptionist' && (
+                    {account && account.role === 'Receptionist' && (
                         <li>
                             <Link to="/receptionists">
                                 <IconBase name='bx-cool' />
@@ -94,7 +93,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                             </ul>
                         </li>
                     )}
-                    {profile && profile.account.role === 'Receptionist' && (
+                    {account && account.role === 'Receptionist' && (
                         <li>
                             <Link to="/doctors">
                                 <IconBase name='bx-user-circle' />
@@ -114,7 +113,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                             <li><Link to="/patients" className="link_name">Patients</Link></li>
                         </ul>
                     </li>
-                    {profile && (profile.account.role === 'Doctor' ? (
+                    {account && account.role === 'Doctor' ? (
                         <li>
                             <Link to="/my-schedule">
                                 <IconBase name='bx-calendar' />
@@ -124,7 +123,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                                 <li><Link to="/my-schedule" className="link_name">My schedule</Link></li>
                             </ul>
                         </li>
-                    ) : profile && (profile.account.role === 'Receptionist' ? (
+                    ) : account && account.role === 'Receptionist' ? (
                         <li>
                             <Link to="/appointments">
                                 <IconBase name='bx-calendar' />
@@ -134,7 +133,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                                 <li><Link to="/appointments" className="link_name">Appointments</Link></li>
                             </ul>
                         </li>
-                    ) : null))}
+                    ) : null}
                     <li>
                         <Link to="/offices">
                             <IconBase className='bx-buildings'></IconBase>
@@ -168,7 +167,7 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                     {isLoggedIn ? (
                         <li>
                             <div className="profile-details">
-                                <Link to="/profile">
+                                <Link to={account && account.role === 'Doctor' ? "/doctor" : (account && account.role === 'Receptionist' ? "/receptionist" : "/")}>
                                     <div className="profile-content">
                                         <img src={photo} alt="profileImg" />
                                     </div>

@@ -6,14 +6,22 @@ import 'boxicons/css/boxicons.min.css';
 import '../styles/pages/Doctors.css';
 import Calendar from "../components/organisms/Calendar";
 import FieldNames from "../enums/FieldNames";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GetAppointmentsByDoctorAndDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDoctorAndDateFetchAsync";
-import useAppointmentResultForm from "../hooks/useAppointmentResultForm";
 import FormModal from "../components/organisms/FormModal";
-import { InputWrapper } from "../components/molecules/InputWrapper";
 import { ButtonBase } from "../components/atoms/ButtonBase";
+import IsAppointmentResultsExistenceFetchAsync from "../api/Appointments.API/IsAppointmentResultsExistenceFetchAsync";
+import { InputWrapper } from "../components/molecules/InputWrapper";
+import useAppointmentResultForm from "../hooks/useAppointmentResultForm";
+import GetPatientByIdFetchAsync from "../api/Profiles.API/GetPatientByIdFetchAsync";
+import GetDoctorByIdFetchAsync from "../api/Profiles.API/GetDoctorByIdFetchAsync";
+import CreateAndSendToEmailAppointmentResultDocumentFetchAsync from "../api/Documents.API/CreateAndSendAppointmentResultDocumentToEmailAsync";
+import CreateAppointmentResultFetchAsync from "../api/Appointments.API/CreateAppointmentResultFetchAsync";
 
 export default function MySchedule() {
+    const navigate = useNavigate();
+    const [patient, setPatient] = useState(null);
+    const [doctor, setDoctor] = useState(null);
     const [appointments, setAppointments] = useState([]);
     const [editableAppointments, setEditableAppointments] = useState([]);
 
@@ -22,7 +30,7 @@ export default function MySchedule() {
 
     const [selectedDate, setSelectedDate] = useState(new Date());
 
-    const [isAppointmentAddModalOpen, setIsAppointmentAddModalOpen] = useState(false);
+    const [isAppoimentResultAddModalOpen, setIsAppoimentResultAddModalOpen] = useState(false);
 
     const [columnNames, setColumnNames] = useState([
         'time',
@@ -31,11 +39,17 @@ export default function MySchedule() {
         'isApproved',
     ]);
 
-    const { appointmentFormData, setAppointmentFormData, appointmentErrors, handleChangeAppointment, handleBlurAppointment, isAppointmentFormValid } = useAppointmentResultForm({
+    const { appointmentResultFormData, setAppointmentResultFormData, appointmentResultFormDataErrors, handleChangeAppoimentResult, handleBlurAppoimentResult, isAppointmentResultFormValid } = useAppointmentResultForm({
+        date: '',
+        patientFullName: '',
+        dateOfBirth: '',
+        doctorFullName: '',
+        specialization: '',
+        medicalServiceName: '',
         complaints: '',
         conclusion: '',
         recommendations: '',
-        appointmentId: '',
+        diagnosis: '',
     });
 
     useEffect(() => {
@@ -95,25 +109,89 @@ export default function MySchedule() {
         setSelectedDate(date);
     }
 
-    const toggleAddModalAppointment = () => {
-        setIsAppointmentAddModalOpen(!isAppointmentAddModalOpen);
+    const toggleAddAppointmentResultModal = () => {
+        setIsAppoimentResultAddModalOpen(!isAppoimentResultAddModalOpen);
     };
 
-    const handleAppointmentResultsLinkClick = (id) => (event) => {
+    const handleAppointmentResultsLinkClick = (appointmentId, patientId) => async (event) => {
         event.preventDefault();
-        checkAppointmentResultsExistence(id);
+
+        const isAppointmentResultsExistence = await IsAppointmentResultsExistenceFetchAsync(appointmentId);
+
+        if (isAppointmentResultsExistence) {
+            navigate(`/appointment-results/${appointmentId}/${patientId}`)
+        } else {
+            const fetchedPatient = await GetPatientByIdFetchAsync(patientId);
+            setPatient(fetchedPatient);
+
+            const appointment = appointments.find(appointment => appointment.id === appointmentId);
+
+            const fetchedDoctor = await GetDoctorByIdFetchAsync(appointment.doctor.id);
+            setDoctor(fetchedDoctor);
+
+            const {
+                firstName: patientFirstName,
+                lastName: patientLastName,
+                middleName: patientMiddleName,
+                dateOfBirth
+            } = fetchedPatient;
+
+            const {
+                firstName: doctorFirstName,
+                lastName: doctorLastName,
+                middleName: doctorMiddleName,
+                specialization: { specializationName },
+            } = fetchedDoctor;
+
+            const {
+                date,
+                medicalService: { serviceName },
+                complaints,
+                conclusion,
+                recommendations,
+                diagnosis
+            } = appointment;
+
+            const appointmentFormData = {
+                appointmentId: appointment.id,
+                date,
+                patientFullName: `${patientFirstName} ${patientLastName} ${patientMiddleName}`,
+                dateOfBirth: dateOfBirth,
+                doctorFullName: `${doctorFirstName} ${doctorLastName} ${doctorMiddleName}`,
+                specialization: specializationName,
+                medicalServiceName: serviceName,
+                complaints,
+                conclusion,
+                recommendations,
+                diagnosis,
+            };
+
+            setAppointmentResultFormData(appointmentFormData);
+
+            setIsAppoimentResultAddModalOpen(!isAppoimentResultAddModalOpen);
+        }
     };
 
-    async function checkAppointmentResultsExistence(id) {
-        console.log(id);
-
-        console.log(appointmentFormData);
-    }
-
-    async function handleAddAppointment(e) {
+    async function handleAddAppointmentResult(e) {
         e.preventDefault();
 
-        console.log(appointmentFormData);
+        const createAppoimentResultDocumentAndSendToEmailRequest = {
+            date: appointmentResultFormData.date,
+            patientFullName: appointmentResultFormData.patientFullName,
+            dateOfBirth: appointmentResultFormData.dateOfBirth,
+            doctorFullName: appointmentResultFormData.doctorFullName,
+            specialization: appointmentResultFormData.specialization,
+            medicalServiceName: appointmentResultFormData.medicalServiceName,
+            complaints: appointmentResultFormData.complaints,
+            conclusion: appointmentResultFormData.conclusion,
+            recommendations: appointmentResultFormData.recommendations,
+            diagnosis: appointmentResultFormData.diagnosis,
+            email: patient.account.email,
+        }
+        
+        await CreateAppointmentResultFetchAsync(appointmentResultFormData);
+    
+        await CreateAndSendToEmailAppointmentResultDocumentFetchAsync(createAppoimentResultDocumentAndSendToEmailRequest);
     }
 
     return (
@@ -162,7 +240,7 @@ export default function MySchedule() {
                                                         ))}
                                                         <td>
                                                             {editableAppointment.isApproved === 'Approved' ? (
-                                                                <Link onClick={handleAppointmentResultsLinkClick(editableAppointment.id)} className="link_name">
+                                                                <Link onClick={handleAppointmentResultsLinkClick(editableAppointment.id, appointments.find(a => a.id === editableAppointment.id).patient.id)} className="link_name">
                                                                     Appointment Medical Results
                                                                 </Link>
                                                             ) : (
@@ -177,29 +255,106 @@ export default function MySchedule() {
                                 )}
                             </>
                         )}
-
-                        {isCalendarOpen && (
-                            <Calendar onClose={toggleCalendarClick} handleSetSelectedDate={handleSetSelectedDate} currentDate={selectedDate} />
-                        )}
-
-                        {isAppointmentAddModalOpen && (
-                            <FormModal title="Add office" onClose={toggleAddModalAppointment} onSubmit={handleAddAppointment} showCloseButton={true}>
-                                <div className="modal-inputs">
-
-                                </div>
-                                <div className="form-actions">
-                                    <ButtonBase type="submit" disabled={!isAppointmentFormValid}>
-                                        Confirm
-                                    </ButtonBase>
-                                    <ButtonBase variant="secondary" onClick={toggleAddModalAppointment}>
-                                        Cancel
-                                    </ButtonBase>
-                                </div>
-                            </FormModal>
-                        )}
                     </div>
+
+                    {isCalendarOpen && (
+                        <Calendar onClose={toggleCalendarClick} handleSetSelectedDate={handleSetSelectedDate} currentDate={selectedDate} />
+                    )}
+
+                    {isAppoimentResultAddModalOpen && (
+                        <FormModal title="Add doctor" onClose={toggleAddAppointmentResultModal} onSubmit={handleAddAppointmentResult} showCloseButton={true}>
+                            <div className="modal-inputs">
+                                <InputWrapper
+                                    type="date"
+                                    label="Date"
+                                    id="Date"
+                                    value={appointmentResultFormData.date}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Full Name Of The Patient"
+                                    id="patientFullName"
+                                    value={appointmentResultFormData.patientFullName}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="date"
+                                    label="Patient’s Date Of Birth"
+                                    id="dateOfBirth"
+                                    value={appointmentResultFormData.dateOfBirth}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Full Name Of The Doctor"
+                                    id="doctorFullName"
+                                    value={appointmentResultFormData.doctorFullName}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Doctor’s Specialization"
+                                    id="specialization"
+                                    value={appointmentResultFormData.specialization}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Service Name"
+                                    id="medicalServiceName"
+                                    value={appointmentResultFormData.medicalServiceName}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Complaints"
+                                    id="complaints"
+                                    value={appointmentResultFormData.complaints}
+                                    onBlur={handleBlurAppoimentResult('complaints')}
+                                    onChange={handleChangeAppoimentResult('complaints')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Conclusion"
+                                    id="conclusion"
+                                    value={appointmentResultFormData.conclusion}
+                                    onBlur={handleBlurAppoimentResult('conclusion')}
+                                    onChange={handleChangeAppoimentResult('conclusion')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Recommendations"
+                                    id="recommendations"
+                                    value={appointmentResultFormData.recommendations}
+                                    onBlur={handleBlurAppoimentResult('recommendations')}
+                                    onChange={handleChangeAppoimentResult('recommendations')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Diagnosis"
+                                    id="diagnosis"
+                                    value={appointmentResultFormData.diagnosis}
+                                    onBlur={handleBlurAppoimentResult('diagnosis')}
+                                    onChange={handleChangeAppoimentResult('diagnosis')}
+                                    required
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <ButtonBase type="submit" disabled={!isAppointmentResultFormValid}>
+                                    Confirm
+                                </ButtonBase>
+                                <ButtonBase variant="secondary" onClick={toggleAddAppointmentResultModal}>
+                                    Cancel
+                                </ButtonBase>
+                            </div>
+                        </FormModal>
+                    )}
                 </>
             )}
         </>
     );
-} 
+}

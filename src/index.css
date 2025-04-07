@@ -27,6 +27,9 @@
   --profile-info-bg-light: #f3f1f6;
   --profile-info-bg-dark: #333;
 
+  --tab-button-bg-light: #f3f1f6;
+  --tab-button-bg-dark: #333;
+
   /* Акцентные цвета */
   --accent: #00FF7F;
   --error: #dc3545;
@@ -76,6 +79,8 @@
   --sidebar-fg: var(--dark-sidebar);
 
   --profile-info-bg: var(--profile-info-bg-light);
+
+  --tab-button-bg: var(--tab-button-bg-light);
 }
 
 [data-theme='dark'] {
@@ -107,6 +112,8 @@
   --sidebar-fg: var(--light-sidebar);
 
   --profile-info-bg: var(--profile-info-bg-dark);
+
+  --tab-button-bg: var(--tab-button-bg-dark);
 }
 
 html,

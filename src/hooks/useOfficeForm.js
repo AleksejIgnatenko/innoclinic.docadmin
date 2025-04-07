@@ -67,6 +67,7 @@ const useOfficeForm = (initialValues) => {
     formData,
     setFormData,
     errors,
+    setErrors,
     handleChange,
     handleBlur,
     handleRegistryPhoneNumberKeyDown,

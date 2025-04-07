@@ -91,7 +91,7 @@ function Receptionist() {
             lastName,
             middleName,
             status,
-            officeId: office.id, 
+            officeId: office.id,
             photoId: account.photoId,
         };
     };
@@ -129,6 +129,7 @@ function Receptionist() {
 
     return (
         <>
+            <Toolbar pageTitle="Receptionist" />
             {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
