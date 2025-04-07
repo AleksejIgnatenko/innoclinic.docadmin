@@ -1,32 +1,31 @@
-import { getCookie } from "../../services/getCookie";
 import { ProfilesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
+import Cookies from 'js-cookie';
 
 async function CreateDoctorFetchAsync(doctorModel) {
     try {
-        // let jwtToken = getCookie('accessToken');
-        // if (!jwtToken) {
-        //     await RefreshTokenFetchAsync(); 
-        //     jwtToken = getCookie('accessToken');
-        // }
+        let jwtToken = Cookies.get('accessToken');
+        if (!jwtToken) {
+            await RefreshTokenFetchAsync();
+            jwtToken = Cookies.get('accessToken');
+        }
 
-        const response = await fetch(`http://localhost:5002/api/Doctors`, {
+        const response = await fetch(`${ProfilesAPI}/Doctor`, {
             method: 'POST',
             headers: {
                 "Content-Type": "application/json",
-                // "Authorization": `Bearer ${jwtToken}`,
+                "Authorization": `Bearer ${jwtToken}`,
             },
             body: JSON.stringify(doctorModel)
         });
 
-        if (response.ok) {
-            console.log("ok");
-        } else {
-            console.log("not ok");
+        if (response.status === 400) {
+            const data = await response.json();
+            console.log(data);
         }
     } catch (error) {
-        console.error('Error in creating patient:', error);
-        alert('An error occurred while creating the patient');
+        console.error('Error in creating doctor:', error);
+        //alert('An error occurred while creating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }

@@ -12,7 +12,7 @@ async function EmailExistsAsync(email) {
         if (!response.ok) {
             const data = await response.json();
             console.error('Error check email availability:', data);
-            alert(data.message || 'Check email availability failed');
+            //alert(data.message || 'Check email availability failed');
             return;
         }
 
@@ -20,7 +20,7 @@ async function EmailExistsAsync(email) {
         return data.isEmailAvailability;
     } catch (error) {
         console.error('Error during check email availability:', error);
-        alert('An error occurred during check email availability');
+        //alert('An error occurred during check email availability');
     }
 }
 

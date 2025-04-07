@@ -1,0 +1,44 @@
+.bx {
+    font-size: 20px;
+    color: var(--foreground);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+.bx.menu-icon {
+    font-size: 30px;
+    height: 50px;
+    min-width: 48px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.bx.nav-icon {
+    height: 50px;
+    min-width: 48px;
+    text-align: center;
+    line-height: 50px;
+    cursor: pointer;
+}
+
+.bx:hover {
+    opacity: 0.8;
+} 
+
+.sort-icon {
+    font-size: 16px;
+}
+
+.approved {
+    filter: brightness(0.5);
+    cursor: default;
+}
+
+.delete-icon {
+    color: var(--error);
+}
+
+.icon-invalid {
+    color: #555;
+}

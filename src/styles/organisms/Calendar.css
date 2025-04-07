@@ -1,0 +1,160 @@
+.calendar-modal-container {
+  position: relative;
+  margin: auto;
+  background-color: var(--background);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 32px;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.calendar-container {
+    width: max-content;
+    position: relative;
+  }
+  
+  .calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 25px;
+    font-weight: 600;
+    color: var(--foreground);
+    padding: 10px;
+  }
+  
+  .curr-date {
+    border: 2px solid var(--accent); 
+    color: var(--foreground); 
+    border-radius: 100%; 
+    background-color: transparent;
+}
+  
+  .calendar-week-day {
+    height: 50px;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-weight: 600;
+  }
+  
+  .calendar-week-day div {
+    display: grid;
+    place-items: center;
+    color: var(--accent);
+  }
+  
+  .calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    color: var(--foreground);
+  }
+  
+  .calendar-days div {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    position: relative;
+    cursor: pointer;
+    animation: to-top 1s forwards;
+  }
+  
+  .calendar-days div:hover {
+    background-color: #999; 
+    border-radius: 100%; 
+    transition: background-color 0.3s ease; 
+  }
+  
+  .dark .calendar-days div:hover {
+    background-color: var(--background); 
+  }
+  
+  .calendar-days div span {
+    position: absolute;
+  }
+  
+  .calendar-days div.curr-date span {
+    display: none;
+  }
+  
+  .month-picker {
+    padding: 5px 10px;
+
+    cursor: pointer;
+    color: var(--accent);
+  }
+  
+  .year-picker {
+    display: flex;
+    align-items: center;
+  }
+  
+  .year-change {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    margin: 0 10px;
+    cursor: pointer;
+  }
+  
+  .year-change:hover {
+    background-color: var(--background);
+  }
+  
+  .month-list {
+    position: absolute;
+    width: 100%;
+    max-height: 100%; 
+    top: 0%; 
+    left: 0;
+    background-color: var(--background);
+    padding: 10px 0;
+    grid-template-columns: repeat(3, auto);
+    gap: 5px;
+    display: grid;
+    transform: scale(1);
+    visibility: hidden;
+    pointer-events: none;
+    border-radius: 8px;
+    overflow: hidden; 
+}
+  
+  .month-list.show {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background);
+    /* transform: scale(.99); */
+    visibility: visible;
+    pointer-events: visible;
+    /* transition: all 0.2s ease-in-out; */
+  }
+  
+  .month-list > div {
+    display: grid;
+    place-items: center;
+  }
+  
+  .month-list > div > div {
+    width: 100%;
+    padding: 5px 20px;
+    text-align: center;
+    cursor: pointer;
+    color: var(--foreground);
+  }
+  
+  .month-list > div > div:hover {
+    background-color: var(--background);
+  }
+
+  .selected-date {
+    background-color: var(--accent);
+    color: var(--background);
+    border-radius: 100%;
+}
+
+  

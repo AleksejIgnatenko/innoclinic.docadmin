@@ -1,20 +1,119 @@
 :root {
-  --background-light: #e2e9f7;
-  --foreground-light: #000;
-  --background-dark: #000;
+  /* Основные цвета темы */
+  --background-light: #fff;
+  --foreground-light: #171717;
+
+  --background-dark: #171717;
   --foreground-dark: #fff;
 
+  --background-page-light: #e2e9f7;
+  --background-page-dark: #000;
+
+  --input-bg-light: #fff;
+  --input-bg-dark: #171717;
+
+  --label-bg-light: #fff;
+  --label-bg-dark: #171717;
+
+  --toolbar-light: #ffffff;
+  --toolbar-dark: #171717;
+
+  --search-light: #ece9e9;
+  --search-dark: #383838;
+
+  --light-sidebar: #fff;
+  --dark-sidebar: #171717;
+
+  --profile-info-bg-light: #f3f1f6;
+  --profile-info-bg-dark: #333;
+
+  --tab-button-bg-light: #f3f1f6;
+  --tab-button-bg-dark: #333;
+
+  /* Акцентные цвета */
   --accent: #00FF7F;
+  --error: #dc3545;
+  --success: #00FF7F;
+  --info: #1c2fd2;
+
+  /* Нейтральные цвета */
+  --gray-100: #ffffff;
+  --gray-200: #f3f1f6;
+  --gray-300: #e6e6e6;
+  --gray-400: #999;
+  --gray-500: #666;
+  --gray-600: #333;
+  --gray-700: #171717;
+
+  /* Прозрачности */
+  --modal-overlay: rgba(0, 0, 0, 0.8);
+  --shadow-color: rgba(0, 0, 0, 0.2);
 }
 
 [data-theme='light'] {
   --background: var(--background-light);
   --foreground: var(--foreground-light);
+  
+  --border-color: var(--gray-400);
+
+  --button-bg: var(--gray-300);
+
+  --input-bg: var(--gray-100);
+  --input-fg: var(--gray-700);
+
+  --disabled-bg: var(--gray-300);
+
+  --background-page: var(--background-page-light);
+  --foreground-page: var(--foreground-page-light);
+
+  --input-bg: var(--input-bg-light);
+
+  --label-bg: var(--label-bg-light);
+
+  --toolbar-bg: var(--toolbar-light);
+  --toolbar-fg: var(--toolbar-dark);
+
+  --search-bg: var(--search-light);
+
+  --sidebar-bg: var(--light-sidebar);
+  --sidebar-fg: var(--dark-sidebar);
+
+  --profile-info-bg: var(--profile-info-bg-light);
+
+  --tab-button-bg: var(--tab-button-bg-light);
 }
 
 [data-theme='dark'] {
   --background: var(--background-dark);
   --foreground: var(--foreground-dark);
+
+  --border-color: var(--gray-600);
+
+  --input-bg: var(--gray-700);
+  --input-fg: var(--gray-100);
+  
+  --disabled-bg: var(--gray-600);
+
+  --background-page: var(--background-page-dark);
+  --foreground-page: var(--foreground-page-dark);
+
+  --button-bg: var(--gray-600);
+
+  --input-bg: var(--input-bg-dark);
+
+  --label-bg: var(--label-bg-dark);
+
+  --toolbar-bg: var(--toolbar-dark);
+  --toolbar-fg: var(--toolbar-light);
+
+  --search-bg: var(--search-dark);
+
+  --sidebar-bg: var(--dark-sidebar);
+  --sidebar-fg: var(--light-sidebar);
+
+  --profile-info-bg: var(--profile-info-bg-dark);
+
+  --tab-button-bg: var(--tab-button-bg-dark);
 }
 
 html,
@@ -24,8 +123,8 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color: var(--foreground-page);
+  background: var(--background-page);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -70,4 +169,41 @@ a {
 
 input[type='date']::-webkit-calendar-picker-indicator {
   filter: invert(56%) sepia(94%) saturate(3177%) hue-rotate(88deg) brightness(102%) contrast(101%);
+}
+
+.no-items {
+  color: var(--gray-400);
+  text-align: center;
+  font-size: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 200px);
+}
+
+.img-container {
+  height: 150px;
+  width: 150px;
+  border: 2px dashed var(--accent);
+  overflow: hidden;
+  margin: 10px auto 20px auto;
+  border-radius: 50%;
+}
+
+.img-container img {
+  width: 150px; 
+  height: 150px;
+  background: var(--background);
+  border-radius: 50%;
+}
+
+.filtred-list {
+  cursor: pointer;
+  max-height: 55px;
+  overflow-y: auto;
+  margin-bottom: 1rem;
+}
+
+.filtred-list h5 {
+  color: var(--foreground);
 }
