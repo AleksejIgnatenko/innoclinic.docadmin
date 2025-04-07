@@ -1,47 +1,32 @@
-import Cookies from 'js-cookie';
 import { AuthorizationAPI } from '../api';
-import { comparePassword } from '../../utils/PasswordUtils';
+import Cookies from 'js-cookie';
 
 async function SignInFetchAsync(signInModel) {
     try {
-        const response = await fetch(`${AuthorizationAPI}/Account/sign-in?email=${signInModel.email}`, {
+        const response = await fetch(`${AuthorizationAPI}/Account/sign-in`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
+            credentials: 'include',
+            body: JSON.stringify({ email: signInModel.email,  password: signInModel.password })
         });
 
-        const data = await response.json();
-
         if (response.ok) {
-            const { hashPassword, accessToken, refreshToken } = data;
-            const passwordsMatch = comparePassword(signInModel.password, hashPassword);
-            if (passwordsMatch) {
-                const accessTokenExpiry = 15 / (24 * 60);
-                const refreshTokenExpiry = 180;
-
-                Cookies.set('accessToken', accessToken, { 
-                    sameSite: 'strict', 
-                    expires: accessTokenExpiry, 
-                    path: '/',
-                    domain: 'localhost'
-                });
-                Cookies.set('refreshToken', refreshToken, { 
-                    secure: true, 
-                    sameSite: 'strict', 
-                    expires: refreshTokenExpiry, 
-                    path: '/', 
-                    domain: 'localhost'
-                });
-
-                window.location.href = "/";
-            } else {
-                alert('You entered the wrong password.');
-            }
+            alert("You've signed in successfully");
+            Cookies.set('isLoggedIn', true, { 
+                sameSite: 'strict',  
+                path: '/',
+                expires: 7,
+                domain: 'localhost'
+            });
+            window.location.href = "/";
+        } else if (response.status === 401 || response.result === 404) {
+            var result = await response.json();
+            alert(result.error);
         }
     } catch (error) {
         console.error('Error during sign in:', error);
-        alert('An error occurred during sign in');
     }
 }
 

@@ -24,12 +24,12 @@ async function GetAppointmentsByDoctorFetchAsync() {
         } else {
             const errorData = await response.json();
             console.error('Error fetching appointments:', errorData);
-            alert(`Error: ${errorData.message || 'Failed to retrieve appointments.'}`);
+            //alert(`Error: ${errorData.message || 'Failed to retrieve appointments.'}`);
             return;
         }
     } catch (error) {
-        console.error('Error in fetching appointments:', error);
-        alert('An unexpected error occurred while fetching appointments. Please try again later.');
+        console.error('Error in fetching get appointments:', error);
+        //alert('An unexpected error occurred while fetching appointments. Please try again later.');
     }
 }
 

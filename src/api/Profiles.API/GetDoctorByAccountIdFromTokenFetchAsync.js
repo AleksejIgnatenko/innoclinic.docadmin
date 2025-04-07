@@ -23,12 +23,12 @@ async function GetDoctorByAccountIdFromTokenFetchAsync() {
         if (response.ok) {
             return data;
         } else {
-            console.error("Error connecting account with doctor:", data);
+            console.error("Error in getting by account id doctors:", data);
             return null;
         }
     } catch (error) {
-        console.error('Error in account connection with the doctor:', error);
-        alert('An error occurred while connecting the account with the doctor');
+        console.error('Error in getting by account id doctors:', error);
+        //alert('An error occurred while connecting the account with the doctor');
         return null;
     }
 }

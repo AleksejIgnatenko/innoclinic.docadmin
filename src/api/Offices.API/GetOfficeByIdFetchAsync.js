@@ -1,8 +1,8 @@
 import { OfficesAPI } from "../api";
 
-async function GetOfficeByIdFetchAsync(officeId) {
+async function GetOfficeByIdFetchAsync(id) {
     try {
-        const response = await fetch(`${OfficesAPI}/Office/${officeId}`, {
+        const response = await fetch(`${OfficesAPI}/Office/${id}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -16,7 +16,7 @@ async function GetOfficeByIdFetchAsync(officeId) {
         }
     } catch (error) {
         console.error('Error while fetching office by Id:', error);
-        alert('An error occurred while trying to fetch the office details. Please try again later.');
+        //alert('An error occurred while trying to fetch the office details. Please try again later.');
     }
 }
 

@@ -1,22 +1,48 @@
-import React, { useState, useEffect } from 'react';
-import "./../styles/Offices.css";
-import Loader from '../components/Loader';
-import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
-import Toolbar from '../components/Toolbar';
-import Table from '../components/Table';
-import { useNavigate } from 'react-router-dom';
-import CreateOfficeModal from '../components/CreateOfficeModal';
+import { useEffect, useRef, useState } from "react";
+import Toolbar from '../components/organisms/Toolbar';
+import Loader from '../components/organisms/Loader';
+import Table from '../components/organisms/Table';
+import { ButtonBase } from '../components/atoms/ButtonBase';
+import FormModal from "../components/organisms/FormModal";
+import { InputWrapper } from "../components/molecules/InputWrapper";
+import useOfficeForm from "../hooks/useOfficeForm";
+import ImageUploader from "../components/organisms/ImageUploader";
+import 'boxicons/css/boxicons.min.css';
+import FieldNames from "../enums/FieldNames";
+import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
+import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
+import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
+import CreateOfficeFetchAsync from "../api/Offices.API/CreateOfficeFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
+import { useNavigate } from "react-router-dom";
 
-function Offices() {
+export default function Offices() {
     const navigate = useNavigate();
 
     const [offices, setOffices] = useState([]);
-    const [filteredOffices, setFilteredOffices] = useState([]);
+    const [editableOffices, setEditableOffices] = useState([]);
 
-    const [showCreateOfficeModal, setShowCreateOfficeModal] = useState(false);
+    const [photo, setPhoto] = useState(null);
 
-    const [searchTerm, setSearchTerm] = useState('');
+    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
+        city: '',
+        street: '',
+        houseNumber: '',
+        officeNumber: '',
+        photoId: '',
+        registryPhoneNumber: '+',
+        status: false,
+    });
+
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
     const [isLoading, setIsLoading] = useState(false);
+
+    const columnNames = [
+        'officeAddress',
+        'status',
+        'registryPhoneNumber',
+    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -26,14 +52,8 @@ function Offices() {
                 const fetchedOffices = await GetAllOfficesFetchAsync();
                 setOffices(fetchedOffices);
 
-                const formattedOffices = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
-                    id,
-                    address: city + " " + street + " " + houseNumber + " " + officeNumber,
-                    status: isActive ? 'Active' : 'Inactive',
-                    registryPhoneNumber,
-                }));
-
-                setFilteredOffices(formattedOffices);
+                const formattedOffices = formatOffices(fetchedOffices);
+                setEditableOffices(formattedOffices);
             } catch (error) {
                 console.error('Error fetching data:', error);
             } finally {
@@ -44,62 +64,173 @@ function Offices() {
         fetchData();
     }, []);
 
-    useEffect(() => {
-        const lowerCaseSearchTerm = searchTerm.toLowerCase();
-        const filtered = offices.filter(office => {
-            return (
-                office.city.toLowerCase().includes(lowerCaseSearchTerm) ||
-                office.street.toLowerCase().includes(lowerCaseSearchTerm) ||
-                office.houseNumber.toString().includes(lowerCaseSearchTerm) ||
-                office.officeNumber.toString().includes(lowerCaseSearchTerm)
-            );
-        }).map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
+    const formatOffices = (offices) => {
+        return offices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
             id,
-            address: city + " " + street + " " + houseNumber + " " + officeNumber,
+            officeAddress: city + " " + street + " " + houseNumber + " " + officeNumber,
             status: isActive ? 'Active' : 'Inactive',
             registryPhoneNumber,
         }));
-    
-        setFilteredOffices(filtered);
-    }, [searchTerm]);
+    };
 
     const toggleLoader = (status) => {
         setIsLoading(status);
     };
 
-    const toggleCreateOfficeModalClick = () => {
-        setShowCreateOfficeModal(!showCreateOfficeModal)
-    }
-
-    const handleTableRowClick = (id) => {
-        navigate(`/officeInfo/${id}`);
+    const toggleAddModal = () => {
+        setIsAddModalOpen(!isAddModalOpen);
     };
+
+    const handleCheckboxChange = (e) => {
+        const value = e.target.value === 'true';
+
+        setFormData(prev => ({
+            ...prev,
+            status: value,
+        }));
+    };
+
+    async function handleAdd(e) {
+        e.preventDefault();
+
+        let photoId = ''
+        if (photo) {
+            photoId = await CreatePhotoFetchAsync(photo);
+        }
+
+        const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
+            photoId, formData.registryPhoneNumber, formData.status);
+        await CreateOfficeFetchAsync(createOfficeModel);
+    }
 
     return (
         <>
-            {showCreateOfficeModal && <CreateOfficeModal  onClose={toggleCreateOfficeModalClick} />}
-            {isLoading && <Loader />}
             <Toolbar
-                pageTitle={"Offices"}
-                setSearchTerm={setSearchTerm}
-
+                pageTitle="Offices"
                 showAddIcon={true}
-                toggleCreateModalClick={toggleCreateOfficeModalClick}
+                toggleCreateModalClick={toggleAddModal}
             />
-            <div className="offices-container">
-                {filteredOffices.length > 0 ? (
-                    <Table 
-                        items={filteredOffices} 
+            {isLoading ? (<Loader />
+            ) : (
+                <div className="page">
+                    {offices.length === 0 ? (
+                        <p className="no-items">Offices not found</p>
+                    ) : (
+                        <>
+                            {editableOffices.length === 0 && (
+                                <p className="no-items">Nothing was found</p>
+                            )}
+                            {editableOffices.length > 0 && (
+                                <div className="table">
+                                    <Table>
+                                        <thead>
+                                            <tr>
+                                                {columnNames.map(columnName => (
+                                                    <th key={columnName}>{FieldNames[columnName]}</th>
+                                                ))}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {editableOffices.map(editableOffice => (
+                                                <tr key={editableOffice.id} onClick={() => navigate(`/office/${editableOffice.id}`)}
+                                                    style={{ cursor: 'pointer' }}
+                                                >
+                                                    {columnNames.map(columnName => (
+                                                        <td key={columnName}>{editableOffice[columnName]}</td>
+                                                    ))}
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </Table>
+                                </div>
+                            )}
+                        </>
+                    )}
 
-                        useHandleRowClick={true}
-                        handleRowClick={handleTableRowClick}
-                    />
-                ) : (
-                    !isLoading && <p className="no-offices-message">Nothing could be found.</p>
-                )}
-            </div>
+                    {isAddModalOpen && (
+                        <FormModal title="Add office" onClose={toggleAddModal} onSubmit={handleAdd} showCloseButton={true}>
+                            <div className="modal-inputs">
+                                <div class="img-container">
+                                    <ImageUploader
+                                        setPhoto={setPhoto}
+                                    />
+                                </div>
+                                <InputWrapper
+                                    type="text"
+                                    label="City"
+                                    id="city"
+                                    value={formData.city}
+                                    onBlur={handleBlur('city')}
+                                    onChange={handleChange('city')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Street"
+                                    id="street"
+                                    value={formData.street}
+                                    onBlur={handleBlur('street')}
+                                    onChange={handleChange('street')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="House Number"
+                                    id="houseNumber"
+                                    value={formData.houseNumber}
+                                    onBlur={handleBlur('houseNumber')}
+                                    onChange={handleChange('houseNumber')}
+                                    required
+                                />
+                                <InputWrapper
+                                    type="text"
+                                    label="Office Number"
+                                    id="officeNumber"
+                                    value={formData.officeNumber}
+                                    onBlur={handleBlur('officeNumber')}
+                                    onChange={handleChange('officeNumber')}
+                                />
+                                <InputWrapper
+                                    type="phone"
+                                    label="Registry Phone Number"
+                                    id="registryPhoneNumber"
+                                    value={formData.registryPhoneNumber}
+                                    onBlur={handleBlur('registryPhoneNumber')}
+                                    onChange={handleChange('registryPhoneNumber')}
+                                    onKeyDown={handleRegistryPhoneNumberKeyDown}
+                                    required
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status active"
+                                    id="statusActive"
+                                    value={true}
+                                    checked={formData.status === true}
+                                    onChange={handleCheckboxChange}
+                                    required
+                                />
+                                <CheckboxWrapper
+                                    type="radio"
+                                    label="Status inactive"
+                                    id="statusInactive"
+                                    value={false}
+                                    checked={formData.status === false}
+                                    onChange={handleCheckboxChange}
+                                    required
+                                />
+                            </div>
+                            <div className="form-actions">
+                                <ButtonBase type="submit" disabled={!isFormValid}>
+                                    Confirm
+                                </ButtonBase>
+                                <ButtonBase variant="secondary" onClick={toggleAddModal}>
+                                    Cancel
+                                </ButtonBase>
+                            </div>
+                        </FormModal>
+                    )}
+                </div>
+            )}
         </>
     );
-}
-
-export default Offices;
+} 

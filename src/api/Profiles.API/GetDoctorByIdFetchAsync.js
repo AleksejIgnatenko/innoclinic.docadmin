@@ -23,8 +23,8 @@ async function GetDoctorByIdFetchAsync(doctorId) {
            return data;
         }
     } catch (error) {
-        console.error('Error in getting all doctors:', error);
-        alert('An error occurred while receiving all the doctors');
+        console.error('Error in getting by id doctors:', error);
+        //alert('An error occurred while receiving all the doctors');
         return null;
     }
 }

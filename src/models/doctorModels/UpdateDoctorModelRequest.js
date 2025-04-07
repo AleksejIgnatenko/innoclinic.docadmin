@@ -8,7 +8,8 @@ class UpdateDoctorModelRequest {
         specializationId,
         officeId,
         careerStartYear,
-        status
+        status,
+        photoId
     ) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -19,6 +20,7 @@ class UpdateDoctorModelRequest {
         this.officeId = officeId; 
         this.careerStartYear = careerStartYear;
         this.status = status;
+        this.photoId = photoId;
     }
 }
 

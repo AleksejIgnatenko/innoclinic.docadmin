@@ -1,0 +1,27 @@
+.profile-container {
+    width: 400px;
+    margin: 80px auto 0px auto;
+    background: var(--background);
+    border-radius: 10px;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.profile-icon-container {
+    display: flex; 
+    justify-content: flex-end; 
+    padding: 10px;
+}
+
+.profile-content {
+    text-align: center;
+    margin: 0 auto;
+}
+
+.profile-content p {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--foreground);
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

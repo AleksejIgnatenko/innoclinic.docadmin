@@ -1,248 +1,409 @@
-import React, { useEffect, useState } from 'react';
-import "./../styles/Appointments.css";
-import Loader from '../components/Loader';
-import GetAppointmentsByDateFetchAsync from '../api/Appointments.API/GetAppointmentsByDateFetchAsync';
-import GetAccountsByIdsFetchAsync from '../api/Authorization.API/GetAccountsByIdsFetchAsync';
-import GetAllOfficesFetchAsync from '../api/Offices.API/GetAllOfficesFetchAsync';
-import GetAllMedicalServiceFetchAsync from '../api/Services.API/GetAllMedicalServiceFetchAsync';
-import GetAllDoctorsFetchAsync from '../api/Profiles.API/GetAllDoctorsFetchAsync';
-import AppointmentFilterModal from '../components/AppointmentFilterModal';
-import Toolbar from '../components/Toolbar';
-import Table from '../components/Table';
-import Calendar from '../components/Calendar';
-import UpdateAppointmentModelRequest from '../models/appointmentModels/UpdateAppointmentModelRequest';
-import UpdateAppointmentFetchAsync from '../api/Appointments.API/UpdateAppointmentFetchAsync';
-import DeleteAppointmentFetchAsync from '../api/Appointments.API/DeleteAppointmentFetchAsync';
+import { useEffect, useState } from "react";
+import Toolbar from '../components/organisms/Toolbar';
+import Loader from '../components/organisms/Loader';
+import Table from '../components/organisms/Table';
+import { ButtonBase } from '../components/atoms/ButtonBase';
+import 'boxicons/css/boxicons.min.css';
+import '../styles/pages/Doctors.css';
+import FilterModal from "../components/organisms/FilterModal";
+import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
+import Calendar from "../components/organisms/Calendar";
+import FieldNames from "../enums/FieldNames";
+import { IconBase } from "../components/atoms/IconBase";
 
-function Appointments() {
-  const [appointments, setAppointments] = useState([]);
-  const [filteredAppointments, setFilteredAppointments] = useState([]);
-  const [accounts, setAccounts] = useState([]);
-  const [doctors, setDoctors] = useState([]);
-  const [offices, setOffices] = useState([]);
-  const [medicalServices, setMedicalServices] = useState([]);
+import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
+import GetAllMedicalServiceFetchAsync from "../api/Services.API/GetAllMedicalServiceFetchAsync";
+import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
+import GetAppointmentsByDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDateFetchAsync";
+import GetAccountsByIdsFetchAsync from "../api/Authorization.API/GetAccountsByIdsFetchAsync";
+import UpdateAppointmentModelRequest from "../models/appointmentModels/UpdateAppointmentModelRequest";
+import UpdateAppointmentFetchAsync from "../api/Appointments.API/UpdateAppointmentFetchAsync";
+import DeleteAppointmentFetchAsync from "../api/Appointments.API/DeleteAppointmentFetchAsync";
 
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('');
-  const [selectedDoctor, setSelectedDoctor] = useState('');
-  const [selectedMedicalService, setSelectedMedicalService] = useState('');
-  const [selectedAppointmentStatus, setSelectedAppointmentStatus] = useState('');
-  const [selectedAddresses, setSelectedAddresses] = useState('');
+export default function Appointments() {
+    const [appointments, setAppointments] = useState([]);
+    const [editableAppointments, setEditableAppointments] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+    const [doctors, setDoctors] = useState([]);
+    const [medicalServices, setMedicalServices] = useState([]);
+    const [offices, setOffices] = useState([]);
 
-  const [showCreateAppointmentModal, setShowCreateAppointmentModal] = useState(false);
-  const [showFilterAppointmentModal, setShowFilterAppointmentModal] = useState(false);
-  const [showCalendar, setShowCalendar] = useState(false);
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+    const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        toggleLoader(true);
-        const currentDate = new Date();
-        currentDate.setDate(currentDate.getDate() + 1);
-        const formattedDate = currentDate.toISOString().split('T')[0];
-        setSelectedDate(formattedDate);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        toggleLoader(false);
-      }
-    };
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [selectedDoctors, setSelectedDoctors] = useState([]);
+    const [selectedMedicalServices, setSelectedMedicalServices] = useState([]);
+    const [selectedIsApproved, setSelectedIsApproved] = useState(null);
+    const [selectedOffices, setSelectedOffices] = useState([]);
 
-    getData();
-  }, []);
+    const columnNames = [
+        'time',
+        'doctorFullName',
+        'patientFullName',
+        'patientPhoneNumber',
+        'medicalServiceName',
+        'isApproved',
+    ];
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        toggleLoader(true);
+    useEffect(() => {
+        const getData = async () => {
+            toggleLoader(true);
 
-        const fetchedAppointments = await GetAppointmentsByDateFetchAsync(selectedDate);
-        setAppointments(fetchedAppointments);
+            const currentDate = new Date();
+            currentDate.setDate(currentDate.getDate() + 1);
+            const formattedDate = currentDate.toISOString().split('T')[0];
+            setSelectedDate(formattedDate);
 
-        const accountIds = Array.from(new Set(fetchedAppointments.map(appointment => appointment.patient.accountId)));
+            toggleLoader(false);
+        };
 
-        const fetchedAccounts = await GetAccountsByIdsFetchAsync(accountIds);
-        setAccounts(fetchedAccounts);
+        getData();
+    }, []);
 
-        const fetchedDoctors = await GetAllDoctorsFetchAsync();
-        setDoctors(fetchedDoctors);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                toggleLoader(true);
 
-        const fetchedOffices = await GetAllOfficesFetchAsync();
-        setOffices(fetchedOffices);
+                const fetchedAppointments = await GetAppointmentsByDateFetchAsync(selectedDate);
+                setAppointments(fetchedAppointments);
+                const accountIds = Array.from(new Set(fetchedAppointments.map(appointment => appointment.patient.accountId)));
 
-        const fetchedMedicalServices = await GetAllMedicalServiceFetchAsync();
-        setMedicalServices(fetchedMedicalServices);
+                const fetchedDoctors = await GetAllDoctorsFetchAsync();
+                setDoctors(fetchedDoctors);
 
-        const formattedAppointments = fetchedAppointments.map(({ id, time, doctor, patient, medicalService }) => {
-          const patientAccount = fetchedAccounts.find(account => account.id === patient.accountId);
-          const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+                const fetchedMedicalServices = await GetAllMedicalServiceFetchAsync();
+                setMedicalServices(fetchedMedicalServices);
 
-          return {
-            id,
-            time,
-            fullNameOfTheDoctor: `${doctor.lastName} ${doctor.firstName} ${doctor.middleName}`,
-            fullNameOfThePatient: `${patient.lastName} ${patient.firstName} ${patient.middleName}`,
-            patientsPhoneNumber,
-            medicalService: medicalService.serviceName,
-          };
+                const fetchedOffices = await GetAllOfficesFetchAsync();
+                setOffices(fetchedOffices);
+
+                const fetchedAccounts = await GetAccountsByIdsFetchAsync(accountIds);
+                setAccounts(fetchedAccounts);
+
+                const formattedAppointments = formatAppointments(fetchedAppointments, fetchedAccounts);
+                setEditableAppointments(formattedAppointments);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            } finally {
+                toggleLoader(false);
+            }
+        };
+
+        fetchData();
+    }, [selectedDate]);
+
+    const formatAppointments = (appointments, accounts) => {
+        return appointments.map(({ id, time, doctor, patient, medicalService, isApproved }) => {
+            const patientAccount = accounts.find(account => account.id === patient.accountId);
+            const patientPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
+
+            return {
+                id,
+                time,
+                doctorFullName: `${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`,
+                patientFullName: `${patient.firstName} ${patient.lastName} ${patient.middleName}`,
+                patientPhoneNumber,
+                medicalServiceName: medicalService.serviceName,
+                isApproved: isApproved ? 'Approved' : 'Not Approved',
+            };
         });
-        setFilteredAppointments(formattedAppointments);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      } finally {
-        toggleLoader(false);
-      }
     };
 
-    fetchData();
-  }, [selectedDate]);
+    const toggleLoader = (status) => {
+        setIsLoading(status);
+    };
 
-  useEffect(() => {
-    const filteredAppointments = appointments.filter(appointment => {
-      const time = appointment.time.toLowerCase();
-      const patientName = `${appointment.fullNameOfThePatient}`.toLowerCase();
-      const doctorName = `${appointment.fullNameOfTheDoctor}`.toLowerCase();
-      const medicalServiceName = `${appointment.medicalService}`.toLowerCase();
-
-      return (
-        time.includes(searchTerm.toLowerCase()) ||
-        patientName.includes(searchTerm.toLowerCase()) ||
-        doctorName.includes(searchTerm.toLowerCase()) ||
-        medicalServiceName.includes(searchTerm.toLowerCase())
-      );
-    });
-
-    const formattedAppointments = filteredAppointments.map(({ id, time, doctor, patient, medicalService }) => {
-      const patientAccount = filteredAppointments.find(account => account.id === patient.accountId);
-      const patientsPhoneNumber = patientAccount ? patientAccount.phoneNumber : 'Phone number not found';
-
-      return {
-        id,
-        time,
-        fullNameOfTheDoctor: `${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`,
-        fullNameOfThePatient: `${patient.firstName} ${patient.lastName} ${patient.middleName}`,
-        patientsPhoneNumber,
-        medicalService: medicalService.serviceName,
-      };
-    });
-
-    setFilteredAppointments(formattedAppointments);
-  }, [searchTerm]);
-
-  const toggleLoader = (status) => {
-    setIsLoading(status);
-  };
-
-  const toggleCreateAppointmentModal = () => {
-    setShowCreateAppointmentModal(!showCreateAppointmentModal);
-  };
-
-  const toggleFilterAppointmentModal = () => {
-    setShowFilterAppointmentModal(!showFilterAppointmentModal);
-  };
-
-  const toggleCalendarClick = () => {
-    setShowCalendar(!showCalendar);
-  };
-
-  async function handleApproveAppointmentAsync(appointmentId) {
-    const appointment = appointments.find(a => a.id === appointmentId);
-
-    const updateAppointmentModelRequest = new UpdateAppointmentModelRequest(
-      appointment.id, appointment.doctor.id, appointment.medicalService.id, appointment.patient.id, appointment.date, appointment.time, true);
-
-    const resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
-    if (resultResponseStatus === 200) {
-      const row = document.getElementById(appointment.id);
-      row.classList.add("approved-appointment");
-
-      const btn = document.getElementById("approve-button");
-      btn.classList.add("disabled-button-approve-style");
+    const toggleAddModalClick = () => {
+        setIsAddModalOpen(!isAddModalOpen);
     }
-  }
 
-  async function handleCancelAppointmentAsync(appointmentId) {
-    const confirmCancel = window.confirm("Are you sure you want to cancel the appointment?");
-
-    if (confirmCancel) {
-      const resultResponseStatus = await DeleteAppointmentFetchAsync(appointmentId);
-      if (resultResponseStatus === 200) {
-        setFilteredAppointments(prevAppointments =>
-          prevAppointments.filter(a => a.id !== appointmentId)
-        );
-      }
-      console.log("The appointment has been cancelled.");
+    const toggleFilterModalClick = () => {
+        setIsFilterModalOpen(!isFilterModalOpen);
     }
-  };
 
-  return (
-    <>
-      {isLoading && <Loader />}
+    const toggleCalendarClick = () => {
+        setIsCalendarOpen(!isCalendarOpen);
+    }
 
-      <Toolbar
-        pageTitle={"Appointments"}
-        setSearchTerm={setSearchTerm}
+    const handleSetSelectedDate = (date) => {
+        setSelectedDate(date);
+    }
 
-        showAddIcon={true}
-        toggleCreateModalClick={toggleCreateAppointmentModal}
+    const handleFilterDoctorChange = (doctor) => {
+        setSelectedDoctors(prevSelectedDoctors => {
+            if (prevSelectedDoctors.some(selectedDoctor => selectedDoctor.id === doctor.id)) {
+                return prevSelectedDoctors.filter(selectedDoctor => selectedDoctor.id !== doctor.id);
+            } else {
+                return [...prevSelectedDoctors, doctor];
+            }
+        });
+    };
 
-        showFilterIcon={true}
-        toggleFilterModalClick={toggleFilterAppointmentModal}
+    const handleFilterMedicalServiceChange = (medicalService) => {
+        setSelectedMedicalServices(prevSelectedMedicalServices => {
+            if (prevSelectedMedicalServices.some(selectedMedicalService => selectedMedicalService.id === medicalService.id)) {
+                return prevSelectedMedicalServices.filter(selectedMedicalService => selectedMedicalService.id !== medicalService.id);
+            } else {
+                return [...prevSelectedMedicalServices, medicalService];
+            }
+        });
+    };
 
-        showCalendarIcon={true}
-        toggleCalendarClick={toggleCalendarClick}
-      />
+    const handleFilterIsApprovedChange = (status) => {
+        setSelectedIsApproved(status);
+    };
 
-      {showFilterAppointmentModal && (
-        <AppointmentFilterModal
-          onClose={toggleFilterAppointmentModal}
-          appointments={appointments}
-          doctors={doctors}
-          medicalServices={medicalServices}
-          offices={offices}
+    const handleFilterOfficeChange = (office) => {
+        setSelectedOffices(prevSelectedOffices => {
+            if (prevSelectedOffices.some(selectedOffice => selectedOffice.id === office.id)) {
+                return prevSelectedOffices.filter(selectedOffice => selectedOffice.id !== office.id);
+            } else {
+                return [...prevSelectedOffices, office];
+            }
+        });
+    };
 
-          setFilteredAppointments={setFilteredAppointments}
+    const handleApplyFilter = () => {
+        let filteredAppointments = appointments;
 
-          selectedAddresses={selectedAddresses}
-          setSelectedAddresses={setSelectedAddresses}
+        if (selectedDoctors.length > 0 || selectedMedicalServices.length > 0 || selectedIsApproved !== null || selectedOffices.length > 0) {
+            const doctorsInSelectedOffice = doctors.filter(doctor =>
+                selectedOffices.some(selectedOffice => selectedOffice.id === doctor.office.id)
+            );
 
-          selectedDoctor={selectedDoctor}
-          setSelectedDoctor={setSelectedDoctor}
+            filteredAppointments = appointments.filter(appointment =>
+                (!selectedDoctors.length || selectedDoctors.some(selectedDoctor => selectedDoctor.id === appointment.doctor.id)) &&
+                (!selectedMedicalServices.length || selectedMedicalServices.some(selectedMedicalService => selectedMedicalService.id === appointment.medicalService.id)) &&
+                (selectedIsApproved === null || selectedIsApproved === appointment.isApproved) &&
+                (!selectedOffices.length || doctorsInSelectedOffice.some(filteredDoctor => filteredDoctor.id === appointment.doctor.id))
+            );
+        }
 
-          selectedMedicalService={selectedMedicalService}
-          setSelectedMedicalService={setSelectedMedicalService}
+        const formattedAppointments = formatAppointments(filteredAppointments);
+        setEditableAppointments(formattedAppointments);
+        setIsFilterModalOpen(!isFilterModalOpen);
+    };
 
-          selectedAppointmentStatus={selectedAppointmentStatus}
-          setSelectedAppointmentStatus={setSelectedAppointmentStatus}
-        />
-      )}
+    const handleClearFilter = () => {
+        const formattedAppointments = formatAppointments(appointments);
+        setEditableAppointments(formattedAppointments);
+        setSelectedDoctors([]);
+        setSelectedMedicalServices([]);
+        setSelectedIsApproved(null);
+        setSelectedOffices([]);
+        setIsFilterModalOpen(!isFilterModalOpen);
+    }
 
-      {showCalendar && (
-        <Calendar
-          currentDate={new Date(selectedDate)}
-          onClose={toggleCalendarClick}
-          setSelectedDate={setSelectedDate}
-        />
-      )}
+    async function handleApproveAppointment(id) {
+        const appointment = appointments.find(a => a.id === id);
 
-      <div className="appointments-container">
-        {filteredAppointments.length > 0 ? (
-          <Table
-            items={filteredAppointments}
+        const updateAppointmentModelRequest = new UpdateAppointmentModelRequest(
+            appointment.id, appointment.doctor.id, appointment.medicalService.id, appointment.patient.id, appointment.date, appointment.time, true);
 
-            showApproveButton={true}
-            handleApprove={handleApproveAppointmentAsync}
+        const resultResponseStatus = await UpdateAppointmentFetchAsync(updateAppointmentModelRequest);
+        if (resultResponseStatus === 200) {
+            setEditableAppointments(prevAppointments => {
+                return prevAppointments.map(appointment => {
+                    if (appointment.id === id) {
+                        return { ...appointment, isApproved: 'Approved' };
+                    }
+                    return appointment;
+                });
+            });
+        }
+    };
 
-            showCancelButton={true}
-            handleCancel={handleCancelAppointmentAsync}
-          />
-        ) : (
-          !isLoading && <p className="no-appointments-message">Nothing could be found.</p>
-        )}
-      </div>
-    </>
-  );
-}
+    async function handleCancelAppointment(id) {
+        const confirmCancel = window.confirm("Are you sure you want to cancel the appointment?");
 
-export default Appointments;
+        if (confirmCancel) {
+            const resultResponseStatus = await DeleteAppointmentFetchAsync(id);
+            if (resultResponseStatus === 200) {
+                setEditableAppointments(prevAppointments =>
+                    prevAppointments.filter(a => a.id !== id)
+                );
+                setAppointments(prevAppointments =>
+                    prevAppointments.filter(a => a.id !== id)
+                );
+            }
+        }
+    }
+
+    return (
+        <>
+            <Toolbar
+                pageTitle="Appointments"
+
+                showAddIcon={true}
+                toggleAddModalClick={toggleAddModalClick}
+
+                showFilterIcon={true}
+                toggleFilterModalClick={toggleFilterModalClick}
+
+                showCalendarIcon={true}
+                toggleCalendarClick={toggleCalendarClick}
+            />
+            {isLoading ? (<Loader />
+            ) : (
+                <>
+                    <div className="page">
+                        {appointments.length === 0 ? (
+                            <p className="no-items">Appointments not found</p>
+                        ) : (
+                            <>
+                                {editableAppointments.length === 0 && (
+                                    <p className="no-items">Nothing was found</p>
+                                )}
+                                {editableAppointments.length > 0 && (
+                                    <div className="table">
+                                        <Table>
+                                            <thead>
+                                                <tr>
+                                                    {columnNames.map(columnName => (
+                                                        <th key={columnName}>{FieldNames[columnName]}</th>
+                                                    ))}
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {editableAppointments.map(editableAppointment => (
+                                                    <tr
+                                                        key={editableAppointment.id}
+                                                        className={editableAppointment.isApproved === 'Approved' ? 'approved-row' : ''}
+                                                    >
+                                                        {columnNames.map(columnName => (
+                                                            <td key={columnName}>{editableAppointment[columnName]}</td>
+                                                        ))}
+                                                        <td>
+                                                            <div className="table-actions">
+                                                                <IconBase
+                                                                    name='bx-chevron-down-circle'
+                                                                    className={editableAppointment.isApproved === 'Approved' ? 'approved' : ''}
+                                                                    onClick={editableAppointment.isApproved === 'Approved' ? undefined : () => handleApproveAppointment(editableAppointment.id)}
+                                                                />
+                                                                <IconBase name='bx-x-circle'
+                                                                    onClick={() => handleCancelAppointment(editableAppointment.id)}
+                                                                />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </Table>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
+                        {isCalendarOpen && (
+                            <Calendar onClose={toggleCalendarClick} handleSetSelectedDate={handleSetSelectedDate} currentDate={selectedDate} />
+                        )}
+
+                        {isFilterModalOpen && (
+                            <FilterModal onClose={() => setIsFilterModalOpen(false)}>
+                                <div className="filter-section">
+                                    <h2 className="filter-modal-title">Doctors</h2>
+                                    <div className="filter-checkbox-container">
+                                        {doctors.map(doctor => (
+                                            <div className="filter-checkbox-group" key={doctor.id}>
+                                                <CheckboxWrapper
+                                                    id={doctor.id}
+                                                    name="doctor-name"
+                                                    value={`${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`}
+                                                    checked={selectedDoctors.some(selectedDoctor => selectedDoctor.id === doctor.id)}
+                                                    onChange={() => handleFilterDoctorChange(doctor)}
+                                                    label={`${doctor.firstName} ${doctor.lastName} ${doctor.middleName}`}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="filter-section">
+                                    <h2 className="filter-modal-title">Medical Services</h2>
+                                    <div className="filter-checkbox-container">
+                                        {medicalServices.map(medicalService => (
+                                            <div className="filter-checkbox-group" key={medicalService.id}>
+                                                <CheckboxWrapper
+                                                    id={medicalService.id}
+                                                    name="medical-service-name"
+                                                    value={`${medicalService.serviceName}`}
+                                                    checked={selectedMedicalServices.some(selectedMedicalService => selectedMedicalService.id === medicalService.id)}
+                                                    onChange={() => handleFilterMedicalServiceChange(medicalService)}
+                                                    label={`${medicalService.serviceName}`}
+                                                />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="filter-section">
+                                    <h2 className="filter-modal-title">Status</h2>
+                                    <div className="filter-checkbox-container">
+                                        <div className="filter-checkbox-group" key="approved-appointments">
+                                            <CheckboxWrapper
+                                                id="approved-appointments"
+                                                name="approved-appointments"
+                                                value={`approved-appointments`}
+                                                checked={selectedIsApproved === true}
+                                                onChange={() => handleFilterIsApprovedChange(true)}
+                                                label={`Approved`}
+                                            />
+                                        </div>
+                                        <div className="filter-checkbox-group" key="not-approved-appointments">
+                                            <CheckboxWrapper
+                                                id="not-approved-appointments"
+                                                name="not-approved-appointments"
+                                                value={`not-approved-appointments`}
+                                                checked={selectedIsApproved === false}
+                                                onChange={() => handleFilterIsApprovedChange(false)}
+                                                label={`Not Approved`}
+                                            />
+                                        </div>
+                                        <div className="filter-checkbox-group" key="all-appointments">
+                                            <CheckboxWrapper
+                                                id="all-appointments"
+                                                name="all-appointments"
+                                                value={`all-appointments`}
+                                                checked={selectedIsApproved === null}
+                                                onChange={() => handleFilterIsApprovedChange(null)}
+                                                label={`All`}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="filter-section">
+                                        <h2 className="filter-modal-title">Offices</h2>
+                                        <div className="filter-checkbox-container">
+                                            {offices.map(office => (
+                                                <div className="filter-checkbox-group" key={office.id}>
+                                                    <CheckboxWrapper
+                                                        id={office.id}
+                                                        name="office-name"
+                                                        value={`${office.city} ${office.street} ${office.houseNumber} ${office.officeNumber}`}
+                                                        checked={selectedOffices.some(selectedOffice => selectedOffice.id === office.id)}
+                                                        onChange={() => handleFilterOfficeChange(office)}
+                                                        label={`${office.city} ${office.street} ${office.houseNumber} ${office.officeNumber}`}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="form-actions">
+                                    <ButtonBase type="button" onClick={handleApplyFilter}>
+                                        Apply
+                                    </ButtonBase>
+                                    <ButtonBase type="button" variant="secondary" onClick={handleClearFilter}>
+                                        Clear
+                                    </ButtonBase>
+                                </div>
+                            </FilterModal>
+                        )}
+                    </div>
+                </>
+            )}
+        </>
+    );
+} 

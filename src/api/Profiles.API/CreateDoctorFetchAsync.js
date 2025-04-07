@@ -19,15 +19,13 @@ async function CreateDoctorFetchAsync(doctorModel) {
             body: JSON.stringify(doctorModel)
         });
 
-        if (response.ok) {
-            console.log("ok");
-        } else if (response.status === 400) {
+        if (response.status === 400) {
             const data = await response.json();
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in creating patient:', error);
-        alert('An error occurred while creating the patient');
+        console.error('Error in creating doctor:', error);
+        //alert('An error occurred while creating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }

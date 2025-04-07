@@ -23,12 +23,12 @@ async function GetAccountByAccountIdFromTokenFetchAsync() {
         if (response.ok) {
             return data;
         } else {
-            console.error('Error fetching accounts:', data);
-            alert(`Error: ${data.message || 'Failed to retrieve accounts.'}`);
+            console.error('Error fetching get accounts:', data);
+            //alert(`Error: ${data.message || 'Failed to retrieve accounts.'}`);
         }
     } catch (error) {
         console.error('Unexpected error:', error);
-        alert('An unexpected error occurred. Please try again.');
+        //alert('An unexpected error occurred. Please try again.');
     }
 }
 

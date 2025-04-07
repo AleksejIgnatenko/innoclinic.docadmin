@@ -24,7 +24,7 @@ async function GetAppointmentsByDateFetchAsync(selectedDate) {
                 return data;
             } else {
                 const errorData = await response.json();
-                console.error('Error fetching appointments:', errorData);
+                console.error('Error fetching get appointments:', errorData);
                 return [];
             }
         }

@@ -1,0 +1,11 @@
+.home-page {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    height: 100vh; 
+}
+
+.home-page h1 {
+    color: var(--foreground);
+    margin: 0;
+}
