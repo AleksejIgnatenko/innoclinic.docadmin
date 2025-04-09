@@ -12,6 +12,11 @@ import GetAllAppointmentsByPatientIdFetchAsync from "../api/Appointments.API/Get
 import FieldNames from "../enums/FieldNames";
 import Table from "../components/organisms/Table";
 import { IconBase } from "../components/atoms/IconBase";
+import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
+import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
+import ImageUploader from "../components/organisms/ImageUploader";
+import { InputWrapper } from "../components/molecules/InputWrapper";
+import UpdatePatientFecthAsync from "../api/Profiles.API/UpdatePatientFecthAsync";
 
 function Patient() {
     const { id } = useParams();
@@ -26,12 +31,14 @@ function Patient() {
 
     const [activeTab, setActiveTab] = useState('personal-information');
 
+    const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = usePatientForm({
+    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, handlePhoneNumberKeyDown, resetForm, isFormValid } = usePatientForm({
         firstName: '',
         lastName: '',
         middleName: '',
+        phoneNumber: '',
         dateOfBirth: '',
     });
 
@@ -42,34 +49,33 @@ function Patient() {
         'medicalServiceName',
     ];
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
 
-                const fetchedPatient = await GetPatientByIdFetchAsync(id);
+            const fetchedPatient = await GetPatientByIdFetchAsync(id);
+            setPatient(fetchedPatient);
 
-                if (fetchedPatient.account.photoId) {
-                    const fetchedPhoto = await GetPhotoByNameAsync(fetchedPatient.account.photoId);
-                    setPhoto(fetchedPhoto);
-                    setEditingPhoto(fetchedPhoto);
-                }
-
-                const fetchedAppointments = await GetAllAppointmentsByPatientIdFetchAsync(fetchedPatient.id);
-                const formattedAppointments = formatAppointment(fetchedAppointments);
-                setAppointments(formattedAppointments);
-
-                setPatient(fetchedPatient);
-
-                const formattedPatient = formatPatient(fetchedPatient);
-                setFormData(formattedPatient);
-            } catch (error) {
-                console.error('Error fetching patient:', error);
-            } finally {
-                toggleLoader(false);
+            if (fetchedPatient.account.photoId) {
+                const fetchedPhoto = await GetPhotoByNameAsync(fetchedPatient.account.photoId);
+                setPhoto(fetchedPhoto);
+                setEditingPhoto(fetchedPhoto);
             }
-        };
 
+            const fetchedAppointments = await GetAllAppointmentsByPatientIdFetchAsync(fetchedPatient.id);
+            const formattedAppointments = formatAppointment(fetchedAppointments);
+            setAppointments(formattedAppointments);
+
+            const formattedPatient = formatPatient(fetchedPatient);
+            setFormData(formattedPatient);
+        } catch (error) {
+            console.error('Error fetching patient:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -119,9 +125,55 @@ function Patient() {
         setIsLoading(status);
     };
 
+    const toggleEditClick = () => {
+        if (isEditing) {
+            const confirmCancel = window.confirm("Do you really want to cancel? Changes will not be saved.");
+            if (!confirmCancel) {
+                return;
+            }
+            setFormData(patient);
+        }
+        setErrors({
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+            dateOfBirth: true,
+        });
+        setIsEditing(!isEditing);
+    };
+
+    async function handleUpdate() {
+        setIsEditing(false);
+
+        let photoId = '';
+        if (!patient.account.photoId && editingPhoto) {
+            photoId = await CreatePhotoFetchAsync(editingPhoto);
+
+            setPhoto(editingPhoto);
+        } else if (editingPhoto instanceof Blob) {
+            const imageUrl = URL.createObjectURL(editingPhoto);
+            setPhoto(imageUrl)
+
+            await UpdatePhotoFetchAsync(editingPhoto, patient.photoId);
+        }
+
+        const updatePatientRequest = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            middleName: formData.middleName,
+            isLinkedToAccount: patient.isLinkedToAccount,
+            phoneNumber: formData.phoneNumber,
+            dateOfBirth: formData.dateOfBirth,
+            photoId: photoId,
+        }
+
+        await UpdatePatientFecthAsync(patient.id, updatePatientRequest);
+        fetchData();
+    }
+
     return (
         <>
-            <Toolbar pageTitle="PAtient" />
+            <Toolbar pageTitle="Patient" />
             {isLoading ? (
                 <Loader />
             ) : (
@@ -145,20 +197,92 @@ function Patient() {
 
                     {activeTab === 'personal-information' && (
                         <ProfileCard>
-                            <div data-content className={activeTab === 'personal-information' ? 'is-active' : ''} id="personalInformation">
-                                <div className="profile-img">
-                                    <div class="img-container">
-                                        <img src={photo} alt="" />
-                                    </div>
+                            <div className="profile-icon-container">
+                                {isEditing ? (
+                                    <>
+                                        <IconBase
+                                            name={"bx-check"}
+                                            onClick={isFormValid ? handleUpdate : null}
+                                            style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                                            className={isFormValid ? '' : 'icon-invalid'}
+                                        />
+                                        <IconBase name={"bx-x"} onClick={toggleEditClick} />
+                                    </>
+                                ) : (
+                                    <IconBase name={"bx-pencil"} onClick={toggleEditClick} style={{ cursor: 'pointer' }} />
+                                )}
+                            </div>
+                            {isEditing ? (
+                                <div className="img-container">
+                                    <ImageUploader
+                                        photo={photo}
+                                        setPhoto={setEditingPhoto}
+                                    />
                                 </div>
+                            ) : (
+                                <div className="img-container">
+                                    <img src={photo} alt="" className={photo ? '' : 'img-area'} />
+                                </div>
+                            )}
+
+                            {isEditing ? (
+                                <div>
+                                    <InputWrapper
+                                        type="text"
+                                        label="First Name"
+                                        id="firstName"
+                                        value={formData.firstName}
+                                        onBlur={handleBlur('firstName')}
+                                        onChange={handleChange('firstName')}
+                                        required
+                                    />
+                                    <InputWrapper
+                                        type="text"
+                                        label="Last Name"
+                                        id="lastName"
+                                        value={formData.lastName}
+                                        onBlur={handleBlur('lastName')}
+                                        onChange={handleChange('lastName')}
+                                        required
+                                    />
+                                    <InputWrapper
+                                        type="text"
+                                        label="Middle Name"
+                                        id="middleName"
+                                        value={formData.middleName}
+                                        onBlur={handleBlur('middleName', false)}
+                                        onChange={handleChange('middleName', false)}
+                                        required
+                                    />
+                                    <InputWrapper
+                                        type="text"
+                                        label="Phone Number"
+                                        id="phoneNumber"
+                                        value={formData.phoneNumber}
+                                        onBlur={handleBlur('phoneNumber')}
+                                        onChange={handleChange('phoneNumber')}
+                                        onKeyDown={handlePhoneNumberKeyDown}
+                                        required
+                                    />
+                                    <InputWrapper
+                                        type="date"
+                                        label="Date Of Birth"
+                                        id="dateOfBirth"
+                                        value={formData.dateOfBirth}
+                                        onBlur={handleBlur('dateOfBirth')}
+                                        onChange={handleChange('dateOfBirth')}
+                                        required
+                                    />
+                                </div>
+                            ) : (
                                 <div className="profile-content">
                                     <p>First name: {formData.firstName}</p>
                                     <p>Last name: {formData.lastName}</p>
                                     <p>Middle name: {formData.middleName}</p>
-                                    <p>Phone Number: {formData.middleName}</p>
+                                    <p>Phone Number: {formData.phoneNumber}</p>
                                     <p>Date of birth: {formData.dateOfBirth}</p>
                                 </div>
-                            </div>
+                            )}
                         </ProfileCard>
                     )}
 

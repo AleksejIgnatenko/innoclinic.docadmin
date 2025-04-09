@@ -16,7 +16,7 @@ async function CreatePhotoFetchAsync(photoFile) {
         const response = await fetch(`${DocumentsAPI}/Photo`, {
             method: 'POST',
             headers: {
-                "Authorization": `Bearer ${jwtToken}`, 
+                "Authorization": `Bearer ${jwtToken}`,
             },
             body: formData
         });

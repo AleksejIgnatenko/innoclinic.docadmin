@@ -27,7 +27,6 @@ export default function Specializations() {
     const [specializationOptions, setSpecializationOptions] = useState([]);
     const [categoryOptions, setcategoryOptions] = useState([]);
 
-
     const [category, setCategories] = useState([]);
 
     const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useSpecializationForm({
@@ -53,38 +52,38 @@ export default function Specializations() {
         'isActive',
     ];
 
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+
+            const fetchedSpecializations = await GetAllSpecializationFetchAsync()
+            setSpecializations(fetchedSpecializations);
+
+            const formattedSpecializations = formatSpecializations(fetchedSpecializations);
+            setEditableSpecializations(formattedSpecializations);
+
+            const specializationOptions = fetchedSpecializations.map(({ id, specializationName }) => ({
+                id,
+                value: specializationName
+            }))
+            setSpecializationOptions(specializationOptions);
+
+            const fetchedCategories = await GetAllServiceCategoryFetchAsync()
+            setCategories(fetchedCategories);
+            
+            const categoryOptions = fetchedCategories.map(({ id, categoryName }) => ({
+                id,
+                value: categoryName
+            }))
+            setcategoryOptions(categoryOptions);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-
-                const fetchedSpecializations = await GetAllSpecializationFetchAsync()
-                setSpecializations(fetchedSpecializations);
-
-                const formattedSpecializations = formatSpecializations(fetchedSpecializations);
-                setEditableSpecializations(formattedSpecializations);
-
-                const specializationOptions = fetchedSpecializations.map(({ id, specializationName }) => ({
-                    id,
-                    value: specializationName
-                }))
-                setSpecializationOptions(specializationOptions);
-
-                const fetchedCategories = await GetAllServiceCategoryFetchAsync()
-                setCategories(fetchedCategories);
-                
-                const categoryOptions = fetchedCategories.map(({ id, categoryName }) => ({
-                    id,
-                    value: categoryName
-                }))
-                setcategoryOptions(categoryOptions);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                toggleLoader(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -101,25 +100,37 @@ export default function Specializations() {
     };
 
     const toggleAddModalClick = () => {
-        setIsAddModalOpen((prev) => {
-            const newState = !prev;
-            if (!newState) {
-                resetForm();
-            }
-            return newState;
-        });
+        const confirmCancel = isAddModalOpen
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
+            : true;
+    
+        if (confirmCancel) {
+            setIsAddModalOpen(prev => {
+                const newState = !prev;
+                if (!newState) {
+                    resetForm();
+                }
+                return newState;
+            });
+        }
     };
 
     const toggleServiceAddModalClick = () => {
+        const confirmCancel = isServiceAddModalOpen
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
+            : true;
+    
         setIsAddModalOpen(!isAddModalOpen);
-
-        setIsServiceAddModalOpen((prev) => {
-            const newState = !prev;
-            if (!newState) {
-                resetFormService();
-            }
-            return newState;
-        });
+    
+        if (confirmCancel) {
+            setIsServiceAddModalOpen(prev => {
+                const newState = !prev;
+                if (!newState) {
+                    resetFormService();
+                }
+                return newState;
+            });
+        }
     };
 
     const handleCheckboxChange = (e) => {
@@ -133,7 +144,6 @@ export default function Specializations() {
 
     const handleCheckboxChangeService = (e) => {
         const value = e.target.value === 'true';
-        console.log(value);
 
         setServiceFormData(prev => ({
             ...prev,
@@ -145,8 +155,8 @@ export default function Specializations() {
     async function handleAdd(e) {
         e.preventDefault();
 
-        const createSpecializationModel = new SpecializationModelRequest(formData.specializationName, formData.isActive);
-        await CreateSpecializationFetchAsync(createSpecializationModel);
+        await CreateSpecializationFetchAsync(formData);
+        fetchData();
     }
 
     async function handleAddService(e) {

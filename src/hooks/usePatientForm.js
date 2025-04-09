@@ -6,19 +6,20 @@ const usePatientForm = (initialValues) => {
     const [errors, setErrors] = useState({
         firstName: false,
         lastName: false,
-        middleName: true,
+        phoneNumber: false,
         dateOfBirth: false,
     });
 
-    const updateInputState = (field, input, label) => {
+    const updateInputState = (field, input, label, validate) => {
         let currentDate;
         let inputDate;
+
         if (field === 'dateOfBirth') {
             currentDate = new Date();
             inputDate = new Date(input.value);
         }
 
-        if (!input.value.trim()) {
+        if (validate && !input.value.trim()) {
             if (input && label) {
                 input.classList.add('error-input');
                 label.classList.add('error-label');
@@ -28,7 +29,7 @@ const usePatientForm = (initialValues) => {
                 ...prev,
                 [field]: false
             }));
-        } else if ((field === 'dateOfBirth') && (inputDate > currentDate)) {
+        } else if (validate && (field === 'dateOfBirth') && (inputDate > currentDate)) {
             input.classList.add('error-input');
             label.classList.add('error-label');
 
@@ -51,7 +52,7 @@ const usePatientForm = (initialValues) => {
         }
     };
 
-    const handleChange = (field) => (e) => {
+    const handleChange = (field, validate = true) => (e) => {
         const input = e.target;
         const label = document.querySelector(`label[for="${field}"]`);
 
@@ -60,27 +61,42 @@ const usePatientForm = (initialValues) => {
             [field]: input.value
         }));
 
-        updateInputState(field, input, label);
+        updateInputState(field, input, label, validate);
     };
 
-    const handleBlur = (field) => (event) => {
+    const handleBlur = (field, validate = true) => (event) => {
         const input = event.target;
         const label = document.querySelector(`label[for="${field}"]`);
 
-        updateInputState(field, input, label);
+        updateInputState(field, input, label, validate);
+    };
+
+    const handlePhoneNumberKeyDown = (event) => {
+        const input = event.target;
+    
+        if (event.key === 'Backspace' && input.value === '+') {
+            event.preventDefault();
+        }
     };
 
     const resetForm = () => {
         setFormData(initialValues);
-        setErrors({});
+        setErrors({
+            firstName: false,
+            lastName: false,
+            phoneNumber: false,
+            dateOfBirth: false,
+        });
     };
 
     return {
         formData,
         setFormData,
         errors,
+        setErrors,
         handleChange,
         handleBlur,
+        handlePhoneNumberKeyDown,
         resetForm,
         isFormValid: Object.values(errors).every(value => value),
     };

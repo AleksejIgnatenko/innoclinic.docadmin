@@ -51,6 +51,14 @@ const useSpecializationForm = (initialValues) => {
         updateInputState(field, input, label);
     };
 
+    const resetForm = () => {
+        setFormData(initialValues);
+        setErrors({
+            specializationName: false,
+            isActive: true,
+        });
+    };
+
     return {
         formData,
         setFormData,
@@ -58,6 +66,7 @@ const useSpecializationForm = (initialValues) => {
         setErrors,
         handleChange,
         handleBlur,
+        resetForm,
         isFormValid: Object.values(errors).every(value => value),
     };
 };

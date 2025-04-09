@@ -1,84 +1,117 @@
 import { useState } from 'react';
 import FieldNames from '../enums/FieldNames';
+import IsEmailAvailableFetchAsync from '../api/Authorization.API/IsEmailAvailableFetchAsync';
 
-const useSignInForm = (initialValues) => {
-  const [formData, setFormData] = useState(initialValues);
-  const [errors, setErrors] = useState({
+const useSignInForm = (initialSignInValues) => {
+  const [signInFormData, setSignInFormData] = useState(initialSignInValues);
+  const [signInErrors, setSignInErrors] = useState({
     email: false,
     password: false
   });
 
-  const updateInputState = (field, input, label) => {
-    if (!input.value.trim()) {
-      if (input && label) {
-        input.classList.add('error-input');
-        label.classList.add('error-label');
+  const updateSignInInputState = async (field, inputElement, labelElement) => {
+    if (!inputElement.value.trim()) {
+      if (inputElement && labelElement) {
+        inputElement.classList.add('error-input');
+        labelElement.classList.add('error-label');
 
-        label.textContent = `Please, enter the ${field}`;
+        labelElement.textContent = `Please, enter your ${field}`;
       }
-      setErrors(prev => ({
+      setSignInErrors(prev => ({
         ...prev,
         [field]: false
       }));
-    } else if (field === 'password' && (input.value.length < 6 || input.value.length > 15)) {
-      input.classList.add('error-input');
-      label.classList.add('error-label');
+    } else if (field === 'password' && (inputElement.value.length < 6 || inputElement.value.length > 15)) {
+      inputElement.classList.add('error-input');
+      labelElement.classList.add('error-label');
 
-      label.textContent = "The number of characters in the password must be from 6 to 15";
+      labelElement.textContent = "The password must be between 6 and 15 characters";
 
-      setErrors(prev => ({
+      setSignInErrors(prev => ({
         ...prev,
         [field]: false
       }));
-    } else if (field === 'email' && !input.value.includes('@')) {
-      input.classList.add('error-input');
-      label.classList.add('error-label');
+    } else if (field === 'email') {
+      if (!inputElement.value.includes('@')) {
+        inputElement.classList.add('error-input');
+        labelElement.classList.add('error-label');
 
-      label.textContent = "You've entered an invalid email";
+        labelElement.textContent = "You've entered an invalid email address";
 
-      setErrors(prev => ({
-        ...prev,
-        [field]: false
-      }));
+        setSignInErrors(prev => ({
+          ...prev,
+          [field]: false
+        }));
+      } else {
+        const isEmailAvailable = await IsEmailAvailableFetchAsync(inputElement.value);
+        if (isEmailAvailable) {
+          inputElement.classList.add('error-input');
+          labelElement.classList.add('error-label');
+
+          labelElement.textContent = "User with this email doesn’t exist";
+
+          setSignInErrors(prev => ({
+            ...prev,
+            [field]: false
+          }));
+        } else {
+          if (inputElement && labelElement) {
+            inputElement.classList.remove('error-input');
+            labelElement.classList.remove('error-label');
+
+            labelElement.textContent = `${FieldNames[field]}`;
+          }
+          setSignInErrors(prev => ({
+            ...prev,
+            [field]: true
+          }));
+        }
+      }
     } else {
-      if (input && label) {
-        input.classList.remove('error-input');
-        label.classList.remove('error-label');
+      if (inputElement && labelElement) {
+        inputElement.classList.remove('error-input');
+        labelElement.classList.remove('error-label');
 
-        label.textContent = `${FieldNames[field]}`;
+        labelElement.textContent = `${FieldNames[field]}`;
       }
-      setErrors(prev => ({
+      setSignInErrors(prev => ({
         ...prev,
         [field]: true
       }));
     }
   };
 
-  const handleChange = (field) => (e) => {
-    const input = e.target;
-    const label = document.querySelector(`label[for="${field}"]`);
+  const handleSignInChange = (field) => (event) => {
+    const inputElement = event.target;
+    const labelElement = document.querySelector(`label[for="${field}"]`);
 
-    setFormData(prev => ({
+    setSignInFormData(prev => ({
       ...prev,
-      [field]: input.value
+      [field]: inputElement.value
     }));
 
-    updateInputState(field, input, label);
+    updateSignInInputState(field, inputElement, labelElement);
   };
 
-  const handleBlur = (field) => (event) => {
-    const input = event.target;
-    const label = document.querySelector(`label[for="${field}"]`);
+  const handleSignInBlur = (field) => (event) => {
+    const inputElement = event.target;
+    const labelElement = document.querySelector(`label[for="${field}"]`);
 
-    updateInputState(field, input, label);
+    updateSignInInputState(field, inputElement, labelElement);
+  };
+
+  const resetSignInForm = () => {
+    setSignInFormData(initialSignInValues);
+    setSignInErrors({});
   };
 
   return {
-    formData,
-    errors,
-    handleChange,
-    handleBlur,
-    isFormValid: errors.email && errors.password
+    signInFormData,
+    signInErrors,
+    handleSignInChange,
+    handleSignInBlur,
+    resetSignInForm,
+    isSignInFormValid: signInErrors.email && signInErrors.password
   };
 };
 

@@ -6,24 +6,23 @@ const useDoctorForm = (initialValues) => {
     const [errors, setErrors] = useState({
         firstName: false,
         lastName: false,
-        middleName: true,
         dateOfBirth: false,
         email: false,
         specializationId: false,
         officeId: false,
         careerStartYear: false,
         status: false,
-        photoId: true,
     });
 
-    const updateInputState = (field, input, label) => {
-        if (field !== 'middleName') {
+    const updateInputState = (field, input, label, validate) => {
+        if (validate && field !== 'middleName') {
             let currentDate;
             let inputDate;
-            if(field === 'dateOfBirth' || field === 'careerStartYear'){
+            if (field === 'dateOfBirth' || field === 'careerStartYear') {
                 currentDate = new Date();
                 inputDate = new Date(input.value);
             }
+
             if (!input.value.trim()) {
                 if (input && label) {
                     input.classList.add('error-input');
@@ -73,7 +72,7 @@ const useDoctorForm = (initialValues) => {
         }
     };
 
-    const handleChange = (field) => (e) => {
+    const handleChange = (field, validate = true) => (e) => {
         const input = e.target;
         const label = document.querySelector(`label[for="${field}"]`);
 
@@ -82,19 +81,28 @@ const useDoctorForm = (initialValues) => {
             [field]: input.value
         }));
 
-        updateInputState(field, input, label);
+        updateInputState(field, input, label, validate);
     };
 
-    const handleBlur = (field) => (event) => {
+    const handleBlur = (field, validate = true) => (event) => {
         const input = event.target;
         const label = document.querySelector(`label[for="${field}"]`);
 
-        updateInputState(field, input, label);
+        updateInputState(field, input, label, validate);
     };
 
     const resetForm = () => {
         setFormData(initialValues);
-        setErrors({});
+        setErrors({
+            firstName: false,
+            lastName: false,
+            dateOfBirth: false,
+            email: false,
+            specializationId: false,
+            officeId: false,
+            careerStartYear: false,
+            status: false,
+        });
     };
 
     return {

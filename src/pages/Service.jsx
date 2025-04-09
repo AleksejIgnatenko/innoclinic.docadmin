@@ -11,6 +11,7 @@ import GetAllServiceCategoryFetchAsync from "../api/Services.API/GetAllServiceCa
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import UpdateMedicalServiceFetchAsync from "../api/Services.API/UpdateMedicalServiceFetchAsync";
+import Toolbar from "../components/organisms/Toolbar";
 
 function Service() {
     const { id } = useParams();

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { IconBase } from "../atoms/IconBase";
 import '../../styles/organisms/Sidebar.css';
 import 'boxicons/css/boxicons.min.css';
-import Cookies from 'js-cookie';
 
 import GetAccountByAccountIdFromTokenFetchAsync from "../../api/Authorization.API/GetAccountByAccountIdFromTokenFetchAsync";
 import GetDoctorByAccountIdFromTokenFetchAsync from "../../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
@@ -104,15 +103,17 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                             </ul>
                         </li>
                     )}
-                    <li>
-                        <Link to="/patients">
-                            <IconBase name='bx-group' />
-                            <span className="link_name">Patients</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link to="/patients" className="link_name">Patients</Link></li>
-                        </ul>
-                    </li>
+                    {account && account.role === 'Receptionist' && (
+                        <li>
+                            <Link to="/patients">
+                                <IconBase name='bx-group' />
+                                <span className="link_name">Patients</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link to="/patients" className="link_name">Patients</Link></li>
+                            </ul>
+                        </li>
+                    )}
                     {account && account.role === 'Doctor' ? (
                         <li>
                             <Link to="/my-schedule">
@@ -134,24 +135,28 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                             </ul>
                         </li>
                     ) : null}
-                    <li>
-                        <Link to="/offices">
-                            <IconBase className='bx-buildings'></IconBase>
-                            <span className="link_name">Offices</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/offices">Offices</Link></li>
-                        </ul>
-                    </li>
-                    <li>
-                        <Link to="/specializations">
-                            <IconBase name='bx-collection' />
-                            <span className="link_name">Specialization</span>
-                        </Link>
-                        <ul className="sub-menu blank">
-                            <li><Link className="link_name" to="/specializations">Specialization</Link></li>
-                        </ul>
-                    </li>
+                    {account && account.role === 'Receptionist' && (
+                        <li>
+                            <Link to="/offices">
+                                <IconBase className='bx-buildings'></IconBase>
+                                <span className="link_name">Offices</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link className="link_name" to="/offices">Offices</Link></li>
+                            </ul>
+                        </li>
+                    )}
+                    {account && account.role === 'Receptionist' && (
+                        <li>
+                            <Link to="/specializations">
+                                <IconBase name='bx-collection' />
+                                <span className="link_name">Specialization</span>
+                            </Link>
+                            <ul className="sub-menu blank">
+                                <li><Link className="link_name" to="/specializations">Specialization</Link></li>
+                            </ul>
+                        </li>
+                    )}
                     <li>
                         <Link onClick={toggleTheme}>
                             <IconBase

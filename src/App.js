@@ -37,10 +37,10 @@ function App() {
 
   const isLoggedIn = Boolean(Cookies.get('isLoggedIn'));
 
-  const { formData, errors, handleChange, handleBlur, isFormValid } = useSignInForm({
+  const { signInFormData, signInErrors, handleSignInChange, handleSignInBlur, resetSignInForm, isSignInFormValid } = useSignInForm({
     email: '',
     password: ''
-  });
+});
 
   const toggleTheme = () => {
     setCurrentTheme(prevTheme => (prevTheme === 'dark' ? 'light' : 'dark'));
@@ -48,7 +48,7 @@ function App() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    await SignInFetchAsync(formData);
+    await SignInFetchAsync(signInFormData);
   };
 
   return (
@@ -85,23 +85,23 @@ function App() {
                   type="email"
                   label="Email"
                   id="email"
-                  value={formData.email}
-                  onBlur={handleBlur('email')}
-                  onChange={handleChange('email')}
+                  value={signInFormData.email}
+                  onBlur={handleSignInBlur('email')}
+                  onChange={handleSignInChange('email')}
                   required
                 />
                 <InputWrapper
                   type="password"
                   label="Password"
                   id="password"
-                  value={formData.password}
-                  onBlur={handleBlur('password')}
-                  onChange={handleChange('password')}
+                  value={signInFormData.password}
+                  onBlur={handleSignInBlur('password')}
+                  onChange={handleSignInChange('password')}
                   required
                 />
               </div>
               <div className="form-actions">
-                <ButtonBase type="submit" disabled={!isFormValid}>
+                <ButtonBase type="submit" disabled={!isSignInFormValid}>
                   Sign in
                 </ButtonBase>
               </div>

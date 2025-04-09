@@ -1,11 +1,20 @@
 import { ServicesAPI } from "../api";
+import Cookies from 'js-cookie';
+import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 
 async function GetServicesBySpecializationIdFetchAsync(id) {
     try {
+        let jwtToken = Cookies.get('accessToken');
+        if (!jwtToken) {
+            await RefreshTokenFetchAsync(); 
+            jwtToken = Cookies.get('accessToken');
+        }
+
         const response = await fetch(`${ServicesAPI}/MedicalService/services-by-specialization-id/${id}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken}`, 
             },
         });
 
@@ -13,10 +22,13 @@ async function GetServicesBySpecializationIdFetchAsync(id) {
         
         if (response.ok) {
            return data;
+        } else {
+            console.error('Failed to fetch services by specialization ID:', data);
+            return [];
         }
     } catch (error) {
-        console.error('Error in getting services by id:', error);
-        //alert('An error occurred while trying to fetch the office details. Please try again later.');
+        console.error('Error in getting services by specialization ID:', error);
+        return [];
     }
 }
 
