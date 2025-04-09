@@ -2,7 +2,7 @@ import { ProfilesAPI } from "../api";
 import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 import Cookies from 'js-cookie';
 
-async function UpdateDoctorFetchAsync(id, doctor) {
+async function UpdatePatientFecthAsync(patientId, updatedPatientData) {
     try {
         let jwtToken = Cookies.get('accessToken');
         if (!jwtToken) {
@@ -10,13 +10,13 @@ async function UpdateDoctorFetchAsync(id, doctor) {
             jwtToken = Cookies.get('accessToken');
         }
 
-        const response = await fetch(`${ProfilesAPI}/Doctor/${id}`, {
+        const response = await fetch(`${ProfilesAPI}/Patient/${patientId}`, {
             method: 'PUT',
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${jwtToken}`,
             },
-            body: JSON.stringify(doctor)
+            body: JSON.stringify(updatedPatientData)
         });
 
         if (!response.ok) {
@@ -24,10 +24,10 @@ async function UpdateDoctorFetchAsync(id, doctor) {
             console.log(data);
         }
     } catch (error) {
-        console.error('Error in updating doctor:', error);
+        console.error('Error in updating patient:', error);
         //alert('An error occurred while updating the patient');
         return { status: 500, error: 'Internal Server Error' };
     }
 }
 
-export default UpdateDoctorFetchAsync;
+export default UpdatePatientFecthAsync;

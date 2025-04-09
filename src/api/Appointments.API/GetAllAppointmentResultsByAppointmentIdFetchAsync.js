@@ -1,11 +1,20 @@
 import { AppointmentAPI } from "../api";
+import Cookies from 'js-cookie';
+import RefreshTokenFetchAsync from "../Authorization.API/RefreshTokenFetchAsync";
 
 async function GetAllAppointmentResultsByAppointmentIdFetchAsync(appointmentId) {
     try {
+        let jwtToken = Cookies.get('accessToken');
+        if (!jwtToken) {
+            await RefreshTokenFetchAsync();
+            jwtToken = Cookies.get('accessToken');
+        }
+
         const response = await fetch(`${AppointmentAPI}/AppointmentResult/by-appointment-id/${appointmentId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
+                "Authorization": `Bearer ${jwtToken}`,
             },
         });
 

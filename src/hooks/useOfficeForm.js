@@ -10,8 +10,8 @@ const useOfficeForm = (initialValues) => {
     registryPhoneNumber: false,
   });
 
-  const updateInputState = (field, input, label) => {
-    if (!input.value.trim()) {
+  const updateInputState = (field, input, label, validate) => {
+    if (validate && !input.value.trim()) {
       if (input && label) {
         input.classList.add('error-input');
         label.classList.add('error-label');
@@ -36,7 +36,7 @@ const useOfficeForm = (initialValues) => {
     }
   };
 
-  const handleChange = (field) => (e) => {
+  const handleChange = (field, validate = true) => (e) => {
     const input = e.target;
     const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
 
@@ -45,23 +45,33 @@ const useOfficeForm = (initialValues) => {
       [field]: input.value
     }));
 
-    updateInputState(field, input, label);
+    updateInputState(field, input, label, validate);
   };
 
-  const handleBlur = (field) => (event) => {
+  const handleBlur = (field, validate = true) => (event) => {
     const input = event.target;
     const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
 
-    updateInputState(field, input, label);
+    updateInputState(field, input, label, validate);
   };
 
   const handleRegistryPhoneNumberKeyDown = (event) => {
     const input = event.target;
 
     if (event.key === 'Backspace' && input.value === '+') {
-        event.preventDefault();
+      event.preventDefault();
     }
-};
+  };
+
+  const resetForm = () => {
+    setFormData(initialValues);
+    setErrors({
+      city: false,
+      street: false,
+      houseNumber: false,
+      registryPhoneNumber: false,
+    });
+  };
 
   return {
     formData,
@@ -71,6 +81,7 @@ const useOfficeForm = (initialValues) => {
     handleChange,
     handleBlur,
     handleRegistryPhoneNumberKeyDown,
+    resetForm,
     isFormValid: Object.values(errors).every(value => value),
   };
 };

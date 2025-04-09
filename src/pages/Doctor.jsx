@@ -12,7 +12,6 @@ import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializa
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import GetDoctorByIdFetchAsync from "../api/Profiles.API/GetDoctorByIdFetchAsync";
 
-import UpdateDoctorModelRequest from "../models/doctorModels/UpdateDoctorModelRequest";
 import UpdateDoctorFetchAsync from "../api/Profiles.API/UpdateDoctorFetchAsync";
 import GetPhotoByIdAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
@@ -37,12 +36,11 @@ function Doctor() {
 
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
-    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, resetForm, isFormValid } = useDoctorForm({
+    const { formData, setFormData, errors, setErrors, handleChange, handleBlur, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
         dateOfBirth: '',
-        email: '',
         specializationId: '',
         officeId: '',
         cabinetNumber: '',
@@ -54,51 +52,51 @@ function Doctor() {
     const [isEditing, setIsEditing] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-                errors.email = true;
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+            errors.email = true;
 
-                const fetchedSpecializations = await GetAllSpecializationFetchAsync();
-                setSpecializations(fetchedSpecializations);
+            const fetchedSpecializations = await GetAllSpecializationFetchAsync();
+            setSpecializations(fetchedSpecializations);
 
-                const fetchedOffices = await GetAllOfficesFetchAsync();
-                setOffices(fetchedOffices);
+            const fetchedOffices = await GetAllOfficesFetchAsync();
+            setOffices(fetchedOffices);
 
-                const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
-                    id,
-                    value: `${city} ${street} ${houseNumber} ${officeNumber}`
-                }))
-                setOfficeOptions(officeOptions);
+            const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
+                id,
+                value: `${city} ${street} ${houseNumber} ${officeNumber}`
+            }))
+            setOfficeOptions(officeOptions);
 
-                let fetchedDoctor;
-                if (id) {
-                    fetchedDoctor = await GetDoctorByIdFetchAsync(id);
-                    setDoctor(fetchedDoctor);
-                } else {
-                    fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
-                    setDoctor(fetchedDoctor);
-                }
-
-                const formattedDocto = formatDoctor(fetchedDoctor);
-                setFormData(formattedDocto);
-
-                setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
-
-                if (fetchedDoctor.account.photoId) {
-                    const fetchedPhoto = await GetPhotoByIdAsync(fetchedDoctor.account.photoId);
-                    setPhoto(fetchedPhoto);
-                    setEditingPhoto(fetchedPhoto);
-                }
-
-            } catch (error) {
-                console.error('Error fetching doctor:', error);
-            } finally {
-                toggleLoader(false);
+            let fetchedDoctor;
+            if (id) {
+                fetchedDoctor = await GetDoctorByIdFetchAsync(id);
+                setDoctor(fetchedDoctor);
+            } else {
+                fetchedDoctor = await GetDoctorByAccountIdFromTokenFetchAsync();
+                setDoctor(fetchedDoctor);
             }
-        };
 
+            const formattedDocto = formatDoctor(fetchedDoctor);
+            setFormData(formattedDocto);
+
+            setSelectSpecializationName(fetchedSpecializations.find(spec => spec.id === fetchedDoctor.specialization.id)?.specializationName || '');
+
+            if (fetchedDoctor.account.photoId) {
+                const fetchedPhoto = await GetPhotoByIdAsync(fetchedDoctor.account.photoId);
+                setPhoto(fetchedPhoto);
+                setEditingPhoto(fetchedPhoto);
+            }
+
+        } catch (error) {
+            console.error('Error fetching doctor:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -181,34 +179,34 @@ function Doctor() {
     async function handleUpdate() {
         setIsEditing(false);
 
-        if (!doctor.photoId && editingPhoto) {
-            const photoId = await CreatePhotoFetchAsync(editingPhoto);
-            formData.photoId = photoId;
+        let photoId = '';
+        if (!doctor.account.photoId && editingPhoto) {
+            photoId = await CreatePhotoFetchAsync(editingPhoto);
 
-            await AddImageInAccountFetchAsync(doctor.account.id, photoId);
+            setPhoto(editingPhoto);
         } else if ((editingPhoto instanceof Blob)) {
             const imageUrl = URL.createObjectURL(editingPhoto);
             setPhoto(imageUrl)
 
-            await UpdatePhotoFetchAsync(editingPhoto, doctor.photoId);
+            await UpdatePhotoFetchAsync(editingPhoto, doctor.account.photoId);
         }
 
-        const updateDoctorModel = new UpdateDoctorModelRequest(
-            formData.firstName,
-            formData.lastName,
-            formData.middleName,
-            formData.cabinetNumber,
-            formData.dateOfBirth,
-            formData.specializationId,
-            formData.officeId,
-            formData.careerStartYear,
-            formData.status,
-            formData.photoId,
-        );
+        const updateDoctorRequest = {
+            firstName: formData.firstName, 
+            lastName: formData.lastName, 
+            middleName: formData.middleName,
+            cabinetNumber: formData.cabinetNumber, 
+            dateOfBirth: formData.dateOfBirth, 
+            email: formData.email, 
+            specializationId: formData.specializationId, 
+            officeId: formData.officeId,
+            careerStartYear: formData.careerStartYear, 
+            status: formData.status, 
+            photoId: doctor.account.photoId ? doctor.account.photoId : photoId,
+        }
 
-        setDoctor(updateDoctorModel);
-
-        await UpdateDoctorFetchAsync(doctor.id, updateDoctorModel);
+        await UpdateDoctorFetchAsync(doctor.id, updateDoctorRequest);
+        fetchData();
     }
 
     return (
@@ -220,10 +218,10 @@ function Doctor() {
                         {isEditing ? (
                             <>
                                 <IconBase
-                                        name={"bx-check"}
-                                        onClick={isFormValid ? handleUpdate : null}
-                                        style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
-                                        className={isFormValid ? '' : 'icon-invalid'}
+                                    name={"bx-check"}
+                                    onClick={isFormValid ? handleUpdate : null}
+                                    style={{ cursor: isFormValid ? 'pointer' : 'not-allowed' }}
+                                    className={isFormValid ? '' : 'icon-invalid'}
                                 />
                                 <IconBase name={"bx-x"} onClick={toggleEditClick} />
                             </>
@@ -241,7 +239,7 @@ function Doctor() {
                         </div>
                     ) : (
                         <div class="img-container">
-                            <img src={photo} alt="" />
+                           <img src={photo} alt="" className={photo ? '' : 'img-area'} />
                         </div>
                     )}
 
@@ -270,8 +268,8 @@ function Doctor() {
                                 label="Middle Name"
                                 id="middleName"
                                 value={formData.middleName}
-                                onBlur={handleBlur('middleName')}
-                                onChange={handleChange('middleName')}
+                                onBlur={handleBlur('middleName', false)}
+                                onChange={handleChange('middleName', false)}
                                 required
                             />
                             <InputWrapper

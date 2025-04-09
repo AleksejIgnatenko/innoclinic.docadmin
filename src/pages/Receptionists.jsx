@@ -29,14 +29,13 @@ export default function Receptionists() {
 
     const [photo, setPhoto] = useState(null);
 
-    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, resetForm, isFormValid } = useReceptionistForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useReceptionistForm({
         firstName: '',
         lastName: '',
         middleName: '',
         email: '',
         officeId: '',
         status: '',
-        photoId: '',
     });
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -49,31 +48,31 @@ export default function Receptionists() {
         'address',
     ];
 
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+
+            const fetchedReceptionists = await GetAllReceptionistsFetchAsync();
+            setReceptionists(fetchedReceptionists);
+
+            const formattedReceptionists = formatReceptionists(fetchedReceptionists);
+            setEditableReceptionists(formattedReceptionists);
+
+            const fetchedOffices = await GetAllOfficesFetchAsync();
+            setOffices(fetchedOffices);
+            const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
+                id,
+                value: `${city} ${street} ${houseNumber} ${officeNumber}`
+            }))
+            setOfficeOptions(officeOptions);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-
-                const fetchedReceptionists = await GetAllReceptionistsFetchAsync();
-                setReceptionists(fetchedReceptionists);
-
-                const formattedReceptionists = formatReceptionists(fetchedReceptionists);
-                setEditableReceptionists(formattedReceptionists);
-
-                const fetchedOffices = await GetAllOfficesFetchAsync();
-                setOffices(fetchedOffices);
-                const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
-                    id,
-                    value: `${city} ${street} ${houseNumber} ${officeNumber}`
-                }))
-                setOfficeOptions(officeOptions);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                toggleLoader(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -94,23 +93,41 @@ export default function Receptionists() {
     };
 
     const toggleAddModalClick = () => {
-        setIsAddModalOpen((prev) => {
-            const newState = !prev;
-            if (!newState) {
-                resetForm();
-            }
-            return newState;
-        });
+        const confirmCancel = isAddModalOpen
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
+            : true;
+    
+        if (confirmCancel) {
+            setIsAddModalOpen(prev => {
+                const newState = !prev;
+                if (!newState) {
+                    resetForm();
+                }
+                return newState;
+            });
+        }
     };
 
     async function handleAdd(e) {
         e.preventDefault();
 
+        let photoId = '';
         if (photo) {
-            formData.photoId = await CreatePhotoFetchAsync(photo);
+            photoId = await CreatePhotoFetchAsync(photo);
         }
 
-        await CreateReceptionistFetchAsync(formData);
+        const createReceptionistRequest = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            middleName: formData.middleName,
+            email: formData.email,
+            officeId: formData.officeId,
+            status: formData.status,
+            photoId: photoId
+        }
+
+        await CreateReceptionistFetchAsync(createReceptionistRequest);
+        fetchData();
     }
 
     async function handleDelete(id) {
@@ -210,8 +227,8 @@ export default function Receptionists() {
                                     label="Middle Name"
                                     id="middleName"
                                     value={formData.middleName}
-                                    onBlur={handleBlur('middleName')}
-                                    onChange={handleChange('middleName')}
+                                    onBlur={handleBlur('middleName', false)}
+                                    onChange={handleChange('middleName', false)}
                                     required
                                 />
                                 <InputWrapper

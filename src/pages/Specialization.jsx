@@ -19,6 +19,7 @@ import { SelectWrapper } from "../components/molecules/SelectWrapper";
 import GetAllServiceCategoryFetchAsync from "../api/Services.API/GetAllServiceCategoryFetchAsync";
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import { ButtonBase } from "../components/atoms/ButtonBase";
+import Toolbar from "../components/organisms/Toolbar";
 
 function Specialization() {
     const { id } = useParams();
@@ -57,45 +58,45 @@ function Specialization() {
         'categoryName',
     ];
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
 
-                if (id) {
-                    const fetchedSpecialization = await GetSpecializationByIdAsync(id);
-                    setFormData(fetchedSpecialization);
-                    setSpecialization(fetchedSpecialization);
+            if (id) {
+                const fetchedSpecialization = await GetSpecializationByIdAsync(id);
+                setFormData(fetchedSpecialization);
+                setSpecialization(fetchedSpecialization);
 
-                    const fetchedSpecializations = await GetAllSpecializationFetchAsync()
-                    setSpecializations(fetchedSpecializations);
+                const fetchedSpecializations = await GetAllSpecializationFetchAsync()
+                setSpecializations(fetchedSpecializations);
 
-                    const specializationOptions = fetchedSpecializations.map(({ id, specializationName }) => ({
-                        id,
-                        value: specializationName
-                    }))
-                    setSpecializationOptions(specializationOptions);
+                const specializationOptions = fetchedSpecializations.map(({ id, specializationName }) => ({
+                    id,
+                    value: specializationName
+                }))
+                setSpecializationOptions(specializationOptions);
 
-                    const fetchedServices = await GetServicesBySpecializationIdFetchAsync(fetchedSpecialization.id);
-                    const formatedServices = formatServices(fetchedServices);
-                    setServices(formatedServices);
+                const fetchedServices = await GetServicesBySpecializationIdFetchAsync(fetchedSpecialization.id);
+                const formatedServices = formatServices(fetchedServices);
+                setServices(formatedServices);
 
-                    const fetchedCategories = await GetAllServiceCategoryFetchAsync()
-                    setCategories(fetchedCategories);
+                const fetchedCategories = await GetAllServiceCategoryFetchAsync()
+                setCategories(fetchedCategories);
 
-                    const categoryOptions = fetchedCategories.map(({ id, categoryName }) => ({
-                        id,
-                        value: categoryName
-                    }))
-                    setcategoryOptions(categoryOptions);
-                }
-            } catch (error) {
-                console.error('Error fetching specialization:', error);
-            } finally {
-                toggleLoader(false);
+                const categoryOptions = fetchedCategories.map(({ id, categoryName }) => ({
+                    id,
+                    value: categoryName
+                }))
+                setcategoryOptions(categoryOptions);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching specialization:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
 
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -159,17 +160,16 @@ function Specialization() {
     async function handleUpdate() {
         setIsEditing(false);
 
-        const updateSpecializationModel = new SpecializationModelRequest(formData.specializationName, formData.isActive);
+        setSpecialization(formData)
 
-        setSpecialization(updateSpecializationModel)
-
-        await UpdateSpecializationFetchAsync(specialization.id, updateSpecializationModel);
+        await UpdateSpecializationFetchAsync(specialization.id, formData);
     }
 
     async function handleAddService(e) {
         e.preventDefault();
 
         await CreateMedicalServiceAsync(serviceFormData);
+        fetchData();
     }
 
     return (

@@ -14,8 +14,8 @@ async function CreateAndSendAppointmentResultDocumentToEmailAsync(appointmentRes
         const response = await fetch(`${DocumentsAPI}/Document/create-and-send-appointment-result-document-to-email`, {
             method: 'POST',
             headers: {
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${jwtToken}`,
-                "Content-Type": "application/json"
             },
             body: JSON.stringify(appointmentResult)
         });

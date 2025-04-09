@@ -37,24 +37,21 @@ export default function Patients() {
         'patientPhoneNumber',
     ];
 
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+            const fetchedPatients = await GetAllPatientsFetchAsync();
+            setPatients(fetchedPatients);
+            const formattedPatients = formatPatients(fetchedPatients);
+            setEditablePatients(formattedPatients);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-
-                const fetchedPatients = await GetAllPatientsFetchAsync()
-                setPatients(fetchedPatients);
-                console.log(fetchedPatients);
-
-                const formattedPatients = formatPatients(fetchedPatients);
-                setEditablePatients(formattedPatients);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                toggleLoader(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -86,7 +83,9 @@ export default function Patients() {
     };
 
     const toggleAddModalClick = () => {
-        const confirmCancel = isAddModalOpen ? window.confirm("Do you really want to cancel? Entered data will not be saved.") : true;
+        const confirmCancel = isAddModalOpen 
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.") 
+            : true;
 
         if (confirmCancel) {
             setIsAddModalOpen((prev) => {
@@ -103,6 +102,7 @@ export default function Patients() {
         e.preventDefault();
 
         await CreatePatientFetchAsync(formData);
+        fetchData(); 
     }
 
     async function handleDelete(id) {
@@ -110,7 +110,8 @@ export default function Patients() {
     
         if (confirmCancel) {
             await DeletePatientFetchAsync(id);
-        } 
+            fetchData(); 
+        }
     }
 
     return (
@@ -198,8 +199,8 @@ export default function Patients() {
                                     label="Middle Name"
                                     id="middleName"
                                     value={formData.middleName}
-                                    onBlur={handleBlur('middleName')}
-                                    onChange={handleChange('middleName')}
+                                    onBlur={handleBlur('middleName', false)}
+                                    onChange={handleChange('middleName', false)}
                                     required
                                 />
                                 <InputWrapper

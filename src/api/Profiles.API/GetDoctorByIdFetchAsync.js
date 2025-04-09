@@ -9,11 +9,12 @@ async function GetDoctorByIdFetchAsync(doctorId) {
             await RefreshTokenFetchAsync(); 
             jwtToken = Cookies.get('accessToken');
         }
-        
+
         const response = await fetch(`${ProfilesAPI}/Doctor/${doctorId}`, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${jwtToken}`,
             },
         });
 
@@ -21,10 +22,12 @@ async function GetDoctorByIdFetchAsync(doctorId) {
 
         if (response.ok) {
            return data;
+        } else {
+            console.error('Failed to fetch doctor by ID:', data);
+            return null;
         }
     } catch (error) {
-        console.error('Error in getting by id doctors:', error);
-        //alert('An error occurred while receiving all the doctors');
+        console.error('Error in getting doctor by ID:', error);
         return null;
     }
 }

@@ -77,7 +77,13 @@ const useServiceForm = (initialValues) => {
 
     const resetFormService = () => {
         setServiceFormData(initialValues);
-        setServiceErrors({});
+        setServiceErrors({
+            serviceCategoryId: false,
+            serviceName: false,
+            price: false,
+            specializationId: false,
+            isActive: true,
+        });
     };
 
     return {

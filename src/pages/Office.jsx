@@ -10,7 +10,8 @@ import GetPhotoByNameAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import '../styles/pages/Office.css';
-import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
+import Toolbar from "../components/organisms/Toolbar";
+
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import UpdateOfficeFetchAsync from "../api/Offices.API/UpdateOfficeFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
@@ -95,9 +96,9 @@ function Office() {
     async function handleUpdate() {
         setIsEditing(false);
 
+        let photoId = '';
         if (!office.photoId && editingPhoto) {
-            const photoId = await CreatePhotoFetchAsync(editingPhoto);
-            formData.photoId = photoId;
+            photoId = await CreatePhotoFetchAsync(editingPhoto);
         } else if ((editingPhoto instanceof Blob)) {
             const imageUrl = URL.createObjectURL(editingPhoto);
             setPhoto(imageUrl)
@@ -105,17 +106,25 @@ function Office() {
             await UpdatePhotoFetchAsync(editingPhoto, office.photoId);
         }
 
-        const updateOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
-            formData.photoId, formData.registryPhoneNumber, formData.status);
+        const updateOfficeRequest = {
+            city: formData.city,
+            street: formData.street,
+            houseNumber: formData.houseNumber,
+            officeNumber: formData.officeNumber,
+            registryPhoneNumber: formData.registryPhoneNumber,
+            status: formData.status,
+            city: formData.city,
+            photoId: photoId,
+        }
 
-        setOffice(updateOfficeModel)
+        setOffice(updateOfficeRequest)
 
-        await UpdateOfficeFetchAsync(office.id, updateOfficeModel);
+        await UpdateOfficeFetchAsync(office.id, updateOfficeRequest);
     }
 
     return (
         <>
-        <Toolbar pageTitle="Office" />
+            <Toolbar pageTitle="Office" />
             {isLoading ? <Loader /> : (
                 <ProfileCard>
                     <div className="profile-icon-container">
@@ -143,7 +152,7 @@ function Office() {
                         </div>
                     ) : (
                         <div class="img-container">
-                            <img src={photo} alt="" className="img-area" />
+                            <img src={photo} alt="" className={photo ? '' : 'img-area'} />
                         </div>
                     )}
 
@@ -181,8 +190,8 @@ function Office() {
                                 label="Office Number"
                                 id="officeNumber"
                                 value={formData.officeNumber}
-                                onBlur={handleBlur('officeNumber')}
-                                onChange={handleChange('officeNumber')}
+                                onBlur={handleBlur('officeNumber', false)}
+                                onChange={handleChange('officeNumber', false)}
                                 required
                             />
                             <InputWrapper

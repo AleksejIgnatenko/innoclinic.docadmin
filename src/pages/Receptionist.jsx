@@ -15,6 +15,8 @@ import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 import AddImageInAccountFetchAsync from "../api/Authorization.API/AddImageInAccountFetchAsync";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import UpdateReceptionistFetchAsync from "../api/Profiles.API/UpdateReceptionistFetchAsync";
+import Toolbar from "../components/organisms/Toolbar";
+import GetReceptionistByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetReceptionistByAccountIdFromTokenFetchAsync";
 
 function Receptionist() {
     const { id } = useParams();
@@ -23,7 +25,7 @@ function Receptionist() {
     const [photo, setPhoto] = useState(null);
 
     const [editingPhoto, setEditingPhoto] = useState(null);
-    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, resetForm, isFormValid } = useReceptionistForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useReceptionistForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -38,39 +40,44 @@ function Receptionist() {
     const [offices, setOffices] = useState([]);
     const [officeOptions, setOfficeOptions] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+            errors.email = true;
 
-                if (id) {
-                    const fetchedReceptionist = await GetReceptionistByIdFetchAsync(id);
-                    setReceptionist(fetchedReceptionist);
+            const fetchedOffices = await GetAllOfficesFetchAsync();
+            setOffices(fetchedOffices);
+            const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
+                id,
+                value: `${city} ${street} ${houseNumber} ${officeNumber}`
+            }));
+            setOfficeOptions(officeOptions);
 
-                    const formattedReceptionist = formatReceptionist(fetchedReceptionist);
-                    setFormData(formattedReceptionist);
-
-                    const fetchedOffices = await GetAllOfficesFetchAsync();
-                    setOffices(fetchedOffices);
-                    const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
-                        id,
-                        value: `${city} ${street} ${houseNumber} ${officeNumber}`
-                    }))
-                    setOfficeOptions(officeOptions);
-
-                    if (fetchedReceptionist.account.photoId) {
-                        const fetchedPhoto = await GetPhotoByNameAsync(fetchedReceptionist.account.photoId);
-                        setPhoto(fetchedPhoto);
-                        setEditingPhoto(fetchedPhoto);
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching receptionist:', error);
-            } finally {
-                toggleLoader(false);
+            let fetchedReceptionist;
+            if (id) {
+                fetchedReceptionist = await GetReceptionistByIdFetchAsync(id);
+                setReceptionist(fetchedReceptionist);
+            } else {
+                fetchedReceptionist = await GetReceptionistByAccountIdFromTokenFetchAsync();
+                setReceptionist(fetchedReceptionist);
             }
-        };
 
+            const formattedReceptionist = formatReceptionist(fetchedReceptionist);
+            setFormData(formattedReceptionist);
+
+            if (fetchedReceptionist.account.photoId) {
+                const fetchedPhoto = await GetPhotoByNameAsync(fetchedReceptionist.account.photoId);
+                setPhoto(fetchedPhoto);
+                setEditingPhoto(fetchedPhoto);
+            }
+        } catch (error) {
+            console.error('Error fetching receptionist:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
+    useEffect(() => {    
         fetchData();
     }, []);
 
@@ -109,22 +116,30 @@ function Receptionist() {
 
     async function handleUpdate() {
         setIsEditing(false);
+    
+        let photoId = '';
+        if (!receptionist.account.photoId && editingPhoto) {
+            photoId = await CreatePhotoFetchAsync(editingPhoto);
 
-        if (!receptionist.photoId && editingPhoto) {
-            const photoId = await CreatePhotoFetchAsync(editingPhoto);
-            formData.photoId = photoId;
-
-            await AddImageInAccountFetchAsync(receptionist.account.id, photoId);
-        } else if ((editingPhoto instanceof Blob)) {
+            setPhoto(editingPhoto);
+        } else if (editingPhoto instanceof Blob) {
             const imageUrl = URL.createObjectURL(editingPhoto);
-            setPhoto(imageUrl)
-
-            await UpdatePhotoFetchAsync(editingPhoto, receptionist.photoId);
+            setPhoto(imageUrl);
+            
+            await UpdatePhotoFetchAsync(editingPhoto, receptionist.account.photoId);
         }
-
-        console.log(formData);
-
-        await UpdateReceptionistFetchAsync(receptionist.id, formData);
+    
+        const updateReceptionistRequest = {
+            firstName: formData.firstName,
+            lastName: formData.lastName,
+            middleName: formData.middleName,
+            status: formData.status,
+            officeId: formData.officeId,
+            photoId: receptionist.account.photoId ? receptionist.account.photoId : photoId,
+        };
+    
+        await UpdateReceptionistFetchAsync(receptionist.id, updateReceptionistRequest);
+        fetchData();
     }
 
     return (
@@ -152,7 +167,7 @@ function Receptionist() {
                         </div>
                     ) : (
                         <div class="img-container">
-                            <img src={photo} alt="" />
+                            <img src={photo} alt="" className={photo ? '' : 'img-area'} />
                         </div>
                     )}
 
@@ -181,8 +196,8 @@ function Receptionist() {
                                 label="Middle Name"
                                 id="middleName"
                                 value={formData.middleName}
-                                onBlur={handleBlur('middleName')}
-                                onChange={handleChange('middleName')}
+                                onBlur={handleBlur('middleName', false)}
+                                onChange={handleChange('middleName', false)}
                                 required
                             />
                             <SelectWrapper

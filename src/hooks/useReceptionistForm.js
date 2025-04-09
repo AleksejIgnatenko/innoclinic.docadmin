@@ -6,15 +6,13 @@ const useReceptionistForm = (initialValues) => {
   const [errors, setErrors] = useState({
     firstName: false,
     lastName: false,
-    middleName: true,
     email: false,
     officeId: false,
     status: false,
-    photoId: true,
   });
 
-  const updateInputState = (field, input, label) => {
-    if (!input.value.trim()) {
+  const updateInputState = (field, input, label, validate) => {
+    if (validate && !input.value.trim()) {
       if (input && label) {
         input.classList.add('error-input');
         label.classList.add('error-label');
@@ -39,36 +37,34 @@ const useReceptionistForm = (initialValues) => {
     }
   };
 
-  const handleChange = (field) => (e) => {
+  const handleChange = (field, validate = true) => (e) => {
     const input = e.target;
-    const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
+    const label = document.querySelector(`label[for="${field}"]`);
 
     setFormData(prev => ({
-      ...prev,
-      [field]: input.value
+        ...prev,
+        [field]: input.value
     }));
 
-    updateInputState(field, input, label);
-  };
+    updateInputState(field, input, label, validate);
+};
 
-  const handleBlur = (field) => (event) => {
+const handleBlur = (field, validate = true) => (event) => {
     const input = event.target;
-    const label = document.querySelector(`label[for="${FieldNames[field]}"]`);
+    const label = document.querySelector(`label[for="${field}"]`);
 
-    updateInputState(field, input, label);
-  };
-
-  const handleRegistryPhoneNumberKeyDown = (event) => {
-    const input = event.target;
-
-    if (event.key === 'Backspace' && input.value === '+') {
-        event.preventDefault();
-    }
-  };
+    updateInputState(field, input, label, validate);
+};
 
   const resetForm = () => {
     setFormData(initialValues);
-    setErrors({});
+    setErrors({
+        firstName: false,
+        lastName: false,
+        email: false,
+        officeId: false,
+        status: false,
+    });
 };
 
   return {
@@ -77,7 +73,6 @@ const useReceptionistForm = (initialValues) => {
     errors,
     handleChange,
     handleBlur,
-    handleRegistryPhoneNumberKeyDown,
     resetForm,
     isFormValid: Object.values(errors).every(value => value),
   };

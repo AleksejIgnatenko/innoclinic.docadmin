@@ -11,7 +11,6 @@ import 'boxicons/css/boxicons.min.css';
 import FieldNames from "../enums/FieldNames";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
-import OfficeModelRequest from "../models/officeModels/OfficeModelRequest";
 import CreateOfficeFetchAsync from "../api/Offices.API/CreateOfficeFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 import { useNavigate } from "react-router-dom";
@@ -24,12 +23,11 @@ export default function Offices() {
 
     const [photo, setPhoto] = useState(null);
 
-    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, isFormValid } = useOfficeForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, handleRegistryPhoneNumberKeyDown, resetForm, isFormValid } = useOfficeForm({
         city: '',
         street: '',
         houseNumber: '',
         officeNumber: '',
-        photoId: '',
         registryPhoneNumber: '+',
         status: false,
     });
@@ -44,23 +42,23 @@ export default function Offices() {
         'registryPhoneNumber',
     ];
 
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+
+            const fetchedOffices = await GetAllOfficesFetchAsync();
+            setOffices(fetchedOffices);
+
+            const formattedOffices = formatOffices(fetchedOffices);
+            setEditableOffices(formattedOffices);
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-
-                const fetchedOffices = await GetAllOfficesFetchAsync();
-                setOffices(fetchedOffices);
-
-                const formattedOffices = formatOffices(fetchedOffices);
-                setEditableOffices(formattedOffices);
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                toggleLoader(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -77,8 +75,20 @@ export default function Offices() {
         setIsLoading(status);
     };
 
-    const toggleAddModal = () => {
-        setIsAddModalOpen(!isAddModalOpen);
+    const toggleAddModalClick = () => {
+        const confirmCancel = isAddModalOpen
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
+            : true;
+    
+        if (confirmCancel) {
+            setIsAddModalOpen(prev => {
+                const newState = !prev;
+                if (!newState) {
+                    resetForm();
+                }
+                return newState;
+            });
+        }
     };
 
     const handleCheckboxChange = (e) => {
@@ -93,14 +103,25 @@ export default function Offices() {
     async function handleAdd(e) {
         e.preventDefault();
 
-        let photoId = ''
+        let photoId = '';
         if (photo) {
             photoId = await CreatePhotoFetchAsync(photo);
         }
 
-        const createOfficeModel = new OfficeModelRequest(formData.city, formData.street, formData.houseNumber, formData.officeNumber,
-            photoId, formData.registryPhoneNumber, formData.status);
-        await CreateOfficeFetchAsync(createOfficeModel);
+        const createOfficeRequest = {
+            city: formData.city,
+            street: formData.street,
+            houseNumber: formData.houseNumber,
+            officeNumber: formData.officeNumber,
+            registryPhoneNumber: formData.registryPhoneNumber,
+            status: formData.status,
+            city: formData.city,
+            photoId: photoId,
+        }
+
+        await CreateOfficeFetchAsync(createOfficeRequest);
+
+        await fetchData();
     }
 
     return (
@@ -108,7 +129,7 @@ export default function Offices() {
             <Toolbar
                 pageTitle="Offices"
                 showAddIcon={true}
-                toggleCreateModalClick={toggleAddModal}
+                toggleCreateModalClick={toggleAddModalClick}
             />
             {isLoading ? (<Loader />
             ) : (
@@ -148,7 +169,7 @@ export default function Offices() {
                     )}
 
                     {isAddModalOpen && (
-                        <FormModal title="Add office" onClose={toggleAddModal} onSubmit={handleAdd} showCloseButton={true}>
+                        <FormModal title="Add office" onClose={toggleAddModalClick} onSubmit={handleAdd} showCloseButton={true}>
                             <div className="modal-inputs">
                                 <div class="img-container">
                                     <ImageUploader
@@ -187,8 +208,8 @@ export default function Offices() {
                                     label="Office Number"
                                     id="officeNumber"
                                     value={formData.officeNumber}
-                                    onBlur={handleBlur('officeNumber')}
-                                    onChange={handleChange('officeNumber')}
+                                    onBlur={handleBlur('officeNumber', false)}
+                                    onChange={handleChange('officeNumber', false)}
                                 />
                                 <InputWrapper
                                     type="phone"
@@ -223,7 +244,7 @@ export default function Offices() {
                                 <ButtonBase type="submit" disabled={!isFormValid}>
                                     Confirm
                                 </ButtonBase>
-                                <ButtonBase variant="secondary" onClick={toggleAddModal}>
+                                <ButtonBase variant="secondary" onClick={toggleAddModalClick}>
                                     Cancel
                                 </ButtonBase>
                             </div>

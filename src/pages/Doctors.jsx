@@ -19,7 +19,6 @@ import { useNavigate } from 'react-router-dom';
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
 import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
-import CreateDoctorModelRequest from "../models/doctorModels/CreateDoctorModelRequest";
 import CreateDoctorFetchAsync from "../api/Profiles.API/CreateDoctorFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 
@@ -40,7 +39,7 @@ export default function Doctors() {
     const [selectSpecializationName, setSelectSpecializationName] = useState('');
 
 
-    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, mapDoctorData, isFormValid } = useDoctorForm({
+    const { formData, setFormData, errors, handleChange, handleBlur, resetForm, isFormValid } = useDoctorForm({
         firstName: '',
         lastName: '',
         middleName: '',
@@ -51,7 +50,6 @@ export default function Doctors() {
         cabinetNumber: '',
         careerStartYear: '',
         status: '',
-        photoId: '',
     });
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -71,35 +69,35 @@ export default function Doctors() {
         'address',
     ];
 
+    const fetchData = async () => {
+        try {
+            toggleLoader(true);
+
+            const fetchedSpecializations = await GetAllSpecializationFetchAsync()
+            setSpecializations(fetchedSpecializations);
+
+            const fetchedOffices = await GetAllOfficesFetchAsync();
+            setOffices(fetchedOffices);
+            const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
+                id,
+                value: `${city} ${street} ${houseNumber} ${officeNumber}`
+            }))
+            setOfficeOptions(officeOptions);
+
+            const fetchedDoctors = await GetAllDoctorsFetchAsync();
+            setDoctors(fetchedDoctors);
+
+            const formattedDoctors = formatDoctors(fetchedDoctors);
+            setEditableDoctors(formattedDoctors);
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        } finally {
+            toggleLoader(false);
+        }
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                toggleLoader(true);
-
-                const fetchedSpecializations = await GetAllSpecializationFetchAsync()
-                setSpecializations(fetchedSpecializations);
-
-                const fetchedOffices = await GetAllOfficesFetchAsync();
-                setOffices(fetchedOffices);
-                const officeOptions = fetchedOffices.map(({ id, city, street, houseNumber, officeNumber }) => ({
-                    id,
-                    value: `${city} ${street} ${houseNumber} ${officeNumber}`
-                }))
-                setOfficeOptions(officeOptions);
-
-                const fetchedDoctors = await GetAllDoctorsFetchAsync();
-                setDoctors(fetchedDoctors);
-
-                const formattedDoctors = formatDoctors(fetchedDoctors);
-                setEditableDoctors(formattedDoctors);
-
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            } finally {
-                toggleLoader(false);
-            }
-        };
-
         fetchData();
     }, []);
 
@@ -134,13 +132,19 @@ export default function Doctors() {
     };
 
     const toggleAddModalClick = () => {
-        setIsAddModalOpen((prev) => {
-            const newState = !prev;
-            if (!newState) {
-                resetForm();
-            }
-            return newState;
-        });
+        const confirmCancel = isAddModalOpen 
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.") 
+            : true;
+    
+        if (confirmCancel) {
+            setIsAddModalOpen((prev) => {
+                const newState = !prev;
+                if (!newState) {
+                    resetForm();
+                }
+                return newState;
+            });
+        }
     };
 
     const toggleFilterModalClick = () => {
@@ -205,15 +209,27 @@ export default function Doctors() {
     async function handleAdd(e) {
         e.preventDefault();
 
+        let photoId = '';
         if (photo) {
-            formData.photoId = await CreatePhotoFetchAsync(photo);
+            photoId = await CreatePhotoFetchAsync(photo);
         }
 
-        const createDoctorRequest = new CreateDoctorModelRequest(formData.firstName, formData.lastName, formData.middleName,
-            formData.cabinetNumber, formData.dateOfBirth, formData.email, formData.specializationId, formData.officeId,
-            formData.careerStartYear, formData.status, formData.photoId);
+        const createDoctorRequest = {
+            firstName: formData.firstName, 
+            lastName: formData.lastName, 
+            middleName: formData.middleName,
+            cabinetNumber: formData.cabinetNumber, 
+            dateOfBirth: formData.dateOfBirth, 
+            email: formData.email, 
+            specializationId: formData.specializationId, 
+            officeId: formData.officeId,
+            careerStartYear: formData.careerStartYear, 
+            status: formData.status, 
+            photoId: photoId,
+        }
 
         await CreateDoctorFetchAsync(createDoctorRequest);
+        fetchData();
     }
 
     return (
@@ -296,8 +312,8 @@ export default function Doctors() {
                                     label="Middle Name"
                                     id="middleName"
                                     value={formData.middleName}
-                                    onBlur={handleBlur('middleName')}
-                                    onChange={handleChange('middleName')}
+                                    onBlur={handleBlur('middleName', false)}
+                                    onChange={handleChange('middleName', false)}
                                     required
                                 />
                                 <InputWrapper
