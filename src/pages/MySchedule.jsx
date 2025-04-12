@@ -6,7 +6,7 @@ import 'boxicons/css/boxicons.min.css';
 import '../styles/pages/Doctors.css';
 import Calendar from "../components/organisms/Calendar";
 import FieldNames from "../enums/FieldNames";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import GetAppointmentsByDoctorAndDateFetchAsync from "../api/Appointments.API/GetAppointmentsByDoctorAndDateFetchAsync";
 import FormModal from "../components/organisms/FormModal";
 import { ButtonBase } from "../components/atoms/ButtonBase";
@@ -20,6 +20,8 @@ import CreateAppointmentResultFetchAsync from "../api/Appointments.API/CreateApp
 
 export default function MySchedule() {
     const navigate = useNavigate();
+    const location = useLocation();
+
     const [patient, setPatient] = useState(null);
     const [doctor, setDoctor] = useState(null);
     const [appointments, setAppointments] = useState([]);
@@ -53,19 +55,13 @@ export default function MySchedule() {
     });
 
     useEffect(() => {
-        const getData = async () => {
-            toggleLoader(true);
+        const queryParams = new URLSearchParams(location.search);
+        const dateParam = queryParams.get('date');
 
-            const currentDate = new Date();
-            currentDate.setDate(currentDate.getDate() + 1);
-            const formattedDate = currentDate.toISOString().split('T')[0];
-            setSelectedDate(formattedDate);
-
-            toggleLoader(false);
-        };
-
-        getData();
-    }, []);
+        if (dateParam) {
+            setSelectedDate(dateParam);
+        }
+    }, [location.search]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -102,12 +98,34 @@ export default function MySchedule() {
     };
 
     const toggleCalendarClick = () => {
-        setIsCalendarOpen(!isCalendarOpen);
+        const newModalState = !isCalendarOpen;
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+
+        if (newModalState) {
+            params.set('modal', 'calendar');
+        } else {
+            params.delete('modal');
+        }
+
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        setIsCalendarOpen(newModalState);
+        navigate(updatedPath);
     }
 
     const handleSetSelectedDate = (date) => {
+        const newModalState = !isCalendarOpen;
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+    
+        params.set('date', date);
+    
+        const updatedPath = `${currentPath}?${params.toString()}`;
+    
+        setIsCalendarOpen(newModalState);
         setSelectedDate(date);
-    }
+        navigate(updatedPath);
+    };
 
     const toggleAddAppointmentResultModal = () => {
         setIsAppoimentResultAddModalOpen(!isAppoimentResultAddModalOpen);

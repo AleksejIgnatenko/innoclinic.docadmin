@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useSpecializationForm from "../hooks/useSpecializationForm";
 import Loader from "../components/organisms/Loader";
 import ProfileCard from "../components/organisms/ProfileCard";
@@ -10,7 +10,6 @@ import Table from "../components/organisms/Table";
 import FieldNames from "../enums/FieldNames";
 import GetSpecializationByIdAsync from "../api/Services.API/GetSpecializationByIdAsync";
 import GetServicesBySpecializationIdFetchAsync from "../api/Services.API/GetServicesBySpecializationIdFetchAsync";
-import SpecializationModelRequest from "../models/specializationModels/SpecializationModelRequest";
 import UpdateSpecializationFetchAsync from "../api/Services.API/UpdateSpecializationFetchAsync";
 import useServiceForm from "../hooks/useServiceForm";
 import FormModal from "../components/organisms/FormModal";
@@ -24,6 +23,7 @@ import Toolbar from "../components/organisms/Toolbar";
 function Specialization() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [specialization, setSpecialization] = useState(null);
     const [specializations, setSpecializations] = useState([]);
@@ -100,6 +100,14 @@ function Specialization() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const modalParam = queryParams.get('modal');
+        if (modalParam === 'create-service') {
+            setIsServiceAddModalOpen(true);
+        }
+    }, [location.search]);
+
     const formatServices = (services) => {
         return services.map(({ id, serviceName, price, isActive, serviceCategory }) => ({
             id,
@@ -129,13 +137,29 @@ function Specialization() {
     };
 
     const toggleServiceAddModalClick = () => {
-        setIsServiceAddModalOpen((prev) => {
-            const newState = !prev;
-            if (!newState) {
-                resetFormService();
-            }
-            return newState;
-        });
+        const confirmCancel = isServiceAddModalOpen
+        ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
+        : true;
+
+    if (confirmCancel) {
+        const newModalState = !isServiceAddModalOpen;
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+
+        if (newModalState) {
+            params.set('modal', 'create-service');
+        } else {
+            params.delete('modal');
+        }
+
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        setIsServiceAddModalOpen(newModalState);
+        navigate(updatedPath);
+
+        if (!newModalState) {
+            resetFormService();
+        }
+    }
     };
 
     const handleCheckboxChange = (e) => {

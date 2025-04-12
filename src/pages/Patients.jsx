@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import usePatientForm from "../hooks/usePatientForm";
 import Toolbar from "../components/organisms/Toolbar";
 import Loader from "../components/organisms/Loader";
@@ -16,6 +16,7 @@ import DeletePatientFetchAsync from "../api/Profiles.API/DeletePatientFetchAsync
 
 export default function Patients() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [patients, setPatients] = useState([]);
     const [editablePatients, setEditablePatients] = useState([]);
@@ -61,13 +62,52 @@ export default function Patients() {
             return (
                 item.firstName.toLowerCase().includes(lowerCaseSearchTerm) ||
                 item.lastName.toLowerCase().includes(lowerCaseSearchTerm) ||
-                item.middleName.toLowerCase().includes(lowerCaseSearchTerm)
+                item.middleName.toLowerCase().includes(lowerCaseSearchTerm) ||
+                (item.account && item.account.phoneNumber && item.account.phoneNumber.toLowerCase().includes(lowerCaseSearchTerm))
             );
         })
 
         const formattedPatients = formatPatients(filteredPatients);
-
         setEditablePatients(formattedPatients);
+
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+        
+        if (searchTerm) {
+            params.set('search', searchTerm);
+        } else {
+            params.delete('search');
+        }
+
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        navigate(updatedPath);
+    }, [searchTerm, patients]);
+
+    useEffect(() => {
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
+        const filteredPatients = patients.filter(item => {
+            const fullName = `${item.firstName} ${item.middleName} ${item.lastName}`.toLowerCase();
+    
+            return fullName.includes(lowerCaseSearchTerm) || 
+                   item.firstName.toLowerCase().includes(lowerCaseSearchTerm) ||
+                   item.lastName.toLowerCase().includes(lowerCaseSearchTerm) ||
+                   item.middleName.toLowerCase().includes(lowerCaseSearchTerm);
+        });
+    
+        const formattedPatients = formatPatients(filteredPatients);
+        setEditablePatients(formattedPatients);
+    
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+        
+        if (searchTerm) {
+            params.set('search', searchTerm);
+        } else {
+            params.delete('search');
+        }
+    
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        navigate(updatedPath);
     }, [searchTerm, patients]);
 
     const formatPatients = (patients) => {
@@ -83,18 +123,28 @@ export default function Patients() {
     };
 
     const toggleAddModalClick = () => {
-        const confirmCancel = isAddModalOpen 
-            ? window.confirm("Do you really want to cancel? Entered data will not be saved.") 
+        const confirmCancel = isAddModalOpen
+            ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
             : true;
-
+    
         if (confirmCancel) {
-            setIsAddModalOpen((prev) => {
-                const newState = !prev;
-                if (!newState) {
-                    resetForm();
-                }
-                return newState;
-            });
+            const newModalState = !isAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            if (newModalState) {
+                params.set('modal', 'create');
+            } else {
+                params.delete('modal');
+            }
+
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsAddModalOpen(newModalState);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetForm();
+            }
         }
     };
 
@@ -120,6 +170,7 @@ export default function Patients() {
                 pageTitle="Patients"
                 showSearch={true}
                 setSearchTerm={setSearchTerm}
+                searchTerm={searchTerm}
                 showAddIcon={true}
                 toggleCreateModalClick={toggleAddModalClick}
             />

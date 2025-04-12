@@ -36,6 +36,8 @@ const FieldNames = {
     categoryName: "Category Name",
     receptionistFullName: "Receptionist Full Name",
     recommendations: "Recommendations",
+    patient: "Patient",
+    doctor: "Doctor",
 };
 
 export default FieldNames;

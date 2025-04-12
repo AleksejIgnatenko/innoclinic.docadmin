@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useNavigate, useLocation } from 'react-router-dom';
 import GetAllAppointmentResultsByAppointmentIdFetchAsync from "../api/Appointments.API/GetAllAppointmentResultsByAppointmentIdFetchAsync";
 import { useEffect, useState } from "react";
 import GetAllDoctorsFetchAsync from "../api/Profiles.API/GetAllDoctorsFetchAsync";
@@ -13,9 +14,12 @@ import useAppointmentResultForm from "../hooks/useAppointmentResultForm";
 import FormModal from "../components/organisms/FormModal";
 import { InputWrapper } from "../components/molecules/InputWrapper";
 import { ButtonBase } from "../components/atoms/ButtonBase";
-import UpdateAppointmentResultFetchAsync from "../api/Appointments.API/UpdateAppointmentResultFetchAsync";
+import UpdateAppointmentResultFetchAsync from "../api/Appointments.API/UpdateAppointmentResultFetchAsync";  
 
 export default function AppointmentResults() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    
     const { appointmentId } = useParams();
     const { patientId } = useParams();
 
@@ -26,7 +30,7 @@ export default function AppointmentResults() {
     const [appointmentResults, setAppointmentResults] = useState([]);
     const [editableAppointmentResults, setEditableAppointmentResults] = useState([]);
 
-    const [isAppoimentResultUpdateModalOpen, setIsAppoimentResultUpdateModalOpen] = useState(false);
+    const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -81,6 +85,14 @@ export default function AppointmentResults() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+
+        if (queryParams.get('modal') === 'update' && !isUpdateModalOpen) {
+            setIsUpdateModalOpen(true);
+        }
+    }, [location.search]);
+
     const formatAppointmentResults = (appointmentResults, patient, doctors) => {
         return appointmentResults.map(({ id, appointment, complaints, conclusion, diagnosis, recommendations }) => ({
             id,
@@ -125,13 +137,14 @@ export default function AppointmentResults() {
 
         setAppointmentResultFormData(appoimentResult);
 
-        setIsAppoimentResultUpdateModalOpen(!isAppoimentResultUpdateModalOpen);
+        const queryParams = new URLSearchParams(location.search);
+        queryParams.set('modal', 'update');
+        navigate(`${location.pathname}?${queryParams.toString()}`);
     };
 
     async function handleUpdateAppointmentResult(e) {
         e.preventDefault();
 
-        console.log(appointmentResultFormData);
         await UpdateAppointmentResultFetchAsync(appointmentResultFormData)
     }
 
@@ -186,7 +199,7 @@ export default function AppointmentResults() {
                         )}
                     </div>
 
-                    {isAppoimentResultUpdateModalOpen && (
+                    {isUpdateModalOpen && (
                         <FormModal title="Add doctor" onClose={toggleUpdateAppointmentResultModal} onSubmit={handleUpdateAppointmentResult} showCloseButton={true}>
                             <div className="modal-inputs">
                                 <InputWrapper

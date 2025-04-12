@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import useReceptionistForm from "../hooks/useReceptionistForm";
 import { useEffect, useState } from "react";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
@@ -20,6 +20,7 @@ import DeleteReceptionistFetchAsync from "../api/Profiles.API/DeleteReceptionist
 
 export default function Receptionists() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [receptionists, setReceptionists] = useState([]);
     const [editableReceptionists, setEditableReceptionists] = useState([]);
@@ -75,6 +76,15 @@ export default function Receptionists() {
     useEffect(() => {
         fetchData();
     }, []);
+    
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+    
+        const modalParam = queryParams.get('modal');
+        if (modalParam === 'create') {
+            setIsAddModalOpen(true);
+        }
+    }, [location.search]);
 
     const formatReceptionists = (receptionists) => {
         return receptionists.map(({ id, firstName, lastName, middleName, office }) => ({
@@ -88,9 +98,6 @@ export default function Receptionists() {
         setIsLoading(status);
     };
 
-    const toggleAddModal = () => {
-        setIsAddModalOpen(!isAddModalOpen);
-    };
 
     const toggleAddModalClick = () => {
         const confirmCancel = isAddModalOpen
@@ -98,13 +105,23 @@ export default function Receptionists() {
             : true;
     
         if (confirmCancel) {
-            setIsAddModalOpen(prev => {
-                const newState = !prev;
-                if (!newState) {
-                    resetForm();
-                }
-                return newState;
-            });
+            const newModalState = !isAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            if (newModalState) {
+                params.set('modal', 'create');
+            } else {
+                params.delete('modal');
+            }
+
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsAddModalOpen(newModalState);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetForm();
+            }
         }
     };
 
@@ -144,7 +161,7 @@ export default function Receptionists() {
                 pageTitle="Receptionists"
                 setSearchTerm={setSearchTerm}
                 showAddIcon={true}
-                toggleCreateModalClick={toggleAddModal}
+                toggleCreateModalClick={toggleAddModalClick}
             />
             {isLoading ? (<Loader />
             ) : (

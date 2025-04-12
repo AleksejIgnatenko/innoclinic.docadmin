@@ -13,10 +13,11 @@ import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync"
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import CreateOfficeFetchAsync from "../api/Offices.API/CreateOfficeFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Offices() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [offices, setOffices] = useState([]);
     const [editableOffices, setEditableOffices] = useState([]);
@@ -62,6 +63,15 @@ export default function Offices() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const modalParam = queryParams.get('modal');
+
+        if (modalParam === 'create') {
+            setIsAddModalOpen(true);
+        }
+    }, [location.search]);
+
     const formatOffices = (offices) => {
         return offices.map(({ id, city, street, houseNumber, officeNumber, registryPhoneNumber, isActive }) => ({
             id,
@@ -81,13 +91,23 @@ export default function Offices() {
             : true;
     
         if (confirmCancel) {
-            setIsAddModalOpen(prev => {
-                const newState = !prev;
-                if (!newState) {
-                    resetForm();
-                }
-                return newState;
-            });
+            const newModalState = !isAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            if (newModalState) {
+                params.set('modal', 'create');
+            } else {
+                params.delete('modal');
+            }
+
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsAddModalOpen(newModalState);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetForm();
+            }
         }
     };
 

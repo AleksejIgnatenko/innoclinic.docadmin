@@ -5,7 +5,6 @@ import '../../styles/organisms/FilterModal.css';
 export default function FilterModal({ 
     children,
     onClose,
-    handleSubmit,
 }) {
 
     useEffect(() => {

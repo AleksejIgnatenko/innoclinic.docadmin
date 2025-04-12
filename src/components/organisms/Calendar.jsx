@@ -41,7 +41,6 @@ const Calendar = ({ onClose, handleSetSelectedDate, currentDate }) => {
                     day.onclick = () => {
                         const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(dayNumber).padStart(2, '0')}`;
                         handleSetSelectedDate(formattedDate);
-                        onClose();
                     };
 
                     // Highlight the selected date

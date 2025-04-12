@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import FieldNames from "../enums/FieldNames";
 import useSpecializationForm from "../hooks/useSpecializationForm";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Toolbar from "../components/organisms/Toolbar";
 import Loader from "../components/organisms/Loader";
 import Table from "../components/organisms/Table";
@@ -10,7 +10,6 @@ import FormModal from "../components/organisms/FormModal";
 import { InputWrapper } from "../components/molecules/InputWrapper";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import { ButtonBase } from "../components/atoms/ButtonBase";
-import SpecializationModelRequest from "../models/specializationModels/SpecializationModelRequest";
 import CreateSpecializationFetchAsync from "../api/Services.API/CreateSpecializationFetchAsync";
 import useServiceForm from "../hooks/useServiceForm";
 import { SelectWrapper } from "../components/molecules/SelectWrapper";
@@ -20,6 +19,7 @@ import CreateMedicalServiceAsync from "../api/Services.API/CreateMedicalServiceA
 
 export default function Specializations() {
     const navigate = useNavigate();
+    const location = useLocation(); 
 
     const [specializations, setSpecializations] = useState([]);
     const [editableSpecializations, setEditableSpecializations] = useState([]);
@@ -87,6 +87,16 @@ export default function Specializations() {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const modalParam = queryParams.get('modal');
+        if (modalParam === 'create') {
+            setIsAddModalOpen(true);
+        } else if (modalParam === 'create-service') {
+            setIsServiceAddModalOpen(true);
+        }
+    }, [location.search]);
+
     const formatSpecializations = (specializations) => {
         return specializations.map(({ id, specializationName, isActive }) => ({
             id,
@@ -100,18 +110,28 @@ export default function Specializations() {
     };
 
     const toggleAddModalClick = () => {
-        const confirmCancel = isAddModalOpen
+const confirmCancel = isAddModalOpen
             ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
             : true;
     
         if (confirmCancel) {
-            setIsAddModalOpen(prev => {
-                const newState = !prev;
-                if (!newState) {
-                    resetForm();
-                }
-                return newState;
-            });
+            const newModalState = !isAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            if (newModalState) {
+                params.set('modal', 'create');
+            } else {
+                params.delete('modal');
+            }
+
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsAddModalOpen(newModalState);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetForm();
+            }
         }
     };
 
@@ -120,16 +140,25 @@ export default function Specializations() {
             ? window.confirm("Do you really want to cancel? Entered data will not be saved.")
             : true;
     
-        setIsAddModalOpen(!isAddModalOpen);
-    
         if (confirmCancel) {
-            setIsServiceAddModalOpen(prev => {
-                const newState = !prev;
-                if (!newState) {
-                    resetFormService();
-                }
-                return newState;
-            });
+            const newModalState = !isServiceAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+
+            if (newModalState) {
+                params.set('modal', 'create-service');
+            } else {
+                params.delete('modal');
+            }
+
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsServiceAddModalOpen(newModalState);
+            setIsAddModalOpen(false);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetFormService();
+            }
         }
     };
 

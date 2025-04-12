@@ -6,6 +6,7 @@ const Toolbar = ({
     pageTitle,
     
     showSearch = false,
+    searchTerm,
     setSearchTerm,
 
     showAddIcon = false,
@@ -34,6 +35,7 @@ const Toolbar = ({
                                 type="search"
                                 placeholder="Search..."
                                 onChange={handleSearchChange}
+                                value={searchTerm}
                             />
                         </div>
                     )}

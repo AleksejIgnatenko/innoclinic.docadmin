@@ -13,8 +13,8 @@ export const SelectBase = ({ options, value, onChange, id, error, required, plac
         >
             <option value="" disabled hidden>{placeholder}</option>
             {options.map(option => (
-                <option key={option.id} value={option.id}>
-                    {option.value}
+                <option key={option.id} value={option.value}>
+                    {option.displayValue}
                 </option>
             ))}
         </select>

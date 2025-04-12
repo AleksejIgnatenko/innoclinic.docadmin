@@ -17,7 +17,6 @@ import GetPhotoByIdAsync from "../api/Documents.API/GetPhotoByIdAsync";
 import ImageUploader from "../components/organisms/ImageUploader";
 import UpdatePhotoFetchAsync from "../api/Documents.API/UpdatePhotoFetchAsync";
 import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
-import AddImageInAccountFetchAsync from "../api/Authorization.API/AddImageInAccountFetchAsync";
 import Toolbar from "../components/organisms/Toolbar";
 import GetDoctorByAccountIdFromTokenFetchAsync from "../api/Profiles.API/GetDoctorByAccountIdFromTokenFetchAsync";
 

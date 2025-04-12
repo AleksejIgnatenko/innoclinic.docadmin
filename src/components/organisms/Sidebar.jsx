@@ -16,10 +16,17 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
     const [profile, setProfile] = useState(null);
     const [account, setAccount] = useState(null);
     const [showSidebar, setShowSidebar] = useState(false);
+    const [date, setDate] = useState('');
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                const currentDate = new Date();
+                currentDate.setDate(currentDate.getDate() + 1);
+                const formattedDate = currentDate.toISOString().split('T')[0];
+                setDate(formattedDate);
+
+
                 const fetchedAccount = await GetAccountByAccountIdFromTokenFetchAsync();
                 setAccount(fetchedAccount);
 
@@ -116,22 +123,22 @@ export default function Sidebar({ currentTheme, toggleTheme, isLoggedIn }) {
                     )}
                     {account && account.role === 'Doctor' ? (
                         <li>
-                            <Link to="/my-schedule">
+                            <Link to="/my-schedule?date=${date}">
                                 <IconBase name='bx-calendar' />
                                 <span className="link_name">My schedule</span>
                             </Link>
                             <ul className="sub-menu blank">
-                                <li><Link to="/my-schedule" className="link_name">My schedule</Link></li>
+                                <li><Link to="/my-schedule?date=${date}" className="link_name">My schedule</Link></li>
                             </ul>
                         </li>
                     ) : account && account.role === 'Receptionist' ? (
                         <li>
-                            <Link to="/appointments">
+                            <Link to={`/appointments?date=${date}`}>
                                 <IconBase name='bx-calendar' />
                                 <span className="link_name">Appointments</span>
                             </Link>
                             <ul className="sub-menu blank">
-                                <li><Link to="/appointments" className="link_name">Appointments</Link></li>
+                                <li><Link to={`/appointments?date=${date}`} className="link_name">Appointments</Link></li>
                             </ul>
                         </li>
                     ) : null}

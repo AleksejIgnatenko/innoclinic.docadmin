@@ -14,7 +14,7 @@ import workStatuses from "../enums/WorkStatuses";
 import FilterModal from "../components/organisms/FilterModal";
 import CheckboxWrapper from "../components/molecules/CheckboxWrapper";
 import FieldNames from "../enums/FieldNames";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import GetAllSpecializationFetchAsync from "../api/Services.API/GetAllSpecializationFetchAsync";
 import GetAllOfficesFetchAsync from "../api/Offices.API/GetAllOfficesFetchAsync";
@@ -25,6 +25,7 @@ import CreatePhotoFetchAsync from "../api/Documents.API/CreatePhotoFetchAsync";
 
 export default function Doctors() {
     const navigate = useNavigate();
+    const location = useLocation();
 
     const [photo, setPhoto] = useState(null);
 
@@ -102,6 +103,17 @@ export default function Doctors() {
     }, []);
 
     useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const modalParam = queryParams.get('modal');
+
+        if (modalParam === 'create') {
+            setIsAddModalOpen(true);
+        } else if (modalParam === 'filter') {
+            setIsFilterModalOpen(true);
+        }
+    }, [location.search]);
+
+    useEffect(() => {
         const lowerCaseSearchTerm = searchTerm.toLowerCase();
         const filteredDoctors = doctors.filter(item => {
             return (
@@ -137,19 +149,41 @@ export default function Doctors() {
             : true;
     
         if (confirmCancel) {
-            setIsAddModalOpen((prev) => {
-                const newState = !prev;
-                if (!newState) {
-                    resetForm();
-                }
-                return newState;
-            });
+            const newModalState = !isAddModalOpen;
+            const currentPath = location.pathname;
+            const params = new URLSearchParams(location.search);
+        
+            if (newModalState) {
+                params.set('modal', 'create');
+            } else {
+                params.delete('modal');
+            }
+        
+            const updatedPath = `${currentPath}?${params.toString()}`;
+            setIsAddModalOpen(newModalState);
+            navigate(updatedPath);
+
+            if (!newModalState) {
+                resetForm();
+            }
         }
     };
 
     const toggleFilterModalClick = () => {
-        setIsFilterModalOpen(!isFilterModalOpen);
-    }
+        const newModalState = !isFilterModalOpen;
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+    
+        if (newModalState) {
+            params.set('modal', 'filter');
+        } else {
+            params.delete('modal');
+        }
+    
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        setIsFilterModalOpen(newModalState);
+        navigate(updatedPath);
+    };
 
     const handleSpecializationChange = (value) => {
         if (value === '') {
@@ -196,6 +230,12 @@ export default function Doctors() {
         const formattedDoctors = formatDoctors(filteredDoctors);
         setEditableDoctors(formattedDoctors);
         setIsFilterModalOpen(!isFilterModalOpen);
+
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+        params.delete('modal');
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        navigate(updatedPath);
     };
 
     const handleClearFilter = () => {
@@ -204,6 +244,12 @@ export default function Doctors() {
         setSelectedOffices([]);
         setSelectedSpecializations([]);
         setIsFilterModalOpen(!isFilterModalOpen);
+
+        const currentPath = location.pathname;
+        const params = new URLSearchParams(location.search);
+        params.delete('modal');
+        const updatedPath = `${currentPath}?${params.toString()}`;
+        navigate(updatedPath);
     }
 
     async function handleAdd(e) {
@@ -405,7 +451,7 @@ export default function Doctors() {
                     )}
 
                     {isFilterModalOpen && (
-                        <FilterModal onClose={() => setIsFilterModalOpen(false)}>
+                        <FilterModal onClose={toggleFilterModalClick}>
                             <div className="filter-section">
                                 <h2 className="filter-modal-title">Offices</h2>
                                 <div className="filter-checkbox-container">
